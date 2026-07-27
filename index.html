@@ -4,114 +4,130 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Robinhood Chain：券商自建链，还是新型金融基础设施？</title>
-  <meta name="description" content="Robinhood推出自建链，标志着券商正在从交易入口升级为金融基础设施提供者。本文分析其背后的战略意义、代币化股票逻辑及监管挑战。" />
+  <meta name="description" content="Robinhood 自建链的背后，不只是公链发布，而是传统券商正在向金融基础设施升级。本文解析其战略意义、代币化股票逻辑与行业竞争边界。" />
   <style>
     :root {
-      --bg: #07111f;
-      --panel: #0f172a;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-      --accent: #60a5fa;
-      --accent-2: #38bdf8;
-      --border: rgba(255,255,255,0.12);
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #e5e7eb;
+      --accent: #2b6cf6;
+      --accent-soft: #eaf2ff;
+      --title: #111827;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
-      background: linear-gradient(135deg, #07111f 0%, #0f172a 100%);
+      background: linear-gradient(180deg, #f8fafc 0%, #eef3ff 100%);
       color: var(--text);
-      line-height: 1.75;
+      line-height: 1.9;
     }
-    .container {
-      max-width: 900px;
+    .page {
+      max-width: 960px;
       margin: 0 auto;
-      padding: 40px 20px 80px;
+      padding: 34px 20px 70px;
     }
     .hero {
-      padding: 32px 28px;
+      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      background: rgba(15,23,42,0.85);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-      margin-bottom: 28px;
+      border-radius: 24px;
+      padding: 34px 32px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
     }
-    .eyebrow {
+    .badge {
       display: inline-block;
-      padding: 6px 10px;
-      color: #bfdbfe;
-      background: rgba(96,165,250,0.16);
-      border: 1px solid rgba(96,165,250,0.3);
+      padding: 7px 12px;
       border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
       font-size: 0.9rem;
-      margin-bottom: 10px;
+      font-weight: 700;
+      margin-bottom: 12px;
     }
     h1 {
-      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3.2vw, 2.7rem);
       line-height: 1.2;
-      margin: 0 0 12px;
+      color: var(--title);
     }
     .subtitle {
-      color: var(--muted);
-      font-size: 1rem;
       margin: 0;
+      font-size: 1rem;
+      color: var(--muted);
     }
-    .article {
-      padding: 28px;
+    .content {
+      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      background: rgba(15,23,42,0.9);
+      border-radius: 24px;
+      padding: 30px 32px;
+      box-shadow: var(--shadow);
+    }
+    .intro {
+      font-size: 1.02rem;
+      color: #334155;
+      margin-bottom: 20px;
     }
     h2 {
-      font-size: 1.25rem;
-      margin-top: 24px;
-      margin-bottom: 10px;
-      color: #dbeafe;
+      font-size: 1.2rem;
+      margin: 28px 0 10px;
+      color: var(--title);
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
     }
-    p { margin: 0 0 14px; color: var(--text); }
-    .highlight {
+    p { margin: 0 0 15px; }
+    .card {
+      background: #fbfdff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 18px 0;
+    }
+    .blockquote {
       padding: 14px 16px;
-      border-left: 3px solid var(--accent);
-      background: rgba(96,165,250,0.1);
+      border-left: 4px solid #93c5fd;
+      background: #f8fbff;
+      color: #334155;
+      margin: 18px 0;
       border-radius: 8px;
-      margin: 16px 0;
-      color: #dbeafe;
     }
     ul { padding-left: 20px; }
     li { margin-bottom: 8px; }
     .footer {
-      margin-top: 28px;
+      margin-top: 26px;
       padding-top: 18px;
       border-top: 1px solid var(--border);
       color: var(--muted);
-      font-size: 0.95rem;
       text-align: center;
+      font-size: 0.95rem;
     }
     @media (max-width: 640px) {
-      .container { padding: 20px 12px 60px; }
-      .hero, .article { padding: 20px; }
+      .page { padding: 20px 12px 60px; }
+      .hero, .content { padding: 22px; }
+      h1 { font-size: 1.9rem; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="page">
     <section class="hero">
-      <div class="eyebrow">热点深度分析</div>
+      <div class="badge">热点深度分析</div>
       <h1>Robinhood Chain：券商自建链，还是新型金融基础设施？</h1>
       <p class="subtitle">传统券商不再只是“帮你买卖股票的应用”，而是在试图重新定义金融交易的底层基础设施。</p>
     </section>
 
-    <article class="article">
-      <p>Robinhood 这次推出自建链，表面上看像是一场“公链发布”，但更准确地说，这是一场关于“金融基础设施”重新定义的动作。</p>
+    <section class="content">
+      <p class="intro">Robinhood 这次推出自建链，表面上看像是一场“公链发布”，但更准确地说，这是一场关于“金融基础设施”重新定义的动作。</p>
 
       <p>过去，券商的价值主要来自：提供交易入口、资产托管、流动性和账户体系。可是在链上金融时代，这些功能正在被重新打散。用户不再只需要一个好用的交易界面，而是需要一个能够支持 24/7 交易、即时结算、资产通证化、程序化金融服务的底层网络。</p>
 
-      <div class="highlight">
-        Robinhood Chain 的意义，不在于“它做了一条链”，而在于它把“券商”从一个应用层角色，推向了基础设施层角色。
-      </div>
+      <div class="blockquote">Robinhood Chain 的意义，不在于“它做了一条链”，而在于它把“券商”从一个应用层角色，推向了基础设施层角色。</div>
 
       <h2>1. 这次不是“做个链”，而是“重新定义券商定位”</h2>
-      <p>很多人看到 Robinhood 自建链，会第一时间联想到“又一个区块链项目”。但这类判断过于浅薄。真正重要的不是“链”本身，而是这条链想解决什么问题。</p>
+      <p>很多人看到 Robinhood 自建链，会第一时间联想到“又一个区块链项目”。但这类判断太浅了。真正重要的不是“链”本身，而是这条链想解决什么问题。</p>
       <p>Robinhood 的核心问题一直很清晰：它想把“交易、资产、用户体验、金融服务”重新串联起来。过去它靠低佣金和简单体验抢到流量，但未来它要做的，不再只是“比别人便宜”，而是“拥有交易和资产的底层入口”。</p>
 
       <h2>2. 为什么券商会转向公链？</h2>
@@ -133,17 +149,16 @@
 
       <h2>5. 但真正的挑战，不在“链”，而在“合规和执行力”</h2>
       <p>任何一条链，最终都要回答一个现实问题：它能不能真正承载交易、托管、规则和监管。</p>
-      <p>Robinhood 的挑战并不小。第一，证券、交易和资产管理都涉及复杂监管框架；第二，链上基础设施需要真正的流动性；第三，用户信任不是靠技术就能换来的。</p>
+      <p>Robinhood 的挑战并不小。第一，链上金融面临合规边界；第二，链上基础设施需要真正的流动性；第三，用户信任不是靠技术就能换来的。</p>
       <p>所以 Robinhood Chain 的真正考验，不是宣传效果，而是能否在现实金融体系里落地。</p>
 
       <h2>6. 这件事真正重要的不是“谁先做链”，而是“谁先定义下一代金融底层”</h2>
       <p>Robinhood 的动作，实际上是在回答一个更大的问题：未来金融系统，究竟是由传统券商继续统治，还是由链上基础设施重新定义？</p>
       <p>如果链上资产、链上交易、链上结算、链上托管真的变成新标准，那么那些掌握底层协议和资产入口的机构，将比那些只提供应用层服务的机构更有优势。</p>
-
-      <p>也就是说，Robinhood Chain 的意义，不在于它是不是“下一个传奇项目”，而在于它暴露了一个行业趋势：传统金融正在被重新编码，券商也正在从“交易服务商”变成“金融基础设施提供者”。</p>
-
-      <p><strong>这不是一个项目故事，而是一场关于金融未来结构的竞争。</strong></p>
-    </article>
+      <div class="card">
+        <strong>结语：</strong> Robinhood Chain 的意义，不在于它是不是“下一个传奇项目”，而在于它暴露了一个行业趋势：传统金融正在被重新编码，券商也正在从“交易服务商”变成“金融基础设施提供者”。
+      </div>
+    </section>
 
     <div class="footer">
       <p>作者：鉴叔</p>
