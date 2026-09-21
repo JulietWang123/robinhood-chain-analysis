@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发行即服务：稳定币支付栈正在被垂直整合</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list {
+            display: flex; gap: 20px; list-style: none;
+        }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+        .article-title {
+            font-size: 2em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.05em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 16px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Lead Block ── */
+        .lead-block {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 32px 0;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.75;
+        }
+        .lead-block .cite {
+            display: block; margin-top: 10px;
+            font-size: .82em; color: var(--text3);
+        }
+        .lead-block .cite a {
+            color: var(--accent); text-decoration: none;
+        }
+        .lead-block .cite a:hover { text-decoration: underline; }
+
+        /* ── Body Typography ── */
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.08em; font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p {
+            margin-bottom: 18px;
+            color: var(--text2);
+            line-height: 1.85;
+        }
+        .article-body p:first-of-type {
+            font-size: 1.05em;
+        }
+        .article-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .article-body em {
+            color: var(--text3);
+        }
+        .article-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table, .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0 32px;
+            font-size: .88em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead, .compare-table thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th, .compare-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd), .compare-table tbody tr:nth-child(odd) {
+            background: var(--bg2);
+        }
+        .article-body tbody tr:nth-child(even), .compare-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .article-body tbody tr:hover, .compare-table tbody tr:hover {
+            background: var(--accent-light);
+        }
+        .article-body td, .compare-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .article-body td:first-child, .compare-table td:first-child {
+            font-weight: 600; color: var(--text);
+        }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 16px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li {
+            margin: 6px 0;
+            line-height: 1.7;
+        }
+
+        /* ── Blockquote ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            margin: 24px 0;
+            background: var(--accent-light);
+            border-radius: 0 8px 8px 0;
+            color: var(--text2);
+            font-style: italic;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+        .highlight-box h4 {
+            font-size: .9em; font-weight: 700;
+            color: #4338ca;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .highlight-box ul li {
+            font-size: .88em; color: var(--text2);
+            padding-left: 18px; position: relative;
+            line-height: 1.6;
+        }
+        .highlight-box ul li::before {
+            content: '▸';
+            position: absolute; left: 0;
+            color: #6366f1; font-size: .8em; top: 2px;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37,99,235,.1);
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+        .feature-name {
+            font-size: .88em; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: .8em; color: var(--text3);
+            line-height: 1.6;
+        }
+
+        /* ── Protocol Map Grid ── */
+        .protocol-map {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 28px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .protocol-name {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+        .protocol-role {
+            font-size: .78em; color: var(--text3);
+            line-height: 1.5;
+        }
+        .protocol-item.highlight-protocol {
+            border-color: #059669;
+            background: #ecfdf5;
+            box-shadow: 0 2px 8px rgba(5,150,105,.12);
+        }
+        .protocol-item.highlight-protocol .protocol-name {
+            color: #047857;
+        }
+        .protocol-item.highlight-protocol .protocol-role {
+            color: #065f46;
+        }
+
+        /* ── Horizontal Rule ── */
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+
+        /* ── Code ── */
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .88em;
+            font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources Section ── */
+        .sources-section {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-section h3 {
+            font-size: .9em; font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+        .sources-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .sources-list li {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .source-num {
+            min-width: 22px; height: 22px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7em; font-weight: 700;
+            margin-top: 1px; flex-shrink: 0;
+        }
+        .source-content {
+            font-size: .82em; color: var(--text3);
+            line-height: 1.6;
+        }
+        .source-content a {
+            color: var(--accent); text-decoration: none;
+            word-break: break-all;
+        }
+        .source-content a:hover { text-decoration: underline; }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .84em;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .protocol-map { grid-template-columns: 1fr; }
+            .article-body table, .compare-table { font-size: .78em; }
+            .article-body table th, .article-body table td,
+            .compare-table th, .compare-table td
+            { padding: 8px 10px; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/erc8211-analysis/">⛓ BlockChain 研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/blockchain-2025-report/">年度报告</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">稳定币立法</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-chain-competition/">公链竞争</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">稳定币</span><span class="tag">发行即服务</span><span class="tag">支付基建</span><span class="tag">Circle Arc</span><span class="tag">PYUSDx</span><span class="tag">深度分析</span>
+            </div>
+            <h1 class="article-title">发行即服务：稳定币支付栈正在被垂直整合</h1>
+            <p class="article-subtitle">31 天 17 个节点：竞争焦点从"谁规模更大"，转向"谁能把合规发行、结算与账户打包成一个接口卖出去"</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026年9月</span>
+                <span class="meta-sep">·</span>
+                <span>约 6,000 字 · 阅读约 20 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <blockquote>
+<p>31 天，17 个节点：从 8/17 美国财政部发布 GENIUS 第 3 条实施框架，到 9 月中旬 Circle 自建公链 Arc 主网上线，稳定币的竞争焦点已经从"谁规模更大"转向"谁能把合规发行、结算与账户打包成一个接口卖出去"。</p>
+</blockquote>
+<h2>一、一个月的事件密度：产业分工被重排的 31 天</h2>
+<p>2026 年 9 月 16 日，Circle 的公链 Arc 主网正式上线；次日（9 月 17 日）的市场早报确认，贝莱德、Visa 等机构出现在验证节点名单里。<sup><a href="https://www.techflowpost.com/article/34028" target="_blank" rel="noopener" title="参考来源 [2]">[2]</a></sup> 而在此之前，市场上已经围绕"USDC 溢价 1.8 倍"讨论了一周——机构和散户争抢的不是 USDC 本身，而是这条新链上的发币权与早期位置。<sup><a href="https://www.panewslab.com/zh/articles/01a0a083-a159-74b3-a0b7-0153ef99a8f8" target="_blank" rel="noopener" title="参考来源 [3]">[3]</a></sup></p>
+<p>如果只把这件事读成"Circle 发了一条链"，就会错过过去一个月真正发生的变化。<strong>过去 31 天的主线不是"谁的稳定币更大"，而是产业链的分工被重新切了一遍。</strong></p>
+<p>先把清单摊开。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>日期（2026）</th>
+<th>事件</th>
+<th>谁在动</th>
+<th>信号解读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8/17</td>
+<td>美国财政部发布 GENIUS 法案第 3 条实施框架拟议规则</td>
+<td>美国财政部</td>
+<td>法案预计 2027/1/18 生效；2028/7/18 起原则上不得向美国用户提供非持牌发行人发行的支付稳定币</td>
+</tr>
+<tr>
+<td>8/18</td>
+<td>港元稳定币 HKDAP 正式进入商业运营</td>
+<td>Anchorpoint 发行、HashKey 分销</td>
+<td>非美元稳定币第一次跑通"发行方与分销方分离"的分工</td>
+</tr>
+<tr>
+<td>8/19</td>
+<td>FASB 提议将稳定币认定为"现金等价物"</td>
+<td>会计准则制定方</td>
+<td>企业资产负债表端的持有阻力被拆掉一截</td>
+</tr>
+<tr>
+<td>8/20</td>
+<td>X 洽谈以 USDC 等稳定币向创作者支付版税</td>
+<td>社交平台</td>
+<td>支付需求开始来自非加密原生场景</td>
+</tr>
+<tr>
+<td>8/20</td>
+<td>罗森便利店第二轮线下稳定币支付实证（三币三链）</td>
+<td>零售渠道</td>
+<td>用户端仍是碎片化，合规兑换路径待定</td>
+</tr>
+<tr>
+<td>8/21</td>
+<td>Mastercard 完成对 BVNK 的收购后，解释稳定币与智能体商业战略</td>
+<td>卡组织</td>
+<td>结算走多轨，信任与安全层寸步不让</td>
+</tr>
+<tr>
+<td>8/26</td>
+<td>摩根大通评估发行自有稳定币；多家大型银行推进全球稳定币联盟</td>
+<td>商业银行</td>
+<td>从"公开质疑"到"考虑入场"</td>
+</tr>
+<tr>
+<td>8/27</td>
+<td>Stripe 为 Revolut 发行欧元稳定币 EURR</td>
+<td>支付服务商</td>
+<td>「发行即服务」的第一个干净样本</td>
+</tr>
+<tr>
+<td>9/1</td>
+<td>21 家国际大型金融机构宣布联手推出银行储备完全支持的稳定币</td>
+<td>银行联盟</td>
+<td>首期美元计价，后续优先扩展至欧元等 G7 货币</td>
+</tr>
+<tr>
+<td>9/1</td>
+<td>新加坡金管局拟推稳定币新规（含跨境认可、禁止付息）</td>
+<td>监管机构</td>
+<td>与美国的政策取向出现分叉</td>
+</tr>
+<tr>
+<td>9/3</td>
+<td>SoFi 把银行网络接入 Kraken</td>
+<td>数字银行与交易所</td>
+<td>存款、交易、稳定币清算开始合并</td>
+</tr>
+<tr>
+<td>9/8</td>
+<td>Circle 拟以 4 亿美元公司股票收购跨境支付平台 Tazapay</td>
+<td>发行商</td>
+<td>纵向补强支付栈</td>
+</tr>
+<tr>
+<td>9/9</td>
+<td>PayPal 推出定制稳定币发行平台 PYUSDx</td>
+<td>支付巨头</td>
+<td>发行能力被产品化、被外售</td>
+</tr>
+<tr>
+<td>9/12</td>
+<td>Visa 与 Credit Coop 合作，以智能合约实现应收账款融资</td>
+<td>卡组织与 DeFi 协议</td>
+<td>DeFi 第一次进入信用卡结算后台</td>
+</tr>
+<tr>
+<td>9/13</td>
+<td>速汇金推出稳定币 Visa 卡 MoneyGram Card，哥伦比亚首发支持 USDC</td>
+<td>汇款公司</td>
+<td>新兴市场仍是最先落地的场景</td>
+</tr>
+<tr>
+<td>9/15</td>
+<td>GasFree 数据显示无 Gas 稳定币转账累计超 1385 亿美元</td>
+<td>基础设施</td>
+<td>用户体验层的量级已经不小</td>
+</tr>
+<tr>
+<td>9/16–9/17</td>
+<td>Circle Arc 主网正式上线，BlackRock、Visa 等加入验证节点</td>
+<td>发行商自建结算层</td>
+<td>稳定币开始"自己定义底层"</td>
+</tr>
+</tbody>
+</table>
+<p>一个月，17 个节点。参与方从财政部、会计准则机构、卡组织、商业银行、汇款公司一路延伸到公链本身。<strong>这不是一条赛道的新闻流，这是一次产业分工的重排。</strong></p>
+<p>清单里有三个节点值得单独点出来。8 月 18 日，港元稳定币 HKDAP 正式进入商业运营，发行方 Anchorpoint 与分销方 HashKey Exchange 是两家独立主体，<sup><a href="https://www.panewslab.com/zh/articles/01a013cc-8ecf-72a8-8a86-afeceef8be11" target="_blank" rel="noopener" title="参考来源 [4]">[4]</a></sup> 这是稳定币历史上少见的把"谁发"与"谁卖"明确拆开的安排。<sup><a href="https://www.panewslab.com/zh/articles/019ff5f3-c88c-7742-bbca-b4bd6e556ad4" target="_blank" rel="noopener" title="参考来源 [5]">[5]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/019ff56b-084a-721c-9ad2-17f7e132d46a" target="_blank" rel="noopener" title="参考来源 [6]">[6]</a></sup> 8 月 20 日，X 洽谈以 USDC 等稳定币向创作者支付版税，<sup><a href="https://www.panewslab.com/zh/articles/01a01e94-596a-70af-8681-814487ab8ae7" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup> 说明支付需求正在从加密原生用户向平台型分发场景溢出。9 月 3 日，SoFi 把银行网络接入 Kraken，<sup><a href="https://www.techflowpost.com/article/33735" target="_blank" rel="noopener" title="参考来源 [15]">[15]</a></sup> 存款、交易与稳定币清算开始在同一条链路里合并。</p>
+<p>这三个动作指向同一件事：稳定币的使用者正在从"持币的人"变成"必须收款的平台"。</p>
+<p>这里需要把"重排"的定义讲清楚：过去的稳定币产业是"发行人—交易所—用户"的三层结构，价值集中在发行人（储备利差）和交易所（上币与流动性）两端。现在的结构正在多出一条新的中间层——<strong>把"发行"本身变成一项可以外包的服务</strong>。而议价权向两个端点集中：谁掌握合规发行管道，谁掌握最终结算。</p>
+<p>两个端点同时被人抢，这是过去一个月所有事件共同的底层动作。</p>
+<h2>二、三条路线拆解：谁在卖什么，收谁的钱</h2>
+<p>把 17 个节点按商业逻辑归类，路径其实只有三条。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>路线</th>
+<th>代表案例</th>
+<th>卖的是什么</th>
+<th>护城河</th>
+<th>失效条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>路线一：发行即服务</td>
+<td>Stripe 为 Revolut 发 EURR；PayPal PYUSDx；21 家银行联盟</td>
+<td>合规发行能力（申牌路径、储备托管、审计报告、跨链分发）</td>
+<td>牌照关系与银行通道</td>
+<td>客户自建发行能力，或监管要求发行人自持全部资本</td>
+</tr>
+<tr>
+<td>路线二：支付即服务</td>
+<td>Visa 与 Credit Coop；MoneyGram Card；Mastercard 并购 BVNK</td>
+<td>结算与资金周转（智能合约融资、卡网络、清算轨）</td>
+<td>商户网络与卡组织议价权</td>
+<td>结算成本压不下来，或监管禁止第三方垫资</td>
+</tr>
+<tr>
+<td>路线三：结算层自建</td>
+<td>Circle Arc（USDC 原生 Gas、亚秒终局、机构验证节点）</td>
+<td>底层结算权与 Gas 计价权</td>
+<td>稳定币规模 + 机构验证节点背书</td>
+<td>机构不愿把结算押在单一发行商的链上</td>
+</tr>
+</tbody>
+</table>
+<p><strong>路线一的核心是"你不必自己当发行人"。</strong> 8 月 27 日，Stripe 为 Revolut 发行欧元稳定币 EURR，这是整条路线里最干净的一个样本：发行主体是 Revolut，但发行能力来自 Stripe。<sup><a href="https://www.techflowpost.com/article/33562" target="_blank" rel="noopener" title="参考来源 [12]">[12]</a></sup> 9 月 9 日，PayPal 推出定制稳定币发行平台 PYUSDx，把这层能力进一步产品化——从"我帮你发一个币"升级为"你可以在我这里配置自己的币"。<sup><a href="https://www.panewslab.com/zh/articles/01a0867d-61a8-709f-9941-6576457db5d4" target="_blank" rel="noopener" title="参考来源 [17]">[17]</a></sup> 9 月 1 日，21 家国际大型金融机构宣布计划于 2026 年下半年设立新公司，推出银行储备完全支持的稳定币解决方案，首期为美元计价，后续优先扩展至欧元等 G7 货币，并同时对齐 GENIUS Act 与 MiCA 的合规要求。<sup><a href="https://www.panewslab.com/zh/articles/01a05d77-edc0-7222-afd2-c088148a37e6" target="_blank" rel="noopener" title="参考来源 [13]">[13]</a></sup></p>
+<p>值得注意的是，8 月 26 日还有一条并行信号：摩根大通在评估推出自有稳定币，同时多家大型银行在推进全球稳定币联盟。<sup><a href="https://www.techflowpost.com/newsletter/133660" target="_blank" rel="noopener" title="参考来源 [11]">[11]</a></sup> 一个习惯了对稳定币表达保留意见的群体，开始把"发不发"这个问题认真放上桌面。</p>
+<p><strong>路线二的核心是"把稳定币塞进已有的收单网络"。</strong> 9 月 9 日，深潮已经报道 Visa 在用链上贷款为稳定币卡提供周转资金；9 月 12 日，Visa 正式宣布推出链上借贷计划，与 Credit Coop 合作，以智能合约实现应收账款融资，填补稳定币信用卡结算的资金缺口。<sup><a href="https://www.techflowpost.com/article/33838" target="_blank" rel="noopener" title="参考来源 [18]">[18]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/01a09531-0039-76eb-a586-a3e4c11cef20" target="_blank" rel="noopener" title="参考来源 [21]">[21]</a></sup> 9 月 13 日，速汇金推出稳定币 Visa 卡 MoneyGram Card，在哥伦比亚首发并支持 USDC。<sup><a href="https://www.panewslab.com/zh/articles/01a0994f-73e7-764a-8ae3-4273c42b7698" target="_blank" rel="noopener" title="参考来源 [19]">[19]</a></sup> 再往前，Mastercard 完成对 BVNK 的收购，并在 8 月 21 日解释其稳定币与智能体商业战略：<strong>结算可以是多轨的，但信任与安全层不让步。</strong><sup><a href="https://www.panewslab.com/zh/articles/01a01ec1-2f89-704e-b303-b8aed5e3a431" target="_blank" rel="noopener" title="参考来源 [10]">[10]</a></sup><sup><a href="https://www.odaily.news/zh-CN/newsflash/506382" target="_blank" rel="noopener" title="参考来源 [22]">[22]</a></sup></p>
+<p>这条路线的意义在于，它把 DeFi 从"前台的收益产品"变成了"后台的财务工具"。Visa 拿到的不是一条新的发币故事，而是一套自动化的资金周转机制。</p>
+<p><strong>路线三的核心是"把 Gas 计价权拿回来"。</strong> Circle 的 Arc 用 USDC 做原生 Gas，主打亚秒终局，并把传统金融巨头请上验证节点。<sup><a href="https://www.techflowpost.com/article/33967" target="_blank" rel="noopener" title="参考来源 [24]">[24]</a></sup><sup><a href="https://www.techflowpost.com/article/34028" target="_blank" rel="noopener" title="参考来源 [2]">[2]</a></sup> 这不是一条普通的 L1/L2 —— 它的目标客户是那些已经在用 USDC、但不想让结算依赖外部公链的机构。8 月 28 日，以太坊的 EIP-8141 账户抽象提案确认纳入 Hegotá 升级，方向是让用户可以用稳定币支付 Gas，但结算单位仍是 ETH。<sup><a href="https://www.odaily.news/zh-CN/newsflash/513491" target="_blank" rel="noopener" title="参考来源 [23]">[23]</a></sup> 9 月 15 日，GasFree 的数据显示无 Gas 稳定币转账累计已超过 1385 亿美元。<sup><a href="https://www.odaily.news/zh-CN/post/5213004" target="_blank" rel="noopener" title="参考来源 [20]">[20]</a></sup></p>
+<p>两条路径形成一组对照：<strong>以太坊选择"承认稳定币是支付媒介，但保留 ETH 作为结算资产"；Arc 选择"让 USDC 同时成为支付媒介和结算资产"。</strong> 前者是渐进改良，后者是重新定义计价锚。</p>
+<p>三级路线的分工并不互斥，但它们争夺的是同一件事——<strong>谁来定义"从用户点击到资金到账"这段链路的接口标准。</strong></p>
+<h2>三、产业结构判断：从"产品"到"管道"</h2>
+<p>把三条路线叠起来看，一个判断逐渐清晰：<strong>稳定币正在从"产品"变成"管道"。</strong></p>
+<p>"产品"的逻辑是：我发一个币，你持有它，我从储备资产的利息里赚利差。这个逻辑里，规模即一切，所以行业长期以来的讨论都围绕市值与流通量展开。"管道"的逻辑是：我不在乎你持不持有我的币，我只在乎你的资金流经不流经我的接口，我从每一次结算、每一笔卡交易、每一个账户服务里收费。</p>
+<p><strong>利润池的迁移方向因此发生变化：从发行利差，转向结算费、平台费与卡费。</strong></p>
+<p>这个迁移有可观测的支撑。9 月 11 日的报告显示，RWA 链上市值达到 390 亿美元，持有者数量飙升 119%，稳定币转账量猛增 49%。<sup><a href="https://www.panewslab.com/zh/articles/01a09065-1bb5-762c-99b3-8c2826722fa4" target="_blank" rel="noopener" title="参考来源 [28]">[28]</a></sup> 七天前的 9 月 4 日，同一组指标分别是 387.6 亿美元、105% 与 48.83%。<sup><a href="https://www.panewslab.com/zh/articles/01a06ba3-5605-71a8-8ef0-29bc68acb885" target="_blank" rel="noopener" title="参考来源 [27]">[27]</a></sup> 七天时间里，链上市值的增量只有约 2.4 亿美元，几乎原地踏步，而持有者数量的增速从 105% 抬到 119%——<strong>资产的"存量"几乎没动，参与面在扩张。</strong> 而管道收的是流量的钱。</p>
+<p>这组数据需要加一个注脚：RWA 市值、持有者数量与转账量的统计口径（是否去重、是否剔除合约地址、统计周期是周度还是月度）在行业里并不统一，两份报告相隔七天，相邻两期数据本身的波动就很大，<strong>用它推趋势需要谨慎</strong>。但"存量停滞、参与面扩张"这个方向是清楚的。</p>
+<p>还有一个更容易被忽略的动作：9 月 8 日，Circle 拟以 4 亿美元的公司股票收购跨境支付平台 Tazapay。<sup><a href="https://www.panewslab.com/zh/articles/01a0808c-fc59-7581-b3d2-8a2904dc8faa" target="_blank" rel="noopener" title="参考来源 [16]">[16]</a></sup> 一家稳定币发行商去买一家跨境支付公司，买的是什么？买的是"最后一公里的合规通道"——清关、本地牌照、外汇兑换、企业客户关系。这正是管道的成本中心，也是管道的护城河所在。</p>
+<p>一个可以借用的类比是卡组织与发卡行的关系。在传统卡体系里，Visa 赚的是网络费，发卡行赚的是利息与年费；两者的规模都在增长，但<strong>网络方的边际成本更低、可复制性更强</strong>。稳定币产业现在也在分化出这两类角色：赚利差的相当于发卡行，赚结算费与平台费的在抢网络位。</p>
+<p>ARK Invest 在 9 月 10 日的判断是，稳定币竞争已经进入"赢家通吃"，千亿美元级别可能上演两强争霸。<sup><a href="https://www.panewslab.com/zh/articles/01a08c1d-7dda-77c2-9566-77695efe81f7" target="_blank" rel="noopener" title="参考来源 [25]">[25]</a></sup> 这个判断如果成立，它适用的正是网络位而不是发卡位——<strong>利差生意可以有几十家共存，接口标准通常只剩两三个。</strong></p>
+<p>但这里必须指出一个反方向的证据。9 月 8 日，有分析指出美国财政部长贝森特寄望的"稳定币带来 3 万亿美元美债需求"这一叙事遭遇挫折——稳定币总量的扩张陷入停滞，而支付场景依然火热。<sup><a href="https://www.techflowpost.com/article/33830" target="_blank" rel="noopener" title="参考来源 [26]">[26]</a></sup></p>
+<p><strong>扩张停滞 + 场景火热，这个组合恰恰是"从产品到管道"最直接的证据。</strong> 如果产业还停留在"产品"逻辑，总量停滞就意味着死水；但总量停滞而场景加速，说明价值创造的位置已经从"多发多少币"转移到了"多承接多少流量"。</p>
+<h2>四、四个未解难题</h2>
+<p>判断说得再顺，也得回答卡在哪里。以下四条是这一轮结构变化里最难解的，也是最容易在乐观叙事中被跳过的。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>难题</th>
+<th>现状证据</th>
+<th>卡在哪一层</th>
+<th>需要观察什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>信贷基础设施缺失</td>
+<td>稳定币能转账、能保值，却几乎做不了信贷；Visa/Credit Coop 只是在一个很小的缺口上打了补丁</td>
+<td>风控与信用层（链下）</td>
+<td>应收账款之外，能否出现链上可验证的现金流抵押</td>
+</tr>
+<tr>
+<td>规模化瓶颈在银行侧</td>
+<td>真正卡住行业规模化的，不是链上技术，而是受监管的银行连接、本地清算通道与外汇基础设施</td>
+<td>银行与清算层</td>
+<td>21 家银行联盟落地时，是把这套基础设施开放出来，还是自己独占</td>
+</tr>
+<tr>
+<td>Gas 体验仍未收敛</td>
+<td>无 Gas 转账累计超 1385 亿美元，但三币三链的线下实测说明支付入口依旧碎片化</td>
+<td>账户抽象与钱包层</td>
+<td>EIP-8141 上线后，是否有主流钱包默认启用稳定币付 Gas</td>
+</tr>
+<tr>
+<td>扩张停滞与场景火热的悖论</td>
+<td>稳定币总量扩张停滞，同时支付场景与转账量在加速</td>
+<td>资产端与流量端脱节</td>
+<td>转账量增长能否转化为发行商的可持续收入</td>
+</tr>
+</tbody>
+</table>
+<p><strong>第一条：稳定币能转账、能保值，但做不了信贷。</strong> 这是个结构性缺口，不是技术问题。2026 年 7 月，行业里已经有过一次系统性的讨论：稳定币撬动的信贷市场之所以没能打开，是因为信贷业务真正的难点与链上技术无关——它需要的是借款人的现金流验证、还款意愿评估、违约后的处置能力，这些全在链下。<sup><a href="https://www.techflowpost.com/article/32335" target="_blank" rel="noopener" title="参考来源 [29]">[29]</a></sup> 9 月，Visa 与 Credit Coop 的应收账款融资可以看作一次修补尝试，但它的适用范围很窄：有稳定应收账款的商户，本质上是有信用记录的企业，与"数字普惠"所暗示的服务对象并不重合。</p>
+<p><strong>第二条：规模化的真正瓶颈是受监管的银行基础设施。</strong> 9 月 7 日的一篇行业分析把问题指得很准：真正卡住行业规模化的，不是链上技术，而是受监管的银行连接、本地清算通道与外汇基础设施。<sup><a href="https://www.techflowpost.com/article/33798" target="_blank" rel="noopener" title="参考来源 [30]">[30]</a></sup> 这条判断解释了为什么 21 家银行联盟的出现值得重视——同时也解释了它的隐忧：<strong>如果这套基础设施是被一个联盟独占的，那么"发行即服务"可能不会带来更分散的市场，而是带来一个更强的新中介。</strong></p>
+<p><strong>第三条：Gas 体验仍未收敛。</strong> 累计超过 1385 亿美元的无 Gas 稳定币转账说明需求真实存在。<sup><a href="https://www.odaily.news/zh-CN/post/5213004" target="_blank" rel="noopener" title="参考来源 [20]">[20]</a></sup> 但 8 月 20 日罗森便利店的第二轮线下实测暴露了另一面：三种币、三条链，USDT 的合规兑换路径还要等监管拍板。<sup><a href="https://www.techflowpost.com/article/33401" target="_blank" rel="noopener" title="参考来源 [9]">[9]</a></sup> 也就是说，链上的 Gas 问题正在被解决，线下入口的碎片化问题才刚刚开始。</p>
+<p><strong>第四条，也是最值得争论的一条：扩张停滞与场景火热的悖论。</strong> 把它当利好读，是"结构升级"；把它当风险读，就是"流量繁荣没有沉淀为资产"。<strong>这两个读法目前都无法被排除。</strong> 判断依据应该落在下一季的发行商收入结构上：如果结算费与平台费占收入的比重上升，管道论成立；如果收入仍然绝大部分来自储备利差，那么所谓"管道"只是场景方的流量补贴。</p>
+<p>关于路线三，还需要留一个反面意见。Arc 主网首日有贝莱德、Visa 这样的机构出现在验证节点名单上，<sup><a href="https://www.techflowpost.com/article/34028" target="_blank" rel="noopener" title="参考来源 [2]">[2]</a></sup> 但<strong>"出现在验证节点名单里"和"把核心结算迁移过去"是两回事</strong>。机构加入节点网络，成本可控、公关收益明确；把结算量真正搬上去，涉及合规、审计与灾备的实质投入。这个判断至少需要一到两个季度的链上结算量数据来验证。</p>
+<h2>五、监管拼图与国际对照</h2>
+<p>产业结构的重排，最终还是被监管的时间表所约束。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>辖区</th>
+<th>关键规则</th>
+<th>时间点</th>
+<th>对"发行"的含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>美国</td>
+<td>GENIUS 法案与财政部实施框架：在美发行支付稳定币原则上须取得联邦或州许可</td>
+<td>法案预计 2027/1/18 生效；2028/7/18 起不得向美国用户提供非持牌稳定币；规则刊登《联邦公报》后 60 天征求意见</td>
+<td>发行牌照成为稀缺资源，"持牌"本身就是可售能力</td>
+</tr>
+<tr>
+<td>新加坡</td>
+<td>金管局拟推稳定币新规，涵盖跨境认可、禁止付息</td>
+<td>拟议阶段</td>
+<td>禁止付息直接压缩"稳定币作为储蓄工具"的空间，把使用场景推向支付</td>
+</tr>
+<tr>
+<td>香港</td>
+<td>HKDAP 进入商业运营，发行方与分销方分离</td>
+<td>8/18 起</td>
+<td>提供了非美元稳定币的合规分工样本</td>
+</tr>
+<tr>
+<td>国际组织</td>
+<td>IMF 总裁：稳定币有望降低跨境支付成本，但可能冲击新兴市场货币主权</td>
+<td>—</td>
+<td>为新兴市场的限制性政策提供理论依据</td>
+</tr>
+<tr>
+<td>会计准则</td>
+<td>FASB 提议将稳定币认定为"现金等价物"</td>
+<td>8/19 提出，进入征求意见阶段</td>
+<td>移除企业资产负债表端的持有障碍</td>
+</tr>
+</tbody>
+</table>
+<p>美国这条线最关键的细节不是生效日期，而是<strong>"2028 年 7 月 18 日起，数字资产服务商原则上不得向美国用户提供非持牌发行人发行的支付稳定币"</strong>。<sup><a href="https://www.panewslab.com/zh/articles/01a01018-401c-758c-98e0-e20fcfcc30cc" target="_blank" rel="noopener" title="参考来源 [1]">[1]</a></sup> 这句话把合规压力从发行人推给了所有分发方——交易所、钱包、支付服务商都被迫做一次筛子。而 8 月 19 日 FASB 提议将稳定币认定为现金等价物、随后进入征求意见阶段，则是从会计口径上给持有端松绑。<sup><a href="https://www.panewslab.com/zh/articles/01a0175e-43ee-719b-9d3a-5de8ff94131c" target="_blank" rel="noopener" title="参考来源 [7]">[7]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/01a024a3-50c6-708c-a087-e4264d8f9bff" target="_blank" rel="noopener" title="参考来源 [34]">[34]</a></sup></p>
+<p><strong>一端收紧发行端，一端放松持有端，这套组合拳的效果是：把稳定币从"投资品"重新定义为"现金工具"。</strong></p>
+<p>新加坡的取向与美国出现了分叉。金管局拟推的稳定币新规包含跨境认可与禁止付息两项。<sup><a href="https://www.panewslab.com/zh/articles/01a05b5d-7341-7193-b917-5710aa84c3c9" target="_blank" rel="noopener" title="参考来源 [14]">[14]</a></sup> 禁止付息这一点值得单独讨论，因为它同时带来两个相反的效果：<strong>好处是切断了稳定币与银行存款的正面竞争，降低了监管阻力；代价是稳定币失去了"生息资产"属性，对持有动机是个直接的削弱。</strong> 这是典型的"以采用率换系统稳定"的取舍，效果需要在细则落地后观察，现在下结论为时过早。</p>
+<p>新兴市场这条线提供了另一组样本。阿根廷的加密货币采用率全球领先，94% 的比索交易流向稳定币，而且通胀缓解之后使用率依然没有退潮。<sup><a href="https://www.panewslab.com/zh/articles/01a05761-4040-7315-b766-1a8b7eaa1dff" target="_blank" rel="noopener" title="参考来源 [32]">[32]</a></sup> 对阿根廷用户来说，买币就是买美元，稳定币习惯是在汇率环境改变之后被固化下来的。<sup><a href="https://www.techflowpost.com/article/33626" target="_blank" rel="noopener" title="参考来源 [33]">[33]</a></sup> IMF 总裁的表态因此有了具体所指：稳定币确实能降低跨境支付成本，但可能冲击新兴市场的货币主权。<sup><a href="https://www.panewslab.com/zh/articles/01a052f2-95a3-739f-ab2c-674c7a75e77b" target="_blank" rel="noopener" title="参考来源 [31]">[31]</a></sup></p>
+<p><strong>这三种政策取向的本质分歧在于：稳定币是"美元基础设施的延伸"，还是"需要被本地化管理的支付工具"。</strong> 美国财政部的时间表、新加坡的禁付息、IMF 的警示，是同一问题在三个层面的回答，而它们并不一致。</p>
+<h2>六、结论与观察指标</h2>
+<p>把这一轮变化收敛成一句话：<strong>稳定币的竞争已经从"发币"移到"卖接口"。</strong></p>
+<p>三条路线的共同点在于，它们都在争夺同一件东西——从合规发行、到结算、到账户与卡的完整链路。谁把这条链路做成一个可被调用的接口，谁就拿走中介费；而单独持有某一环的公司，不管是发行商还是卡组织，都面临被"管道化"的压力。Circle 自建结算层、Visa 入股结算后台、Stripe 外售发行能力，看起来方向相反，实际是同一个动作的三种姿势。</p>
+<p>需要明确标注为<strong>分析推断</strong>的部分：利润池从发行利差向结算费与平台费迁移，目前有流量数据与并购动作的支撑，但还缺少发行商收入结构的直接证据。这个判断我在上文已经给出可证伪的条件——<strong>下一季发行商财报中结算费与平台费的收入占比是否上升。</strong></p>
+<p>对参与者而言，2027 年之前是窗口期。GENIUS 法案 2027 年 1 月 18 日生效、2028 年 7 月 18 日的分发端大限，把时间切成两段：<strong>第一段是抢牌照与抢银行关系，第二段是抢分发渠道。</strong> 决定标准归属的大概率是"银行关系 + 持牌 + 开发者体验"这三件套，而不是谁的币规模更大。</p>
+<p>接下来值得盯的观察指标，我会盯这五个：</p>
+<ol>
+<li><strong>发行商收入结构</strong> —— 结算费与平台费占比是否上升，这是"管道论"唯一的硬证据；</li>
+<li><strong>Arc 的结算量</strong> —— 机构加入验证节点之后，是否把真实结算量迁移过去；</li>
+<li><strong>21 家银行联盟的开放度</strong> —— 它成立的新公司是开放接口，还是闭环自用；</li>
+<li><strong>新加坡禁付息细则</strong> —— 落地后新加坡的稳定币持有量是否出现下滑；</li>
+<li><strong>分发端合规筛选</strong> —— 2028 年大限之前，交易所与钱包是否开始批量下架非持牌稳定币。</li>
+</ol>
+<p>最后一句留给风险：<strong>当下所有关于"管道"的叙事，都建立在"流量会继续增长"这个未经检验的前提上。</strong> 一旦转账量增速回落，最先被证伪的不是发行商的规模，而是那些按"接口标准拥有者"估值的公司。</p>
+<h2>参考资料</h2>
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav"><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">📖 稳定币立法对DeFi的影响</a><a href="https://julietwang123.github.io/stablecoin-chain-competition/">⛓ 稳定币专用公链竞争</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/">📚 深度研报合集</a></nav>
+
+        <!-- Sources -->
+        
+        <section class="sources-section">
+            <h3>📚 参考链接</h3>
+            <ol class="sources-list">
+                
+                <li>
+                    <span class="source-num">1</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a01018-401c-758c-98e0-e20fcfcc30cc" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a01018-401c-758c-98e0-e20fcfcc30cc</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">2</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/34028" target="_blank" rel="noopener">https://www.techflowpost.com/article/34028</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">3</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a0a083-a159-74b3-a0b7-0153ef99a8f8" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a0a083-a159-74b3-a0b7-0153ef99a8f8</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">4</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a013cc-8ecf-72a8-8a86-afeceef8be11" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a013cc-8ecf-72a8-8a86-afeceef8be11</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">5</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/019ff5f3-c88c-7742-bbca-b4bd6e556ad4" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/019ff5f3-c88c-7742-bbca-b4bd6e556ad4</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">6</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/019ff56b-084a-721c-9ad2-17f7e132d46a" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/019ff56b-084a-721c-9ad2-17f7e132d46a</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">7</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a0175e-43ee-719b-9d3a-5de8ff94131c" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a0175e-43ee-719b-9d3a-5de8ff94131c</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">8</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a01e94-596a-70af-8681-814487ab8ae7" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a01e94-596a-70af-8681-814487ab8ae7</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">9</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33401" target="_blank" rel="noopener">https://www.techflowpost.com/article/33401</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">10</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a01ec1-2f89-704e-b303-b8aed5e3a431" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a01ec1-2f89-704e-b303-b8aed5e3a431</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">11</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/newsletter/133660" target="_blank" rel="noopener">https://www.techflowpost.com/newsletter/133660</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">12</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33562" target="_blank" rel="noopener">https://www.techflowpost.com/article/33562</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">13</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a05d77-edc0-7222-afd2-c088148a37e6" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a05d77-edc0-7222-afd2-c088148a37e6</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">14</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a05b5d-7341-7193-b917-5710aa84c3c9" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a05b5d-7341-7193-b917-5710aa84c3c9</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">15</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33735" target="_blank" rel="noopener">https://www.techflowpost.com/article/33735</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">16</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a0808c-fc59-7581-b3d2-8a2904dc8faa" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a0808c-fc59-7581-b3d2-8a2904dc8faa</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">17</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a0867d-61a8-709f-9941-6576457db5d4" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a0867d-61a8-709f-9941-6576457db5d4</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">18</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33838" target="_blank" rel="noopener">https://www.techflowpost.com/article/33838</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">19</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a0994f-73e7-764a-8ae3-4273c42b7698" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a0994f-73e7-764a-8ae3-4273c42b7698</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">20</span>
+                    <span class="source-content">
+                        <a href="https://www.odaily.news/zh-CN/post/5213004" target="_blank" rel="noopener">https://www.odaily.news/zh-CN/post/5213004</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">21</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a09531-0039-76eb-a586-a3e4c11cef20" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a09531-0039-76eb-a586-a3e4c11cef20</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">22</span>
+                    <span class="source-content">
+                        <a href="https://www.odaily.news/zh-CN/newsflash/506382" target="_blank" rel="noopener">https://www.odaily.news/zh-CN/newsflash/506382</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">23</span>
+                    <span class="source-content">
+                        <a href="https://www.odaily.news/zh-CN/newsflash/513491" target="_blank" rel="noopener">https://www.odaily.news/zh-CN/newsflash/513491</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">24</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33967" target="_blank" rel="noopener">https://www.techflowpost.com/article/33967</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">25</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a08c1d-7dda-77c2-9566-77695efe81f7" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a08c1d-7dda-77c2-9566-77695efe81f7</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">26</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33830" target="_blank" rel="noopener">https://www.techflowpost.com/article/33830</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">27</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a06ba3-5605-71a8-8ef0-29bc68acb885" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a06ba3-5605-71a8-8ef0-29bc68acb885</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">28</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a09065-1bb5-762c-99b3-8c2826722fa4" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a09065-1bb5-762c-99b3-8c2826722fa4</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">29</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/32335" target="_blank" rel="noopener">https://www.techflowpost.com/article/32335</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">30</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33798" target="_blank" rel="noopener">https://www.techflowpost.com/article/33798</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">31</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a052f2-95a3-739f-ab2c-674c7a75e77b" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a052f2-95a3-739f-ab2c-674c7a75e77b</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">32</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a05761-4040-7315-b766-1a8b7eaa1dff" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a05761-4040-7315-b766-1a8b7eaa1dff</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">33</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33626" target="_blank" rel="noopener">https://www.techflowpost.com/article/33626</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">34</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a024a3-50c6-708c-a087-e4264d8f9bff" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a024a3-50c6-708c-a087-e4264d8f9bff</a>
+                    </span>
+                </li>
+            </ol>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/erc8211-analysis/">⛓ ERC-8211 研报</a> ·
+            <a href="https://julietwang123.github.io/blockchain-2025-report/">📊 年度报告</a>
+        </p>
+    </footer>
+</body>
+</html>
