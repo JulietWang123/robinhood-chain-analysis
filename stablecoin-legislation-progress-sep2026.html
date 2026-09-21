@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>近两周稳定币立法与监管进展说明（2026年9月7日–9月18日）</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list {
+            display: flex; gap: 20px; list-style: none;
+        }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+        .article-title {
+            font-size: 2em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.05em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 16px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Lead Block ── */
+        .lead-block {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 32px 0;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.75;
+        }
+        .lead-block .cite {
+            display: block; margin-top: 10px;
+            font-size: .82em; color: var(--text3);
+        }
+        .lead-block .cite a {
+            color: var(--accent); text-decoration: none;
+        }
+        .lead-block .cite a:hover { text-decoration: underline; }
+
+        /* ── Body Typography ── */
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.08em; font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p {
+            margin-bottom: 18px;
+            color: var(--text2);
+            line-height: 1.85;
+        }
+        .article-body p:first-of-type {
+            font-size: 1.05em;
+        }
+        .article-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .article-body em {
+            color: var(--text3);
+        }
+        .article-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table, .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0 32px;
+            font-size: .88em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead, .compare-table thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th, .compare-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd), .compare-table tbody tr:nth-child(odd) {
+            background: var(--bg2);
+        }
+        .article-body tbody tr:nth-child(even), .compare-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .article-body tbody tr:hover, .compare-table tbody tr:hover {
+            background: var(--accent-light);
+        }
+        .article-body td, .compare-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .article-body td:first-child, .compare-table td:first-child {
+            font-weight: 600; color: var(--text);
+        }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 16px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li {
+            margin: 6px 0;
+            line-height: 1.7;
+        }
+
+        /* ── Blockquote ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            margin: 24px 0;
+            background: var(--accent-light);
+            border-radius: 0 8px 8px 0;
+            color: var(--text2);
+            font-style: italic;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+        .highlight-box h4 {
+            font-size: .9em; font-weight: 700;
+            color: #4338ca;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .highlight-box ul li {
+            font-size: .88em; color: var(--text2);
+            padding-left: 18px; position: relative;
+            line-height: 1.6;
+        }
+        .highlight-box ul li::before {
+            content: '▸';
+            position: absolute; left: 0;
+            color: #6366f1; font-size: .8em; top: 2px;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37,99,235,.1);
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+        .feature-name {
+            font-size: .88em; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: .8em; color: var(--text3);
+            line-height: 1.6;
+        }
+
+        /* ── Protocol Map Grid ── */
+        .protocol-map {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 28px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .protocol-name {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+        .protocol-role {
+            font-size: .78em; color: var(--text3);
+            line-height: 1.5;
+        }
+        .protocol-item.highlight-protocol {
+            border-color: #059669;
+            background: #ecfdf5;
+            box-shadow: 0 2px 8px rgba(5,150,105,.12);
+        }
+        .protocol-item.highlight-protocol .protocol-name {
+            color: #047857;
+        }
+        .protocol-item.highlight-protocol .protocol-role {
+            color: #065f46;
+        }
+
+        /* ── Horizontal Rule ── */
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+
+        /* ── Code ── */
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .88em;
+            font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources Section ── */
+        .sources-section {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-section h3 {
+            font-size: .9em; font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+        .sources-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .sources-list li {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .source-num {
+            min-width: 22px; height: 22px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7em; font-weight: 700;
+            margin-top: 1px; flex-shrink: 0;
+        }
+        .source-content {
+            font-size: .82em; color: var(--text3);
+            line-height: 1.6;
+        }
+        .source-content a {
+            color: var(--accent); text-decoration: none;
+            word-break: break-all;
+        }
+        .source-content a:hover { text-decoration: underline; }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .84em;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .protocol-map { grid-template-columns: 1fr; }
+            .article-body table, .compare-table { font-size: .78em; }
+            .article-body table th, .article-body table td,
+            .compare-table th, .compare-table td
+            { padding: 8px 10px; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/erc8211-analysis/">⛓ BlockChain 研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/blockchain-2025-report/">年度报告</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">稳定币立法</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-chain-competition/">公链竞争</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">稳定币</span><span class="tag">CLARITY法案</span><span class="tag">GENIUS法案</span><span class="tag">SEC</span><span class="tag">CFTC</span><span class="tag">RWA</span><span class="tag">监管</span>
+            </div>
+            <h1 class="article-title">近两周稳定币立法与监管进展说明（2026年9月7日–9月18日）</h1>
+            <p class="article-subtitle">参议院投票未达60票门槛之后：SEC 与 CFTC 的规则议程、GENIUS 法案实施时间表与美国以外的同期进展</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026年9月21日</span>
+                <span class="meta-sep">·</span>
+                <span>约 4,000 字 · 阅读约 10 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <hr />
+<h2>一、事实概览</h2>
+<ul>
+<li><strong>立法线</strong>：9月11日，参议院共和党人公布《CLARITY 法案》630页修订版文本；9月15日进入首次程序性投票；9月16日多家媒体确认该法案未达到60票的推进门槛。</li>
+<li><strong>规则线</strong>：9月16日伯恩斯坦（Bernstein）报告指出，在《CLARITY 法案》未获推进后，美国下一阶段的加密规则制定将转向 SEC 与 CFTC，两家机构预计倾向以具体规则制定方式推进；9月17日 SEC 已批准一项针对代币化股票的临时、有条件"创新豁免"。</li>
+<li><strong>稳定币专项立法</strong>：美国财政部已于2026年8月17日发布《GENIUS 法案》第3条实施框架拟议规则，预计2027年1月起生效；自2028年7月起，数字资产服务商不得向美国用户提供非持牌稳定币。</li>
+<li><strong>存量制度</strong>：2026年3月，SEC 与 CFTC 联合发布解释文件，将 Crypto Asset 划分为 Digital Commodities、Digital Collectibles、Digital Tools、Stablecoins、Digital Securities 五类，并明确协议挖矿、质押、封装、空投的处理方式。</li>
+<li><strong>美国以外</strong>：香港、泰国、英国、新加坡、欧洲央行在同一窗口内各有稳定币或代币化相关规则动作（详见第五部分）。</li>
+<li><strong>市场数据</strong>：据 RWA 周刊覆盖2026年9月11日至18日的数据，稳定币总市值3,033.5亿美元（环比+1.58%），月度转账量7.03万亿美元（环比+14.41%）。</li>
+</ul>
+<h2>二、规则制定接力：SEC 与 CFTC 的规则清单</h2>
+<h3>1、伯恩斯坦报告：下一阶段规则制定转向 SEC 与 CFTC</h3>
+<p>2026年9月16日，据 The Block 报道，伯恩斯坦（Bernstein）在报告中指出，在参议院未能推进《CLARITY 法案》之后，美国下一阶段的加密规则制定将转向 SEC 与 CFTC。该机构分析师预计，两家机构将倾向于"具体规则制定"路径，且推进过程会"积极而迅速"。</p>
+<p>该报告由长期跟踪美国监管节奏的机构分析师出具，内容包含一份可查证的议题清单与时间预期。</p>
+<p>（相关报道：https://www.panewslab.com/zh/articles/01a0aa47-371c-7323-99e1-3fab56579890）</p>
+<h3>2、报告列出的规则议题</h3>
+<ul>
+<li>原生加密代币的分类标准（证券与商品的界定边界）；</li>
+<li>DeFi 与自我托管基础设施的保护规则；</li>
+<li>股权代币化的具体规则；</li>
+<li>加快现实世界资产（RWA）永续期货的批准，并在单股永续合约规则上实现两家机构之间的协调。</li>
+</ul>
+<p>按该报告的表述，前三项决定稳定币及其周边产品的合规形态：代币分类决定稳定币是否被纳入证券监管框架；自我托管保护规则决定钱包与非托管场景的边界；股权代币化规则决定链上证券交易可使用的结算资产类别。</p>
+<h3>3、稳定币奖励框架维持现状</h3>
+<p>报告同时指出，由于《CLARITY 法案》未获推进，稳定币奖励框架保持原有状态。原本的妥协文本会禁止对闲置稳定币余额提供奖励，并将其与客户活动挂钩；该限制条款未生效，Coinbase 等平台可以继续对闲置余额提供奖励。</p>
+<h3>4、SEC 的"创新豁免"已经落地</h3>
+<p>2026年9月17日，SEC 批准一项临时、有条件的"创新豁免"（Innovation Exemption），允许代币化 NMS 股票（美国全国市场体系内上市股票）在部分链上场所进行有限交易，这类场所被称为代币化证券交易场所（TSVs）。符合豁免条件的 TSV 可以通过自动做市商和流动性池开展获准交易，但需满足公开披露、交易透明度、熔断协调、记录保存及技术保障等要求，同时受到股票代码数量与交易量上限的约束。</p>
+<p>SEC 表示，代币化有望降低发行、交易、转移、结算及所有权记录等市场基础设施环节的成本，并提升透明度和流动性；此次豁免旨在观察链上交易场所和市场参与者的运行情况，为后续制定长期监管规则提供依据。</p>
+<p>（相关报道：https://www.panewslab.com/zh/articles/01a0af72-8203-76e9-9a66-094ca5e5d235）</p>
+<h2>三、立法进程的时间顺序</h2>
+<ul>
+<li><strong>2026年9月11日</strong>：参议院共和党人公布《CLARITY 法案》修订版文本，篇幅630页。文本要求非去中心化 DeFi 协议向 CFTC 注册，细则由 CFTC 与财政部共同制定，DeFi 条款限定于现货和现金数字商品交易。</li>
+<li><strong>2026年9月13日至15日</strong>：纽约州总检察长联合17个州公开表达反对，争议集中于稳定币收益安排与官员伦理条款。</li>
+<li><strong>2026年9月15日</strong>：参议院进行首次程序性投票。</li>
+<li><strong>2026年9月16日</strong>：多家媒体确认该法案未获得推进所需票数，通过门槛为60票。</li>
+</ul>
+<p>伯恩斯坦在报告中的表述是：被消耗掉的是立法谈判的时间，被加速的将是监管规则的产出。</p>
+<h2>四、GENIUS 法案：实施时间表</h2>
+<p>2026年8月17日，美国财政部发布《GENIUS 法案》第3条实施框架的拟议规则，预计自2027年1月起生效；自2028年7月起，数字资产服务商不得向美国用户提供非持牌稳定币。</p>
+<p>按上述时间表，涉及美国用户或计划进入美国市场的稳定币发行方与服务商，2027年1月与2028年7月是两个产品路线图节点。SEC 与 CFTC 在通用规则层面的推进，与 GENIUS 法案的落地节奏构成叠加关系。</p>
+<h2>五、美国以外：稳定币及代币化规则进展</h2>
+<p><strong>香港</strong>：2026年9月16日发布的《行政长官2026年施政报告》第49段提出，推动受监管稳定币在持牌虚拟资产交易平台交易，并用于结算代币化货币市场基金；同时提出完善代币化投资产品监管框架、推动黄金及其他合适 RWA 产品在持牌平台发行和交易。同日发布的《香港特别行政区经济和社会发展第一个五年规划（2026—2030）》第27页将稳定币纳入"新兴数字资产"，提法为"稳慎推动"。</p>
+<p><strong>欧洲</strong>：2026年9月18日，币安重申将继续在欧盟 MiCA 框架下合规运营。欧洲央行正在招募商户参与数字欧元试点，试点为期12个月，计划2027年下半年启动，数字欧元最早于2029年发行且仍须立法批准。</p>
+<p><strong>泰国</strong>：泰国 SEC 发布稳定币新规草案，要求仅限本人账户存取、禁止向他人钱包转账，每人每日每平台进出各限额500万泰铢（约15万美元），意见征求截止9月25日，目前尚未生效。</p>
+<p><strong>英国</strong>：英国 FCA 正与财政部及英格兰银行共同研究为代币化黄金提供监管豁免，评估涉及集合投资计划（CIS）与替代投资基金（AIF）的监管范围，方案尚未确定。</p>
+<p><strong>新加坡</strong>：9月15日有报道称拟面向美国机构投资者推出加密货币永续期货；同期星展、华侨、大华三家本地银行完成新加坡首笔本地代币化存款支付。</p>
+<p>上述辖区的取向分别为：泰国以限额方式将稳定币限制在个人支付场景；欧洲以公共品路线推进，时间表较长、参与机构较多；英国针对具体资产类别做监管适配；香港将稳定币定位为持牌体系内的结算工具。</p>
+<p>（相关报道：https://www.panewslab.com/zh/articles/01a0ade9-8650-716f-ac6e-db28d42e9ff5）</p>
+<h2>六、市场数据</h2>
+<p>据 RWA 周刊覆盖2026年9月11日至18日的数据：稳定币总市值3,033.5亿美元，环比增长1.58%；月度转账量7.03万亿美元，环比增长14.41%；月活地址5,464万个，环比增长5.79%；持有者总数2.89亿，环比增长3.22%。头部币种方面，USDT 市值环比增长1.53%，USDC 增长0.02%，USDS 下降0.01%。</p>
+<p>（相关报道：https://www.panewslab.com/zh/articles/01a0b372-87a0-7755-8edd-508d31b7accb）</p>
+<h2>七、后续时间节点</h2>
+<ul>
+<li><strong>9月25日</strong>：泰国 SEC 稳定币新规草案意见征求截止。</li>
+<li><strong>近期</strong>：SEC 创新豁免的配套细则，以及首批 TSV 资质申请及其申报的结算币种。</li>
+<li><strong>近期</strong>：CFTC 与 SEC 具体规则的发布节奏与覆盖范围，涉及代币分类、DeFi 与自我托管保护、股权代币化三项议题；伯恩斯坦给出的预期为"积极而迅速"。</li>
+<li><strong>2027年1月</strong>：《GENIUS 法案》第3条实施框架预计生效。</li>
+<li><strong>2027年下半年至2029年</strong>：数字欧元试点启动与最早发行时点，仍须立法批准。</li>
+<li><strong>2028年7月</strong>：数字资产服务商不得向美国用户提供非持牌稳定币。</li>
+</ul>
+<hr />
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav"><a href="https://julietwang123.github.io/robinhood-chain-analysis/">⛓ 深度研报合集</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/clarity-act-60-votes.html">🏛 CLARITY 法案60票门槛</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/genius-act-implementation-2026.html">📜 GENIUS 法案实施</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-biweekly-aug2026.html">📊 稳定币双周观察</a></nav>
+
+        <!-- Sources -->
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/erc8211-analysis/">⛓ ERC-8211 研报</a> ·
+            <a href="https://julietwang123.github.io/blockchain-2025-report/">📊 年度报告</a>
+        </p>
+    </footer>
+</body>
+</html>
