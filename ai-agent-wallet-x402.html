@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent 的钱包：从 x402 到"机器原生交易"，链上代理经济的第一年</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list {
+            display: flex; gap: 20px; list-style: none;
+        }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+        .article-title {
+            font-size: 2em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.05em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 16px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Lead Block ── */
+        .lead-block {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 32px 0;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.75;
+        }
+        .lead-block .cite {
+            display: block; margin-top: 10px;
+            font-size: .82em; color: var(--text3);
+        }
+        .lead-block .cite a {
+            color: var(--accent); text-decoration: none;
+        }
+        .lead-block .cite a:hover { text-decoration: underline; }
+
+        /* ── Body Typography ── */
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.08em; font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p {
+            margin-bottom: 18px;
+            color: var(--text2);
+            line-height: 1.85;
+        }
+        .article-body p:first-of-type {
+            font-size: 1.05em;
+        }
+        .article-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .article-body em {
+            color: var(--text3);
+        }
+        .article-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table, .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0 32px;
+            font-size: .88em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead, .compare-table thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th, .compare-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd), .compare-table tbody tr:nth-child(odd) {
+            background: var(--bg2);
+        }
+        .article-body tbody tr:nth-child(even), .compare-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .article-body tbody tr:hover, .compare-table tbody tr:hover {
+            background: var(--accent-light);
+        }
+        .article-body td, .compare-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .article-body td:first-child, .compare-table td:first-child {
+            font-weight: 600; color: var(--text);
+        }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 16px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li {
+            margin: 6px 0;
+            line-height: 1.7;
+        }
+
+        /* ── Blockquote ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            margin: 24px 0;
+            background: var(--accent-light);
+            border-radius: 0 8px 8px 0;
+            color: var(--text2);
+            font-style: italic;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+        .highlight-box h4 {
+            font-size: .9em; font-weight: 700;
+            color: #4338ca;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .highlight-box ul li {
+            font-size: .88em; color: var(--text2);
+            padding-left: 18px; position: relative;
+            line-height: 1.6;
+        }
+        .highlight-box ul li::before {
+            content: '▸';
+            position: absolute; left: 0;
+            color: #6366f1; font-size: .8em; top: 2px;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37,99,235,.1);
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+        .feature-name {
+            font-size: .88em; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: .8em; color: var(--text3);
+            line-height: 1.6;
+        }
+
+        /* ── Protocol Map Grid ── */
+        .protocol-map {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 28px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .protocol-name {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+        .protocol-role {
+            font-size: .78em; color: var(--text3);
+            line-height: 1.5;
+        }
+        .protocol-item.highlight-protocol {
+            border-color: #059669;
+            background: #ecfdf5;
+            box-shadow: 0 2px 8px rgba(5,150,105,.12);
+        }
+        .protocol-item.highlight-protocol .protocol-name {
+            color: #047857;
+        }
+        .protocol-item.highlight-protocol .protocol-role {
+            color: #065f46;
+        }
+
+        /* ── Horizontal Rule ── */
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+
+        /* ── Code ── */
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .88em;
+            font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources Section ── */
+        .sources-section {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-section h3 {
+            font-size: .9em; font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+        .sources-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .sources-list li {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .source-num {
+            min-width: 22px; height: 22px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7em; font-weight: 700;
+            margin-top: 1px; flex-shrink: 0;
+        }
+        .source-content {
+            font-size: .82em; color: var(--text3);
+            line-height: 1.6;
+        }
+        .source-content a {
+            color: var(--accent); text-decoration: none;
+            word-break: break-all;
+        }
+        .source-content a:hover { text-decoration: underline; }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .84em;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .protocol-map { grid-template-columns: 1fr; }
+            .article-body table, .compare-table { font-size: .78em; }
+            .article-body table th, .article-body table td,
+            .compare-table th, .compare-table td
+            { padding: 8px 10px; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/erc8211-analysis/">⛓ BlockChain 研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/blockchain-2025-report/">年度报告</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">稳定币立法</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-chain-competition/">公链竞争</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">x402</span><span class="tag">AI Agent</span><span class="tag">机器原生交易</span><span class="tag">ERC-8004</span><span class="tag">EIP-8141</span><span class="tag">可验证执行</span><span class="tag">深度分析</span>
+            </div>
+            <h1 class="article-title">AI Agent 的钱包：从 x402 到"机器原生交易"，链上代理经济的第一年</h1>
+            <p class="article-subtitle">拆解 x402 第一年的真实使用、Agent 经济栈的四层结构，与「买方装备」的五个卡点</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026 年 9 月</span>
+                <span class="meta-sep">·</span>
+                <span>约 7,400 字 · 阅读约 24 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <blockquote>
+<p>x402 上线一年，交出了 1.5 亿笔交易的成绩单，却只有约 5000 万美元结算额。这个落差说明：<strong>链上代理经济缺的从来不是支付轨道，而是"买方装备"</strong>——身份、信用、风控、预算、可审计性。本文按支付、身份信用、算力资源、中介执行四层拆解 2026 年 8 至 9 月的密集事件，检视四个尚未解决的卡点，并给出一个 web3 agent port 的参考架构。</p>
+</blockquote>
+<h2>一、起点：x402 的第一年</h2>
+<p>2025 年 5 月 6 日，Coinbase Developer Platform 推出 x402 协议：它以 HTTP 402 状态码为起点，把支付嵌进请求—响应握手——客户端发请求，服务端返回 402 与报价，客户端构造链上支付并带凭证重试，服务端验证结算后返回内容；全程不需要账号、API Key 或订阅关系。</p>
+<p>一年之后，2026 年 9 月 3 日，PANews 刊出复盘《x402 上线以来：1.5 亿笔交易、结算额与真实使用场景回顾》<sup><a href="https://www.panewslab.com/zh/articles/01a064e5-2abe-737b-9d5b-7ab3a0b02290" target="_blank" rel="noopener" title="参考来源 [1]">[1]</a></sup>。这篇文章给出的数字需要<strong>按口径拆开看</strong>，而不是笼统地引用：</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>数据口径</th>
+<th>交易笔数</th>
+<th>结算金额</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标题与摘要口径</td>
+<td>约 1.5 亿笔</td>
+<td>约 5000 万美元</td>
+<td>一年累计的概括性表述</td>
+</tr>
+<tr>
+<td>Agent Economy x402 tracker（截至 2026-07-10）</td>
+<td>约 1.556 亿笔</td>
+<td>约 4097 万美元</td>
+<td>覆盖多条链与多个 facilitator</td>
+</tr>
+<tr>
+<td>x402scan 索引范围（2026-07-11 查看）</td>
+<td>约 1624 万笔</td>
+<td>约 83.75 万 USDC</td>
+<td>约 6.7 万独立买方、约 3.96 万独立卖方</td>
+</tr>
+</tbody>
+</table>
+<p>三种口径差距近十倍。原文明确说明，x402scan 反映的只是"当前索引范围内"的量，本身不等于全网总量；而标题里的"1.5 亿笔 / 5000 万美元"是概括性表述。<strong>把三者混用，是这类文章最常见的错误。</strong></p>
+<h3>三个"从概念到真实使用"的信号</h3>
+<p>原文作者用三条论据判断 x402"已经过了纯概念阶段"：</p>
+<p><strong>第一，HTTP 原生支付这个方向确实有人在用。</strong> x402scan 索引到约 6.7 万个独立买方与约 3.96 万个独立卖方——两端都是真实参与结算的主体，而非测试地址。</p>
+<p><strong>第二，小额、高频、机器可执行的支付确实存在需求。</strong> 按笔数排序，头部极度集中：<strong>BlockRun</strong> 一个 origin 就贡献约 1312 万笔、约 15.0 万 USDC、约 998 个独立买方，主要在 Base 上，原文称其"远高于第二名"；其后 twit.sh、StableEnrich、Otto AI x402、agentutility 等均在数万笔量级。按结算金额排序则是另一套名单——dTelecom x402 Gateway（约 6108 笔 / 约 1.26 万 USDC）、Bitrefill x402、Laso Finance 等单笔金额更大<sup><a href="https://www.panewslab.com/zh/articles/01a064e5-2abe-737b-9d5b-7ab3a0b02290" target="_blank" rel="noopener" title="参考来源 [1]">[1]</a></sup>。</p>
+<p>这份名单本身就是一份产业地图。<strong>1312 万笔对应 15 万 USDC，单笔均价约 0.011 美元</strong>——金额小到人类无法手动完成，频率高到只能由程序发起；而 Bitrefill、Laso Finance 这类"笔数少、单笔大"的服务，更接近传统电商的自动化版本。</p>
+<p><strong>第三，叙事已经从 Coinbase 单点协议扩散出去。</strong> 原文点名的路径包括 <strong>Cloudflare</strong> 基于 x402 的 Monetization Gateway、<strong>CoinGecko</strong>、<strong>Circle Wallets</strong>、<strong>Stripe Machine Payments</strong> 与多家 Agent SDK<sup><a href="https://www.panewslab.com/zh/articles/01a064e5-2abe-737b-9d5b-7ab3a0b02290" target="_blank" rel="noopener" title="参考来源 [1]">[1]</a></sup>；外围动作同样密集：8 月 23 日 Bankless 报道 <strong>Ramp 为 AI Agent 接入 x402 支付</strong><sup><a href="https://www.bankless.com/read/news/ramp-adds-x402-payments-for-ai-agents" target="_blank" rel="noopener" title="参考来源 [2]">[2]</a></sup>，8 月 28 日 PANews 把 Hooks、x402、RWAFI 与 Agentic Economy 并列为"熊市冷门叙事"<sup><a href="https://www.panewslab.com/zh/articles/01a033bf-c2dd-7399-b9e7-7340a8450302" target="_blank" rel="noopener" title="参考来源 [3]">[3]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/01a046e9-d393-752d-a55f-7ab651b80a0c" target="_blank" rel="noopener" title="参考来源 [4]">[4]</a></sup>。</p>
+<h3>反方向的数据：1.5 亿笔里有多少是真的</h3>
+<p>必须把硬币翻过来看。同一批素材里，深潮 8 月 28 日编译的 Virtuals 研究引用了 Artemis 数据：<strong>x402 的代理交易中有 47% 被操纵，美元交易量中更有 81% 被操纵；过滤之后，x402 只产生约 160 万美元真实代理支付</strong>，远低于彭博报道的 2400 万美元<sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。PANews 9 月 3 日的复盘也承认，<strong>PING 活动贡献了大量交易笔数，而这类激励"不等于真实商业需求"</strong><sup><a href="https://www.panewslab.com/zh/articles/01a064e5-2abe-737b-9d5b-7ab3a0b02290" target="_blank" rel="noopener" title="参考来源 [1]">[1]</a></sup>。</p>
+<p>因此，对 x402 第一年的准确表述应当是：<strong>支付轨道已经建成并且被真实调用，但调用量的绝对规模还很小，且被激励机制显著放大。</strong> 原文作者自己写下了三条保留意见——交易口径不透明、结算额不够大、支付之后的问题未解决<sup><a href="https://www.panewslab.com/zh/articles/01a064e5-2abe-737b-9d5b-7ab3a0b02290" target="_blank" rel="noopener" title="参考来源 [1]">[1]</a></sup>。第三点尤其关键，它正是本文后半部分要展开的"买方装备"问题。</p>
+<h2>二、Agent 经济栈的四层</h2>
+<p>把 2026 年 8 月至 9 月的事件按功能归类，一条四层结构浮现出来。</p>
+<h3>2.1 支付层：最成熟，也最不构成护城河</h3>
+<p>支付层在过去一年收获的进展最为密集。<strong>x402</strong> 是 Coinbase 路线的代表，解决"机器如何为一次 API 调用付费"；<strong>EIP-8141</strong> 把这件事推进到协议层——2026 年 8 月 28 日 Odaily 报道该账户抽象提案确认纳入以太坊 Hegotá 升级<sup><a href="https://www.odaily.news/zh-CN/newsflash/513491" target="_blank" rel="noopener" title="参考来源 [5]">[5]</a></sup>，9 月 8 日 PANews 进一步说明它拟将 <strong>Gas 代付引入协议层：用户可用稳定币支付 Gas，但底层结算仍以 ETH 完成</strong><sup><a href="https://www.panewslab.com/zh/articles/01a07f21-8642-7643-84c4-4a02ebb0e7e8" target="_blank" rel="noopener" title="参考来源 [6]">[6]</a></sup>，从而把"谁付 Gas"与"用什么记账"解耦；<strong>GasFree</strong> 则在应用层解决同一问题，9 月 15 日 Odaily 报道其<strong>无 Gas 转账累计规模已超 1385 亿美元</strong><sup><a href="https://www.odaily.news/zh-CN/post/5213004" target="_blank" rel="noopener" title="参考来源 [7]">[7]</a></sup>。</p>
+<p>支付层的判断很明确：<strong>它是眼下最成熟的一层，也正因如此，单独存在时不构成护城河。</strong> 当代付方案同时存在时，支付会迅速商品化，真正的竞争将转移到"谁来决定这笔支付该不该发生"。</p>
+<h3>2.2 身份与信用层：钱有了，但不知道借给谁</h3>
+<p>这一层在 8 月末集中爆发，主角是 Virtuals Protocol。</p>
+<p>8 月 28 日，深潮编译 Decentralised.co 的研究《AI 工人年入 4 亿美元，Virtuals 想让你当股东》<sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。先纠正一个极易误读的口径：<strong>"年入 4 亿美元"的主体是健康科技 AI 公司 Medvi（"去年录得 4.01 亿美元收入，只有两名人类员工"），不是 Virtuals 协议的收入</strong><sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。Virtuals 自身数字是：在 Base、Solana 等链上推出<strong>超过 8 万个智能体</strong>，<strong>累计获得超 7500 万美元总费用</strong>，占加密 AI 智能体赛道<strong>约 23% 份额</strong>；2025 年初曾有"几周日收入超 100 万美元"的投机潮，<strong>如今协议每月产生约 200 万美元</strong><sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。</p>
+<p>紧接着，8 月 29 日与 8 月 30 日 PANews 连发两篇，把 Virtuals 的叙事推到"让普通人持有自主经济机器"<sup><a href="https://www.panewslab.com/zh/articles/01a047d5-6055-725b-bba7-d549c758480a" target="_blank" rel="noopener" title="参考来源 [9]">[9]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/01a05107-0ee5-72e9-9d97-3a40a06380a0" target="_blank" rel="noopener" title="参考来源 [10]">[10]</a></sup>；9 月 4 日 PANews 进一步将其描述为覆盖"身份、支付、交易、融资、数据训练"的代理与机器人基础设施<sup><a href="https://www.panewslab.com/zh/articles/01a06bed-d96e-7482-b334-9f501320d142" target="_blank" rel="noopener" title="参考来源 [11]">[11]</a></sup>。</p>
+<ul>
+<li><strong>ACP（Agentic Commerce Protocol）每月处理超过 100 万美元的代理间交易</strong>，每笔通过链上托管与程序化评估结算；但按 Virtuals 自己承认，<strong>这个市场的卖方一侧几乎为空</strong><sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。</li>
+<li><strong>EconomOS 身份层</strong>给每个智能体五样东西：非托管钱包、虚拟支付卡、可自动提取验证码的专用邮箱、可选代币、以及钱包资助的算力访问<sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。</li>
+<li>风险侧的数据同样刺眼：2025 年初 AI 代理代币热潮期间，<strong>94% 发行的 AI 代理代币是拉高出货骗局</strong>，<strong>当年只有 1.7% 的代币在 30 天后仍活跃交易</strong><sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。</li>
+<li>宏观背景是 a16z 的结论：在金融服务领域，<strong>非人类身份的数量已超过人类身份的 100 倍</strong><sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。</li>
+</ul>
+<p>这一层的真问题因此不是"Agent 有没有身份"，而是：<strong>当 8 万个智能体都能开钱包、都能发代币时，谁来判断哪一个值得信任、值得付款、值得赊账？</strong> 94% 的骗局率与 1.7% 的 30 日存活率说明，当前的"身份层"更像一个不设门槛的号码池，而不是一套信用体系。</p>
+<h3>2.3 算力与资源层：Agent 买不到自己的生产资料</h3>
+<p>8 月 20 日，Arthur Hayes 的表述被反复引用：<strong>"AI 智能体没法自己买算力"</strong>，去中心化算力网络将迎来机会<sup><a href="https://www.techflowpost.com/article/33396" target="_blank" rel="noopener" title="参考来源 [12]">[12]</a></sup>。同一天 PANews 报道，其 Flop Labs 将创建去中心化算力网络，<strong>测试网参与者或获得约 20% 代币供应</strong><sup><a href="https://www.panewslab.com/zh/articles/01a01cc3-5f66-7491-bf69-55380a83b75b" target="_blank" rel="noopener" title="参考来源 [13]">[13]</a></sup>，Odaily 的交互合集也把其角色申请列为当日热点<sup><a href="https://www.odaily.news/zh-CN/post/5212587" target="_blank" rel="noopener" title="参考来源 [14]">[14]</a></sup>；8 月 31 日 a16z 推出"机器时代基金"，PANews 的概括是"AI 基础设施面临供需大裂缝"<sup><a href="https://www.panewslab.com/zh/articles/01a051e5-881d-7459-988e-3b7e467db526" target="_blank" rel="noopener" title="参考来源 [15]">[15]</a></sup>。</p>
+<p>这一层的判断：<strong>问题不是"世界上有没有算力"，而是"Agent 能不能用自己钱包里的钱、按自己的判断去买算力"。</strong> 当前算力采购都要求实名账户、信用卡预授权或云厂商合同，这三道门槛对 Agent 全部是硬墙。代币激励可以把供给去许可化，但同时也意味着 <strong>Agent 的算力成本将由一个代币价格决定</strong>——这本身就是新的风险敞口。</p>
+<h3>2.4 中介与执行层：Agent 作为链上中介</h3>
+<p>9 月 1 日，深潮刊出《沉迷 AI 之后的神鱼》，核心论点是：<strong>AI 降低了执行成本，从而催生 Agent 成为链上中介的路径</strong><sup><a href="https://www.techflowpost.com/article/33649" target="_blank" rel="noopener" title="参考来源 [16]">[16]</a></sup>。当套利机会的价差只有 0.3%、而人工执行成本是 0.5% 时，这个机会不会被执行；当 Agent 把执行成本压到 0.05% 时，同一个机会就浮出水面。<strong>AI 不是在创造新机会，而是把原本因为执行成本过高而不成立的机会变成可执行的。</strong> 这也解释了为什么 CZ 会认为交易比支付先落地——交易的回报可以直接计算，支付的价值是间接的。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>层级</th>
+<th>代表项目 / 事件（2026.08–09）</th>
+<th>收谁的钱</th>
+<th>当前瓶颈</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>支付层</td>
+<td>x402、EIP-8141、GasFree</td>
+<td>按笔收取的微额结算费</td>
+<td>快速商品化，难成护城河</td>
+</tr>
+<tr>
+<td>身份信用层</td>
+<td>Virtuals、EconomOS、ERC-8004</td>
+<td>发行费、交易费、协议分成</td>
+<td>无征信、94% 骗局率、卖方空心</td>
+</tr>
+<tr>
+<td>算力资源层</td>
+<td>Flop Labs、a16z 机器时代基金</td>
+<td>算力租赁 / 代币激励</td>
+<td>采购仍要求实名与预授权</td>
+</tr>
+<tr>
+<td>中介执行层</td>
+<td>神鱼所述路径、ACP</td>
+<td>执行差价、中介佣金</td>
+<td>执行有代理、责任无主体</td>
+</tr>
+</tbody>
+</table>
+<h2>三、一场分歧：CZ 说"交易优先于支付"</h2>
+<p>2026 年 8 月 27 日，CZ 公开表态：<strong>AI 与加密的集成或将从稳定币切入，而 AI 智能体的交易优先级远高于 AI 支付</strong><sup><a href="https://www.panewslab.com/zh/articles/01a04249-6708-736c-b6f6-1dd137eaf469" target="_blank" rel="noopener" title="参考来源 [17]">[17]</a></sup><sup><a href="https://www.theblockbeats.info/flash/363865" target="_blank" rel="noopener" title="参考来源 [18]">[18]</a></sup>。两家来源（PANews 与律动 BlockBeats）在同一天报道，表述一致。</p>
+<p>这是一句被误读最多的话。<strong>它说的是"优先级"，不是"二选一"。</strong> 但它确实触到了一个真问题：为什么交易会比支付先落地？</p>
+<p><strong>交易派的论证有四条。</strong> 第一，交易自带对手方——一笔兑换天然有买卖两方，无需先建通用付款网络。第二，交易自带定价，价差即收益，ROI 可在毫秒级算出。第三，失败成本可衡量，滑点、Gas、机会成本都是明确数字。第四，也是最容易被忽略的一条：<strong>链上交易的历史比链上支付长得多，流动性、做市商、清算路径都已存在</strong>，Agent 接进来即可复用。</p>
+<p><strong>支付派的论证则集中在原子性上。</strong> 若交易与付款不能在一次原子操作内完成，Agent 就始终面临"付了钱没拿到货"或"拿到货没付钱"的敞口。同日 PANews 刊出的《DeFi 的真正用户不是人类，而是数十亿 AI 智能体》主张机器速度的经济会重塑链上金融、底层资产将成最大赢家<sup><a href="https://www.panewslab.com/zh/articles/01a04212-fae5-725e-bad2-6b947bc5828f" target="_blank" rel="noopener" title="参考来源 [19]">[19]</a></sup>，逻辑上也支持"支付轨必须先行"。</p>
+<p>需要补充语境：8 月 25 日深潮刊出的 CZ 播客笔记显示，他当期反复强调的是一种<strong>降低参与门槛</strong>的立场<sup><a href="https://www.techflowpost.com/article/33497" target="_blank" rel="noopener" title="参考来源 [29]">[29]</a></sup>。放到这个语境里，"交易优先于支付"更像一句务实的排序建议：<strong>先做有明确收益闭环的事，而不是先建理想化的通用轨道。</strong></p>
+<p><strong>这是行业分歧，不是定论。</strong> 本文的立场是：两者并非零和。交易先落地会更快产生现金流，但支付轨的缺失会持续压制 Agent 的活动半径——Agent 可以炒币，却不能给一份 API 付费。真正决定这一层胜负的，是谁先解决"买方装备"问题。</p>
+<p>值得并置的还有一条更宏观的判断：2026 年 8 月 28 日 PANews 对 Chris Dixon 观点的梳理认为，他过去十年预判的加密与所有权都已发生，而<strong>真正的主角是 AI Agent</strong><sup><a href="https://www.panewslab.com/zh/articles/01a041f1-6544-755d-ae17-9d6db50e3f3c" target="_blank" rel="noopener" title="参考来源 [28]">[28]</a></sup>。<strong>当所有权的主体从人扩展到机器时，钱包的含义也随之改变：它不再只是资产容器，而是授权与责任的载体。</strong></p>
+<h2>四、四个卡点</h2>
+<p>以上是进展。以下是尚未解决的问题。这一节是本文的批判性内核。</p>
+<h3>4.1 第一个卡点：谁来装备买方</h3>
+<p>如果只读一份材料来理解这个问题，应该是 2026 年 9 月 11 日深潮刊出的 Waterdrip Capital 研究《机器原生交易：现状和缺失的基础设施》。它的副标题直指要害：<strong>"从机器支付轨道到自主采购网络，一场围绕「谁来装备买方」的基础设施迁移。"</strong><sup><a href="https://www.techflowpost.com/article/33905" target="_blank" rel="noopener" title="参考来源 [20]">[20]</a></sup></p>
+<p>文章把行业瓶颈概括为<strong>"交易没有闭环"</strong>，并拆成六道关卡<sup><a href="https://www.techflowpost.com/article/33905" target="_blank" rel="noopener" title="参考来源 [20]">[20]</a></sup>：</p>
+<ol>
+<li><strong>发现可购买的服务</strong>——Agent 如何知道自己需要什么、市场上有什么</li>
+<li><strong>理解和比较报价</strong>——不同服务商的计价单位、质量、SLA 如何横向比较</li>
+<li><strong>资金分布与跨轨道流动性</strong>——钱可能分散在多条链、多个账户，如何调度</li>
+<li><strong>基于策略的授权</strong>——不是"能不能付"，而是"这笔该不该付"</li>
+<li><strong>结算成功不等于服务交付</strong>——链上交易成功不代表 API 真的返回了可用结果</li>
+<li><strong>统一对账与责任界定</strong>——谁记录、谁审计、出问题谁承担</li>
+</ol>
+<p>这份清单的价值在于，它把行业的关注点从"卖"扭到了"买"。文中两句判断可以单独拎出来：</p>
+<blockquote>
+<p><strong>"未来的核心抽象不是「Pay」，而是「Buy」。"</strong>
+<strong>"一个被装备起来的智能体，可以把零散、偶发的需求转化为稳定交易流。"</strong></p>
+</blockquote>
+<p>由此得出一个反直觉的推论：<strong>买方聚合可能比卖方聚合更重要</strong><sup><a href="https://www.techflowpost.com/article/33905" target="_blank" rel="noopener" title="参考来源 [20]">[20]</a></sup>。过去两年加密行业的默认思路是聚合流动性、聚合服务（卖方聚合）；但如果 Agent 的采购是零散、偶发、金额微小的，那么能产生稳定交易流的一方，是代表成千上万个 Agent 统一采购、统一议价、统一风控的买方——因为单个 Agent 的采购量根本不足以议价。</p>
+<p>该文同时梳理了这一领域的标准坐标：<strong>MPP（Machine Payments Protocol）</strong>、Circle 的《Building the Open Agentic Economy》（2026）、Google Cloud 的 <strong>AP2（Agent Payments Protocol，2025）</strong>、<strong>x402 Foundation</strong>，以及被称为<strong>"首个面向智能体的无许可链上信任层"的 ERC-8004</strong>（并引用 Xiong 等人的实证研究）<sup><a href="https://www.techflowpost.com/article/33905" target="_blank" rel="noopener" title="参考来源 [20]">[20]</a></sup>。</p>
+<p><strong>这个卡点的本质是一句话：支付轨道已经建好了，但没有人给买方造装备。</strong> 装备包括：可发现的服务目录、可比较的报价标准、可执行的授权策略、可核验的交付凭证、可审计的对账记录。</p>
+<h3>4.2 第二个卡点：可验证性</h3>
+<p>买方装备要落地，绕不开一个问题：<strong>Agent 如何向对手方证明"我确实被授权了、我确实按规则执行了"？</strong></p>
+<p>这一层的技术前沿在 2026 年 9 月 10 日由 a16z crypto 给出样本。深潮编译的文章介绍了 <strong>Lattice Jolt</strong>——把 Jolt zkVM 从椭圆曲线基础迁移到格基础<sup><a href="https://www.techflowpost.com/article/33885" target="_blank" rel="noopener" title="参考来源 [21]">[21]</a></sup>。要点如下：</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>技术点</th>
+<th>具体内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>替换了什么</td>
+<td>用 <strong>Akita</strong> 替换 <strong>Dory</strong>——Dory 是原系统中唯一依赖椭圆曲线密码学的多项式承诺方案</td>
+</tr>
+<tr>
+<td>Akita 的基础</td>
+<td>基于 <strong>Module-SIS 格假设</strong>的全新多项式承诺方案，对标完整 <strong>128 位安全</strong>；Module-SIS 与 Module-LWE 同族，后者支撑 <strong>ML-DSA</strong> 与 <strong>ML-KEM</strong></td>
+</tr>
+<tr>
+<td>性能提升基准</td>
+<td>prover 与 verifier 提升 <strong>2–3 倍</strong>，基准是带 Metal 的曲线版 Jolt；MacBook 上从约 <strong>100 万周期/秒</strong>（曲线版纯 CPU）升至超 <strong>1000 万周期/秒</strong>（格版带 Metal）</td>
+</tr>
+<tr>
+<td>证明大小</td>
+<td><strong>不到 100 KB</strong>，其他后量子 zkVM 在 200 KB+ 到约 600 KB+ 之间</td>
+</tr>
+<tr>
+<td>prover 空间</td>
+<td>从每周期约 <strong>300 字节</strong>降到 <strong>200 字节</strong></td>
+</tr>
+<tr>
+<td>开销量级</td>
+<td>SNARK prover 开销从"比直接运行贵几百万倍"降到<strong>约一万倍</strong></td>
+</tr>
+<tr>
+<td>开发主体</td>
+<td>LayerZero 研究员主导，CMU、USC 研究员与 a16z crypto 工程团队参与</td>
+</tr>
+</tbody>
+</table>
+<p>需要强调一处口径：<strong>"快 3 倍"是 prover 与 verifier 相对"被替换掉的曲线版本"的提升</strong>，不是绝对性能的倍数。</p>
+<p>为什么这件事对 Agent 经济重要？原文给出了那句关键表述：<strong>"证明要上链、要跨网络传输，证明越小，验证成本越低。"</strong><sup><a href="https://www.techflowpost.com/article/33885" target="_blank" rel="noopener" title="参考来源 [21]">[21]</a></sup> 如果每次 Agent 的合规执行都需生成一份证明并上链存证，那么证明大小与验证成本就直接决定了这套机制能否被高频调用。</p>
+<p><strong>但必须诚实标注边界：原文只给了定性的"证明越小，验证成本越低"，没有任何具体的链上 Gas 费或美元成本数字</strong><sup><a href="https://www.techflowpost.com/article/33885" target="_blank" rel="noopener" title="参考来源 [21]">[21]</a></sup>。这意味着"可验证执行在经济上是否可行"至今仍是<strong>前提性问题，而不是已被回答的问题</strong>。更麻烦的是，Agent 需要证明的不只是"计算做对了"，还包括"<strong>这笔支出落在被授权的策略范围内</strong>"——预算上限、白名单对手方、用途限制、时间窗；这要求把策略本身也变成可验证对象，难度高于单纯证明执行。</p>
+<h3>4.3 第三个卡点：信任与责任</h3>
+<p>2026 年 9 月 15 日，深潮与 PANews 分别报道了 0x 于一天前发布的一份引发争议的分析<sup><a href="https://www.techflowpost.com/article/33980" target="_blank" rel="noopener" title="参考来源 [22]">[22]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/01a0a3bc-489f-752a-b88c-ac002b5081b7" target="_blank" rel="noopener" title="参考来源 [23]">[23]</a></sup>。核心数据如下：</p>
+<ul>
+<li>0x 分析了 <strong>6 条链上的 84,163 个 Uniswap v4 Hook</strong>；</li>
+<li>截至 <strong>9 月 11 日</strong>，判定 <strong>19.4% 为"安全"</strong>、<strong>54.2% 为"恶意"</strong>、<strong>26.4% 为"疑似恶意"</strong><sup><a href="https://www.techflowpost.com/article/33980" target="_blank" rel="noopener" title="参考来源 [22]">[22]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/01a0a3bc-489f-752a-b88c-ac002b5081b7" target="_blank" rel="noopener" title="参考来源 [23]">[23]</a></sup>。</li>
+</ul>
+<p><strong>这里有一个必须澄清的口径：54.2% 是明确的"恶意"分档，"疑似恶意"是另一个 26.4% 的分档，两者不能互换。</strong> 同时，原文明确写出 <strong>84,163 个 Hook 是"分析过"的总量，并非"被用户交互过"的总量</strong>，其中包含大量僵尸 Hook<sup><a href="https://www.techflowpost.com/article/33980" target="_blank" rel="noopener" title="参考来源 [22]">[22]</a></sup>。最后，<strong>这三个百分比是 0x 的单方分析结果，原文并未说明获得 Uniswap 认可</strong>。</p>
+<p>0x 把这种攻击命名为"<strong>报价欺骗（Quote Spoofing）</strong>"：恶意 Hook 在询价阶段展示有竞争力的报价，执行时篡改定价参数或注入惩罚性费率，并检测 EVM 执行环境以区分模拟调用与真实交易；在活跃交易对最高收取 <strong>18% 的隐藏费用</strong>，<strong>最极端案例中用户实际收到的资产比报价少 50%</strong>，0x 称已提取"数十万美元"<sup><a href="https://www.techflowpost.com/article/33980" target="_blank" rel="noopener" title="参考来源 [22]">[22]</a></sup>。</p>
+<p>Uniswap 方面（Hayden Adams）给出了三层反驳<sup><a href="https://www.techflowpost.com/article/33980" target="_blank" rel="noopener" title="参考来源 [22]">[22]</a></sup>：</p>
+<ol>
+<li><strong>"任何人都可以在以太坊上创建恶意合约，这不是 v4 独有的问题。"</strong></li>
+<li>Uniswap 官方前端与 API 只接入经过审查的 Hook——产品团队成员 Niko 指出，通过官方 API 交易的用户只会接触审核过的 Hook。概括起来就是：<strong>协议层是开放的，但应用层已经做了过滤。</strong></li>
+<li><strong>"聚合器需要为自己的路由决策负责"</strong>——若聚合器无差别接入 8 万多个未审查的 Hook，那是聚合器自身的风控缺陷。</li>
+</ol>
+<p>这场争论对 Agent 经济意味着什么？<strong>它把"Agent 被坑谁赔"从假设变成了实例：</strong> 一个 Agent 通过聚合器路由到恶意 Hook，损失由写策略的、调 API 的、部署 Agent 的还是聚合器承担？没有任何一方答案清晰。规模参考也值得记住：2026 年以来 0x 平台已路由 <strong>8192 万笔</strong>交易、<strong>426.7 亿美元</strong>，约 <strong>70% 涉及 Uniswap 流动性</strong><sup><a href="https://www.techflowpost.com/article/33980" target="_blank" rel="noopener" title="参考来源 [22]">[22]</a></sup>——任何路由层的风控缺陷都会被这个量级放大。</p>
+<p><strong>结论是：无许可扩展性带来了创新速度，同时把验证成本外部化给调用方。而当调用方是 Agent 时，"调用方自己负责"在责任上是不成立的。</strong></p>
+<h3>4.4 第四个卡点：微支付经济学</h3>
+<p>最后一道卡点最朴素：<strong>钱够不够付手续费。</strong></p>
+<p>2026 年 9 月 4 日，PANews 转载编译自 The Token Dispatch 的文章（页面实际标题为《机器人每年 9 亿手续费的坑被加密货币填上了》）<sup><a href="https://www.panewslab.com/zh/articles/01a06c1a-752d-744e-a887-7b84fe186877" target="_blank" rel="noopener" title="参考来源 [25]">[25]</a></sup>，给出了一条完整的成本链条：</p>
+<ul>
+<li>银行卡支付的手续费结构是<strong>按比例收费 + 一笔 10–30 美分的固定手续费</strong>。一笔 <strong>40 美分</strong>的订单，若固定费为 30 美分，<strong>固定费占比高达 75%</strong>。</li>
+<li>规模假设：若机器每年完成价值 <strong>10 亿美元</strong>的小额服务交易，单笔均额约 <strong>32 美分</strong>，全年交易量约 <strong>30 亿笔</strong>；每笔 <strong>30 美分</strong>的固定费，全年手续费成本高达 <strong>9 亿美元</strong>。</li>
+<li><strong>SWIFT</strong> 跨境转账手续费 <strong>15–50 美元</strong>，中间清算行每家再收 <strong>10–30 美元</strong>——这套结构只适合 5000 美元以上的金额。</li>
+</ul>
+<p><strong>这张成本表的含义是：在机器支付场景里，传统支付网络不是"贵一点"，而是结构性不可用。</strong> 30 美分的固定费吃掉 40 美分订单的 75%，这不是定价问题，而是架构问题——传统卡组织的最小计价单位是"人"，不是"机器调用"。</p>
+<p>加密侧给出的答卷并不整齐：</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>项目</th>
+<th>做了什么</th>
+<th>关键限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OpenMind</strong></td>
+<td>Pantera 领投 <strong>2000 万美元</strong>，开发开源操作系统 <strong>OM1</strong> 与调度协协作层 <strong>FABRIC</strong>；与 Circle 合作、<strong>基于 x402 实现零 Gas 费 USDC 微支付</strong></td>
+<td>演示中机器人可自主支付电费，但<strong>运行在测试网，无真实链上成交</strong></td>
+</tr>
+<tr>
+<td><strong>peaq</strong></td>
+<td><strong>peaqID</strong>、<strong>机器 NFT（ERC-3643）</strong>、<strong>机器信用评分（0–100 分）</strong>、P256 芯片签名；2026 年 5 月演示 Serve 机器人自主支付并<strong>结算至 Solana</strong>；联合 CoinList 推出<strong>机器首次发行</strong>；香港代币化垂直农场（80% 自动化）</td>
+<td>规模仍小，市值约 5500 万美元</td>
+</tr>
+<tr>
+<td><strong>IoTeX</strong></td>
+<td>自 2017 年起做<strong>硬件身份 ioID</strong> 与<strong>现实工作量证明 W3bstream</strong></td>
+<td>原文评价其<strong>解决了身份和证明问题，但忽略了信用和融资系统</strong></td>
+</tr>
+</tbody>
+</table>
+<p>上述数据均出自同一来源<sup><a href="https://www.panewslab.com/zh/articles/01a06c1a-752d-744e-a887-7b84fe186877" target="_blank" rel="noopener" title="参考来源 [25]">[25]</a></sup>。</p>
+<p>原文作者的核心结论<strong>与"加密货币将解决机器支付"的叙事方向相反</strong>：<strong>绝大多数机器人永远不需要自主支付体系</strong>——只有当设备分属不同所有者、订单小额随机、无中心化平台结算、需数秒内就地授权四个条件同时成立时才有必要。作者还提出：<strong>"软件智能体向机器人付费，比机器人之间互相转账，前者的商业可持续性更强。"</strong><sup><a href="https://www.panewslab.com/zh/articles/01a06c1a-752d-744e-a887-7b84fe186877" target="_blank" rel="noopener" title="参考来源 [25]">[25]</a></sup></p>
+<p>同一逻辑在公链侧也有对应动作。PANews 一篇报道在梳理波场 TRON 资本动作的同时，重点提到其 <strong>B.AI</strong> 产品<sup><a href="https://www.panewslab.com/zh/articles/01a0a3a9-1eb7-778a-a668-46d85b76802a" target="_blank" rel="noopener" title="参考来源 [24]">[24]</a></sup>。链上规模相当可观：账户数<strong>突破 4 亿</strong>（截至 8 月 23 日）、累计交易<strong>超 154 亿笔</strong>、累计结算金额<strong>逼近 30 万亿美元</strong>；<strong>USDT 发行规模超 942 亿美元</strong>，已超越以太坊成为全球第一大 USDT 发行网络；二季度处理 USDT 转账 <strong>2.1 万亿美元</strong>，日均清算约 <strong>230 亿美元</strong>。B.AI 注册用户<strong>超 260 万</strong>，<strong>8 月 31 日单日 Token 吞吐量突破 1.11 万亿</strong>，截至 9 月 3 日累计<strong>超 10.9 万亿</strong>、API 调用量<strong>超 8956 万次</strong><sup><a href="https://www.panewslab.com/zh/articles/01a0a3a9-1eb7-778a-a668-46d85b76802a" target="_blank" rel="noopener" title="参考来源 [24]">[24]</a></sup>。</p>
+<p><strong>但这里有一个口径陷阱：</strong> "波场正通过 B.AI 探索 AI Agent 微支付市场"是<strong>该文作者 Jae 的分析框架，而非波场官方表态</strong>——原文没有引用任何波场官方关于 AI Agent 微支付的引语<sup><a href="https://www.panewslab.com/zh/articles/01a0a3a9-1eb7-778a-a668-46d85b76802a" target="_blank" rel="noopener" title="参考来源 [24]">[24]</a></sup>。作者本人也写了保留意见："这一趋势仍处于早期。AI Agent 可否形成大规模的自主经济活动，目前还缺乏有效的商业化验证。B.AI 的用户量与吞吐量，也无法直接等同于波场的稳定币结算收入。"<sup><a href="https://www.panewslab.com/zh/articles/01a0a3a9-1eb7-778a-a668-46d85b76802a" target="_blank" rel="noopener" title="参考来源 [24]">[24]</a></sup></p>
+<h2>五、web3 agent port 应该长什么样</h2>
+<p>综合以上四个卡点，一个面向 Agent 的"钱包入口"至少需要提供五项能力。以下内容中，凡属本文推断的部分均已标注。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>能力</th>
+<th>解决哪个卡点</th>
+<th>关键设计要点</th>
+<th>与既有协议的关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. 发现</strong></td>
+<td>4.1 前两关</td>
+<td>可机读的服务目录，统一计价单位与质量标识；Agent 可查询而非硬编码</td>
+<td>消费 x402 的 402 响应；对齐 AP2 / MPP 的报价描述</td>
+</tr>
+<tr>
+<td><strong>2. 授权（scoped auth）</strong></td>
+<td>4.1 第四关、4.2</td>
+<td>授权对象是<strong>策略</strong>而非单笔交易：预算上限、对手方白名单、用途类别、时间窗、单笔与日累计双重限额</td>
+<td>可对接 ERC-8004 的信任语义；策略本身应可被 zk 证明</td>
+</tr>
+<tr>
+<td><strong>3. 限额与预算</strong></td>
+<td>4.4</td>
+<td>预算是"资源语义"而非"金额语义"——同时约束 token 数、调用次数、算力时长与法币等值</td>
+<td>与 EIP-8141 的 Gas 代付解耦，用户无需持仓 ETH</td>
+</tr>
+<tr>
+<td><strong>4. 可撤销</strong></td>
+<td>4.3</td>
+<td>每次授权都需明确的可撤销路径与撤销延迟，且撤销应为链上可验证事件（本文判断）</td>
+<td>当前绝大多数 Agent 框架缺失的一环</td>
+</tr>
+<tr>
+<td><strong>5. 可审计</strong></td>
+<td>4.1 第六关、4.3</td>
+<td>意图、策略判定、报价、支付、交付凭证、对账应生成可导出、可第三方验证的记录</td>
+<td>交付凭证是连接链上结算与链下服务的关键接口</td>
+</tr>
+</tbody>
+</table>
+<p>一次合规的 Agent 采购，流程大致如下（本文推断）：</p>
+<p>意图产生 → 查询服务目录 → 拿到报价并归一化比较 → 策略引擎判定（预算 / 白名单 / 用途 / 时效）→ 生成并签名授权凭证 → 构造支付（x402 或 EIP-8141 代付通道）→ 上链结算 → 获取交付凭证 → 校验交付结果 → 写入对账记录 → 更新预算余额。</p>
+<p>这条链路里有两处是"新东西"：<strong>一是策略判定必须在支付之前发生且结果可验证</strong>——若策略由服务端执行，服务端就成了新的信任中心，Agent 的"自主性"名存实亡；<strong>二是交付凭证不可省略</strong>——"结算成功不等于服务交付"目前靠调用方自己重试、自己判断，但在 Agent 场景下没有人类会去检查"这次 API 调用是不是返回了垃圾"，交付凭证必须成为协议的一部分而非应用层的附加组件。</p>
+<p><strong>agent port 与 x402 是什么关系？</strong> 一句话：<strong>x402 是支付轨，agent port 是调用入口。</strong> x402 定义了"这笔钱怎么付"，agent port 需要回答"这笔钱该不该付、付给谁、付多少、能不能撤回、事后怎么查"。两者是上下游关系，不是竞争关系。谁把 x402 的支付轨当成完整的买方解决方案，谁就会在六道关卡的第二关之后卡住。</p>
+<h2>六、三阶段推演</h2>
+<p>以下三段是<strong>推演，不是预测</strong>。每一段都附带反证条件——如果反证条件成立，该阶段的判断即告失效。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>阶段</th>
+<th>形态</th>
+<th>人在回路中的位置</th>
+<th>责任归属</th>
+<th>反证条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>一、Agent 作为钱包使用者</strong></td>
+<td>执行交易与支付，但额度小、范围窄，实质是"人在环"的自动化</td>
+<td>人在环内：每笔或每轮确认</td>
+<td>传统主体责任制，人类账户持有人担责</td>
+<td>若单笔限额长期停留在百美元以下且无法提升，则停留在此阶段</td>
+</tr>
+<tr>
+<td><strong>二、Agent 作为链上中介</strong></td>
+<td>代表人类在多市场间路由、套利、采购，处理例外</td>
+<td>人在例外处：只处理策略未覆盖的情形</td>
+<td>需要"策略责任"概念——谁写策略谁担责</td>
+<td>若策略可证明性无法落地（4.2 未解决），则责任无法分割，此阶段无法成立</td>
+</tr>
+<tr>
+<td><strong>三、Agent 作为独立经济主体</strong></td>
+<td>持有资产、雇用其他 Agent、被投资、承担盈亏</td>
+<td>人在资产所有者层</td>
+<td>需要新的法律主体类别（本文判断）</td>
+<td>若稳定币在 Agent 支付中占比长期偏低，或 4.3 的责任问题持续无解，则此阶段不成立</td>
+</tr>
+</tbody>
+</table>
+<p>三个阶段之间的跃迁条件各不相同：<strong>从一到二，缺的是可证明的策略执行</strong>——这也是 Lattice Jolt 这类工作的意义；<strong>从二到三，缺的是责任分割机制</strong>——链上可以记录"策略由谁签名"，但法律上尚不存在承认这一记录的框架。最后指出一处容易忽略的对应关系：<strong>第一节提到的 x402"支付之后的问题未解决"，正是从阶段一到阶段二的阻塞点。</strong> 当支付原子化之后，问题并未消失，只是从"钱付不出去"变成"付了之后不知道结果"。这是 x402 第一年最值得记住的一条教训。</p>
+<h2>七、观察指标</h2>
+<p>最后给出五个可跟踪的观察指标。<strong>这些指标的价值不在于单期读数，而在于它们能否同时改善。</strong></p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>指标</th>
+<th>观察什么</th>
+<th>好信号</th>
+<th>坏信号</th>
+<th>主要来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. x402 交易量与结算额</strong></td>
+<td>笔数增长<strong>是否伴随</strong>结算额同步增长</td>
+<td>单笔均价上升，独立买方与卖方同时增加</td>
+<td>笔数涨、结算额不涨；激励贡献无法拆分</td>
+<td>x402scan、Agent Economy tracker<sup><a href="https://www.panewslab.com/zh/articles/01a064e5-2abe-737b-9d5b-7ab3a0b02290" target="_blank" rel="noopener" title="参考来源 [1]">[1]</a></sup></td>
+</tr>
+<tr>
+<td><strong>2. Agent 协议收入与 TVL</strong></td>
+<td>收入是否来自真实商业需求而非代币循环</td>
+<td>ACP 一类协议的市场<strong>卖方一侧</strong>开始有实质供给</td>
+<td>手续费主要来自发行与交易自身</td>
+<td>Virtuals 等协议披露<sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup></td>
+</tr>
+<tr>
+<td><strong>3. 可验证执行落地数</strong></td>
+<td>有多少 Agent 行为真的生成了可上链验证的证明</td>
+<td>出现以"策略可证明"为核心卖点的生产级方案</td>
+<td>仍停留在论文与基准测试阶段</td>
+<td>Lattice Jolt 类进展<sup><a href="https://www.techflowpost.com/article/33885" target="_blank" rel="noopener" title="参考来源 [21]">[21]</a></sup></td>
+</tr>
+<tr>
+<td><strong>4. 持牌稳定币在 Agent 支付中的占比</strong></td>
+<td>传统支付与稳定币机构是否真正切入 Agent 场景</td>
+<td>出现面向 Agent 的合规微支付产品并规模化</td>
+<td>仅有战略表述而无产品</td>
+<td>Circle、Mastercard 等表态<sup><a href="https://www.panewslab.com/zh/articles/01a01df6-2711-706a-8320-f58403bf3d78" target="_blank" rel="noopener" title="参考来源 [26]">[26]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/01a01ec1-2f89-704e-b303-b8aed5e3a431" target="_blank" rel="noopener" title="参考来源 [27]">[27]</a></sup></td>
+</tr>
+<tr>
+<td><strong>5. 无许可扩展的安全事件频率</strong></td>
+<td>开放扩展层的安全事件是否收敛</td>
+<td>出现被广泛采用的审查与信誉机制</td>
+<td>审查缺位持续，聚合器把风险外部化</td>
+<td>0x / Uniswap 类争论<sup><a href="https://www.techflowpost.com/article/33980" target="_blank" rel="noopener" title="参考来源 [22]">[22]</a></sup><sup><a href="https://www.panewslab.com/zh/articles/01a0a3bc-489f-752a-b88c-ac002b5081b7" target="_blank" rel="noopener" title="参考来源 [23]">[23]</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>补一句方法上的提醒。<strong>五个指标里最容易被误读的是第一个。</strong> x402 第一年的教训恰恰是：<strong>在激励存在的情况下，交易笔数几乎不携带关于真实需求的信息</strong>；只有当"笔数增长"与"独立买方增长"、"单笔均价上升"同时出现时才有意义。这也解释了 Artemis 为何用"过滤后约 160 万美元"对照"彭博报道的 2400 万美元"——<strong>同一套数据，过滤前后差 15 倍</strong><sup><a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener" title="参考来源 [8]">[8]</a></sup>。</p>
+<h2>结语</h2>
+<p>回到标题。x402 用一年时间证明了机器支付轨道在技术上可行：路径已经跑通，EIP-8141 把 Gas 代付推进协议层，GasFree 把无 Gas 转账推到 1385 亿美元，支付这一层正在快速商品化。</p>
+<p>但支付层成熟并不能自动带来代理经济。<strong>四个卡点里，有三个与"付钱"本身无关</strong>：买方不知道去哪买、不知道买得对不对、出了问题不知道找谁。合起来就是"买方装备"这个缺口。</p>
+<p><strong>缺的从来不是支付轨道，而是给买方的那套装备。</strong> 谁把这一层做出来，谁就拿到了链上代理经济下一年的入场券。</p>
+<h2>参考资料</h2>
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav"><a href="https://julietwang123.github.io/robinhood-chain-analysis/agent-financial-stack-virtuals-x402-coinbase.html">🤖 Agent 金融栈：Virtuals × x402 × Coinbase</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/clarity-act-60-votes.html">📜 CLARITY 法案 60 票门槛</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-issuance-as-a-service.html">🏦 发行即服务</a></nav>
+
+        <!-- Sources -->
+        
+        <section class="sources-section">
+            <h3>📚 参考链接</h3>
+            <ol class="sources-list">
+                
+                <li>
+                    <span class="source-num">1</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a064e5-2abe-737b-9d5b-7ab3a0b02290" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a064e5-2abe-737b-9d5b-7ab3a0b02290</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">2</span>
+                    <span class="source-content">
+                        <a href="https://www.bankless.com/read/news/ramp-adds-x402-payments-for-ai-agents" target="_blank" rel="noopener">https://www.bankless.com/read/news/ramp-adds-x402-payments-for-ai-agents</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">3</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a033bf-c2dd-7399-b9e7-7340a8450302" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a033bf-c2dd-7399-b9e7-7340a8450302</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">4</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a046e9-d393-752d-a55f-7ab651b80a0c" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a046e9-d393-752d-a55f-7ab651b80a0c</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">5</span>
+                    <span class="source-content">
+                        <a href="https://www.odaily.news/zh-CN/newsflash/513491" target="_blank" rel="noopener">https://www.odaily.news/zh-CN/newsflash/513491</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">6</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a07f21-8642-7643-84c4-4a02ebb0e7e8" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a07f21-8642-7643-84c4-4a02ebb0e7e8</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">7</span>
+                    <span class="source-content">
+                        <a href="https://www.odaily.news/zh-CN/post/5213004" target="_blank" rel="noopener">https://www.odaily.news/zh-CN/post/5213004</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">8</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33597" target="_blank" rel="noopener">https://www.techflowpost.com/article/33597</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">9</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a047d5-6055-725b-bba7-d549c758480a" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a047d5-6055-725b-bba7-d549c758480a</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">10</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a05107-0ee5-72e9-9d97-3a40a06380a0" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a05107-0ee5-72e9-9d97-3a40a06380a0</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">11</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a06bed-d96e-7482-b334-9f501320d142" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a06bed-d96e-7482-b334-9f501320d142</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">12</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33396" target="_blank" rel="noopener">https://www.techflowpost.com/article/33396</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">13</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a01cc3-5f66-7491-bf69-55380a83b75b" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a01cc3-5f66-7491-bf69-55380a83b75b</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">14</span>
+                    <span class="source-content">
+                        <a href="https://www.odaily.news/zh-CN/post/5212587" target="_blank" rel="noopener">https://www.odaily.news/zh-CN/post/5212587</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">15</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a051e5-881d-7459-988e-3b7e467db526" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a051e5-881d-7459-988e-3b7e467db526</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">16</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33649" target="_blank" rel="noopener">https://www.techflowpost.com/article/33649</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">17</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a04249-6708-736c-b6f6-1dd137eaf469" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a04249-6708-736c-b6f6-1dd137eaf469</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">18</span>
+                    <span class="source-content">
+                        <a href="https://www.theblockbeats.info/flash/363865" target="_blank" rel="noopener">https://www.theblockbeats.info/flash/363865</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">19</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a04212-fae5-725e-bad2-6b947bc5828f" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a04212-fae5-725e-bad2-6b947bc5828f</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">20</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33905" target="_blank" rel="noopener">https://www.techflowpost.com/article/33905</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">21</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33885" target="_blank" rel="noopener">https://www.techflowpost.com/article/33885</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">22</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33980" target="_blank" rel="noopener">https://www.techflowpost.com/article/33980</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">23</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a0a3bc-489f-752a-b88c-ac002b5081b7" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a0a3bc-489f-752a-b88c-ac002b5081b7</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">24</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a0a3a9-1eb7-778a-a668-46d85b76802a" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a0a3a9-1eb7-778a-a668-46d85b76802a</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">25</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a06c1a-752d-744e-a887-7b84fe186877" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a06c1a-752d-744e-a887-7b84fe186877</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">26</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a01df6-2711-706a-8320-f58403bf3d78" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a01df6-2711-706a-8320-f58403bf3d78</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">27</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a01ec1-2f89-704e-b303-b8aed5e3a431" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a01ec1-2f89-704e-b303-b8aed5e3a431</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">28</span>
+                    <span class="source-content">
+                        <a href="https://www.panewslab.com/zh/articles/01a041f1-6544-755d-ae17-9d6db50e3f3c" target="_blank" rel="noopener">https://www.panewslab.com/zh/articles/01a041f1-6544-755d-ae17-9d6db50e3f3c</a>
+                    </span>
+                </li>
+
+                <li>
+                    <span class="source-num">29</span>
+                    <span class="source-content">
+                        <a href="https://www.techflowpost.com/article/33497" target="_blank" rel="noopener">https://www.techflowpost.com/article/33497</a>
+                    </span>
+                </li>
+            </ol>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/erc8211-analysis/">⛓ ERC-8211 研报</a> ·
+            <a href="https://julietwang123.github.io/blockchain-2025-report/">📊 年度报告</a>
+        </p>
+    </footer>
+</body>
+</html>
