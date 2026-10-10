@@ -406,7 +406,7 @@
                 </div>
             </div>
 
-            <h3>补充：Agent 支付 / 交易的功能分层与协议位置</h3>
+            <h3>Agent 支付 / 交易的功能分层与协议位置</h3>
             <p>一笔 Agent 交易，需要解决<strong>身份、授权、订单、付款凭证、资金权限和结算</strong>六类问题。按这些功能，可以划分为以下六层，用于理解不同协议的覆盖范围：</p>
 
             <table>
@@ -448,7 +448,7 @@
             </table>
 
             <div class="highlight-box">
-                <div class="hb-title">▸ 如何读这张表</div>
+                <div class="hb-title">补充说明</div>
                 <p><strong>UCP、ACP</strong> 主要组织商业交互并衔接支付；<strong>AP2</strong> 侧重交易授权与验证；<strong>AMP</strong> 跨越信任、授权和支付接入等环节。</p>
                 <p>这是一种功能分析框架，<strong>协议可以跨层覆盖，交易也不必按层级顺序执行</strong>。A2A、MCP 承担通信与能力调用，<strong>接通接口不自动获得用户资金权限</strong>。</p>
             </div>
