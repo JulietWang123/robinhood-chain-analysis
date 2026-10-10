@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L2 退潮与内存池革命：以太坊扩容范式的第二次反转</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list {
+            display: flex; gap: 20px; list-style: none;
+        }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+        .article-title {
+            font-size: 2em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.05em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 16px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Lead Block ── */
+        .lead-block {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 32px 0;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.75;
+        }
+        .lead-block .cite {
+            display: block; margin-top: 10px;
+            font-size: .82em; color: var(--text3);
+        }
+        .lead-block .cite a {
+            color: var(--accent); text-decoration: none;
+        }
+        .lead-block .cite a:hover { text-decoration: underline; }
+
+        /* ── Body Typography ── */
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.08em; font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p {
+            margin-bottom: 18px;
+            color: var(--text2);
+            line-height: 1.85;
+        }
+        .article-body p:first-of-type {
+            font-size: 1.05em;
+        }
+        .article-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .article-body em {
+            color: var(--text3);
+        }
+        .article-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table, .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0 32px;
+            font-size: .88em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead, .compare-table thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th, .compare-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd), .compare-table tbody tr:nth-child(odd) {
+            background: var(--bg2);
+        }
+        .article-body tbody tr:nth-child(even), .compare-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .article-body tbody tr:hover, .compare-table tbody tr:hover {
+            background: var(--accent-light);
+        }
+        .article-body td, .compare-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .article-body td:first-child, .compare-table td:first-child {
+            font-weight: 600; color: var(--text);
+        }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 16px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li {
+            margin: 6px 0;
+            line-height: 1.7;
+        }
+
+        /* ── Blockquote ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            margin: 24px 0;
+            background: var(--accent-light);
+            border-radius: 0 8px 8px 0;
+            color: var(--text2);
+            font-style: italic;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+        .highlight-box h4 {
+            font-size: .9em; font-weight: 700;
+            color: #4338ca;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .highlight-box ul li {
+            font-size: .88em; color: var(--text2);
+            padding-left: 18px; position: relative;
+            line-height: 1.6;
+        }
+        .highlight-box ul li::before {
+            content: '▸';
+            position: absolute; left: 0;
+            color: #6366f1; font-size: .8em; top: 2px;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37,99,235,.1);
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+        .feature-name {
+            font-size: .88em; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: .8em; color: var(--text3);
+            line-height: 1.6;
+        }
+
+        /* ── Protocol Map Grid ── */
+        .protocol-map {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 28px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .protocol-name {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+        .protocol-role {
+            font-size: .78em; color: var(--text3);
+            line-height: 1.5;
+        }
+        .protocol-item.highlight-protocol {
+            border-color: #059669;
+            background: #ecfdf5;
+            box-shadow: 0 2px 8px rgba(5,150,105,.12);
+        }
+        .protocol-item.highlight-protocol .protocol-name {
+            color: #047857;
+        }
+        .protocol-item.highlight-protocol .protocol-role {
+            color: #065f46;
+        }
+
+        /* ── Horizontal Rule ── */
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+
+        /* ── Code ── */
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .88em;
+            font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources Section ── */
+        .sources-section {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-section h3 {
+            font-size: .9em; font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+        .sources-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .sources-list li {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .source-num {
+            min-width: 22px; height: 22px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7em; font-weight: 700;
+            margin-top: 1px; flex-shrink: 0;
+        }
+        .source-content {
+            font-size: .82em; color: var(--text3);
+            line-height: 1.6;
+        }
+        .source-content a {
+            color: var(--accent); text-decoration: none;
+            word-break: break-all;
+        }
+        .source-content a:hover { text-decoration: underline; }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .84em;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .protocol-map { grid-template-columns: 1fr; }
+            .article-body table, .compare-table { font-size: .78em; }
+            .article-body table th, .article-body table td,
+            .compare-table th, .compare-table td
+            { padding: 8px 10px; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/erc8211-analysis/">⛓ BlockChain 研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/blockchain-2025-report/">年度报告</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">稳定币立法</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-chain-competition/">公链竞争</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">以太坊</span><span class="tag">Layer2</span><span class="tag">EIP-8288</span><span class="tag">EIP-8198</span><span class="tag">Starknet</span><span class="tag">Blast</span><span class="tag">Abstract</span><span class="tag">内存池</span><span class="tag">扩容范式</span><span class="tag">深度分析</span>
+            </div>
+            <h1 class="article-title">L2 退潮与内存池革命：以太坊扩容范式的第二次反转</h1>
+            <p class="article-subtitle">Starknet 转型 L1、Blast 与 Abstract 关停、Linera 退款、Arc 上线 5 天收入不足 1 美元——同期 Vitalik 的 EIP-8288 把昂贵计算从链上前置到内存池，EIP-8198 把「出块时间永远 12 秒」从硬编码里拆出来</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026年10月10日</span>
+                <span class="meta-sep">·</span>
+                <span>约 9,500 字 · 阅读约 32 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <blockquote>
+<p>九月下旬到十月中旬这三周，Layer 2 赛道出现了五件事：Starknet 宣布要从 L2 转型为一条独立的抗量子 L1；Blast 关停，TVL 从 22.7 亿美元跌到 3200 万美元；Abstract 宣布 12 月 15 日关闭主网，母公司输血 18 个月、亏损数千万美元；Linera 的社区轮募资只完成目标的一半多，退款；Arc 主网规格漂亮，发射台上线 5 天收入不足 1 美元。这五件事的失败原因各不相同，但指向同一个事实：2021 到 2024 年那套「模块化 + 更多 L2」的叙事正在退潮。而<strong>在同一时间窗口</strong>，以太坊 L1 侧出现了两条方向完全相反的技术路线——Vitalik 的 EIP-8288 把昂贵计算从链上前置到内存池，EIP-8198 把「出块时间永远 12 秒」从硬编码里拆出来。前者不新增一条链，却可能是扩容范式第二次反转的标志物。</p>
+</blockquote>
+<hr />
+<h2>一、引子：五个案例并列</h2>
+<p>在九月下旬到十月中旬这三周里，Layer 2 赛道发生了五件事。</p>
+<p><strong>第一件，Starknet 想「单飞」。</strong> 10 月 8 日，StarkWare 联合创始人兼 CEO Eli Ben-Sasson 提出，Starknet 应从以太坊的 Layer 2 转型为一条独立的 Layer 1，目标是在 2027 年前完成。理由不是性能，而是安全——具体说，是后量子安全。他给出的技术前提是：以太坊要到 2029 年底才会完成抗量子升级，而 Starknet 因为从一开始就构建在 ZK-STARKs 之上，本身具备密码学敏捷性与后量子迁移的路线图。</p>
+<p>市场给出了一个非常典型的反应：消息当天，STRK 在加密市场普遍下跌的背景下逆势单日上涨 <strong>41.2%</strong>，一周累计上涨约 47%。但把时间轴拉长，这个涨幅的位置是——<strong>仍较历史最高点下跌约 98.5%</strong>。链上数据更冷：DeFiLlama 的数据显示，10 月 9 日 Starknet 上的 DeFi 总锁仓额约 <strong>1.6 亿美元</strong>，较历史峰值下跌超过 <strong>50.6%</strong>；过去两年，这条链的每日链上收入大多数时候只有<strong>数千美元</strong>，甚至更低。而在它的高峰时期，这个数字是每日数十万美元。</p>
+<p><strong>第二件，Blast 关停。</strong> 10 月 2 日，Blast 官方公告停止运营。创始人 Tieshun Roquerre（更广为人知的名字是 Pacman，同时也是 Blur 的创始人）在公告里写：「很遗憾没能让这条链实现长期可持续，但感谢那些给了 Blast 属于它的时刻的用户、开发者和团队。」</p>
+<p>这条链的数字轨迹，几乎可以当教科书用：</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>阶段</th>
+<th>时间</th>
+<th>关键数字</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存款期</td>
+<td>2023 年 11 月—2024 年 2 月</td>
+<td>主网上线前开放存款即突破 <strong>20 亿美元</strong>；Paradigm 与 Standard Crypto 早期投资 <strong>2000 万美元</strong></td>
+</tr>
+<tr>
+<td>蜜月期</td>
+<td>2024 年 2 月—6 月</td>
+<td>峰值 TVL <strong>22.7 亿美元</strong>；2024 年 6 月空投，FDV 约 <strong>29 亿美元</strong>（低于空投矿工预期的 50 亿至 100 亿美元）</td>
+</tr>
+<tr>
+<td>衰退期</td>
+<td>2024 年 6 月—2026 年 10 月</td>
+<td>空投后不到两个月 TVL 流失 <strong>60%</strong>；关停前夕 DeFi TVL 约 <strong>3200 万美元</strong>，较高点跌超 <strong>98%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>而最能说明问题的，是它的收入：月收入 <strong>1793 美元</strong>，日收入约 <strong>110 美元</strong>。关停当天，BLAST 下跌 <strong>17% 至 19%</strong>，市值约 <strong>2300 万美元</strong>。截至关停时，以太坊 L1 上仍有约 <strong>5100 万美元</strong>的资产留存于桥合约，官方给出的提取流程是：先退出 Lido 的 stETH（约需一周，期间暂停提款），再恢复提款，延迟缩短至 24 小时；标准前端保留至 10 月 26 日，之后用户只能直接与以太坊主网上的 Blast 桥合约交互。</p>
+<p>Blast 的结构性悖论可以概括成一句话：<strong>用户赚收益，链本身在亏钱。</strong> 它主打的被动收益来自 Lido 与 MakerDAO，收益归用户；而排序器成本、DA 上链费、基础设施与审计费用，归链自己。更糟的是，正是这种吸引用户的被动收益模式，抑制了链上那些能带来手续费的交易活动。研究机构 Yellow 与 BlockEden.xyz 的统计显示，2026 年 L2 生态中 Base、Arbitrum、Optimism 三家拿走了全部排序器手续费收入的约 <strong>80%</strong>，Blast 从未进入这个分配圈。</p>
+<p><strong>第三件，Abstract 关链。</strong> 10 月 6 日，Abstract 宣布将于 12 月 15 日关闭主网。它的母公司是 Igloo Inc.（Pudgy Penguins），CEO 是 Luca Netz。Igloo 为这条链输血 <strong>18 个月</strong>，累计亏损「<strong>数千万美元</strong>」——这个数字放在 2024 年 7 月 Igloo 从 Founders Fund 领投的融资中获得超过 1100 万美元的背景里，并不难理解。</p>
+<p>Abstract 的表面数据其实不算难看：超过 <strong>400 万个</strong> Abstract Global Wallets、超过 <strong>40 万</strong>用户、超过 <strong>325 万笔</strong>交易、<strong>144 个</strong>应用，还有 Red Bull Racing 与 Disney 的品牌合作。但把前两个数字除一下，裂缝就出现了：400 万钱包 ÷ 40 万用户 ≈ <strong>每个真实用户 10 个钱包</strong>。这些钱包大多是空钱包或批量注册的产物。更关键的是用户结构——Abstract 吸引到的是 NFT 收藏者与品牌活动参与者，而不是高频 DeFi 用户。而<strong>链的收入来自手续费，不来自用户数。</strong></p>
+<p>更值得注意的是 Netz 关于「不发代币」的表态：「一个代币需要有真实的需求来驱动它的价值。发一个我们自己都没有信心的代币，对社区是一种辜负。」这句话在 2026 年说出来，含义和 2021 年完全不同——它意味着项目方已经不再相信「发币 → 拉估值 → 再融资」这条循环还能跑通。消息公布当天，PENGU 下跌约 <strong>5.6%</strong>，至约 <strong>0.009 美元</strong>。链上仍有约 <strong>4700 万美元</strong>资产，用户可通过 Migration Hub 或原生桥迁移至以太坊主网（原生桥约有 <strong>3 小时延迟</strong>）。12 月 15 日之后，链关闭，未迁移资金不可访问；官方同时提醒了钓鱼风险。</p>
+<p>Netz 的告别语是这样的：「有些人会对这个结果感到满意。这种反应，可以接受。进入造链这个行业本身就极难成功，能尝试过，已是骄傲。唯一的遗憾是，没能和 Abstract 社区一起庆祝一场胜利。」他在结尾留下了一个问题：<strong>那些既有钱又有人、但仍然依赖补贴维持生态的 L2，它们的倒计时，是否也已经开始了？</strong></p>
+<p>一周之内两条 L2 关停。如果再加上 6 月关停的比特币 L2 Botanix，<strong>2026 年已经有三条有融资背景的 L2 走向终结。</strong></p>
+<p><strong>第四件，Linera 的社区轮卖不动了。</strong> 9 月 9 日，这条由 a16z 等机构支持、两轮融资合计约 <strong>1200 万美元</strong>的 Layer 1 宣布社区轮募资结束：来自 <strong>69 个国家</strong>的 <strong>617 名</strong>参与者合计认购 <strong>84.8 万美元</strong>，未达到 <strong>150 万美元</strong>的最低募资目标，也未达到 <strong>800 万美元</strong>硬顶，资金已原路退还参与者钱包。</p>
+<p>条款其实不算苛刻：标价 <strong>0.16 美元</strong>（对应 1.6 亿美元完全稀释估值）；前 160 万美元的参与者可获 Founder 身份，折算成本低至每枚 0.02 美元；另有测试网徽章对应的独立空投。但它 2023 年 8 月那一轮的背后是 a16z、Borderless Capital、GSR、DFG、Matrixport Ventures、Flow Traders。即便如此，<strong>主网三年多仍未上线</strong>。它的首席产品官 Ryan Trost 说团队约 <strong>5 人</strong>、开支有限；产品侧补上了一个短周期链上预测盘 Linera Markets（一分钟一轮涨跌盘，覆盖 BTC、ETH、SOL），官方称测试网运行超过 25 周、约 8500 万笔交易、5 万余名用户。</p>
+<p><strong>第五件，Arc 上线了，但发射台没有声音。</strong> 9 月 16 日，Circle 的 Layer 1 公链 Arc 开放主网。它的规格是漂亮的：<strong>USDC 支付 Gas 费</strong>、支持<strong>次秒级交易终局性</strong>、兼容 EVM；首日有 Aave V4 借贷市场、Morpho、Uniswap 等超过 <strong>100 个</strong>应用上线；创始验证节点包括 <strong>BlackRock、DTCC、ICE、Mastercard、Visa</strong> 等 <strong>11 家</strong>机构，将分阶段加入；Circle 在美国完成 <strong>100 亿枚</strong> ARC 代币的创世铸造（强调为技术里程碑，暂未承诺公开发行），并计划于 2027 年推动网络从 PoA 转向 PoS，届时启动 DTC 托管资产代币化服务。它的公测网自 2025 年 10 月上线以来，已处理逾 <strong>7 亿笔</strong>交易。</p>
+<p>但结果同样干净：<strong>上线 5 天，发射台集体哑火，收入不足 1 美元。</strong></p>
+<p>另外几件不属于「关停」但属于同一方向的事：9 月 8 日，以太坊二层 Scroll 在治理论坛发布进展更新，准备从通用 zkEVM 逐步转向围绕 AI 产品 Compass 的专用网络，过渡期约九个月；MegaETH 关掉了偏投机的 MegaMafia 加速器，转向自研消费应用，并用稳定币产品 USDm 的收益做回购销毁；Arbitrum、Sei、Sophon 也在讨论把应用和手续费收回到自己账上。万向区块链肖风撰文提出，约九成加密项目仍缺清晰用户、持续收入或监管合规。</p>
+<p>把五个案例并排放在一起，会看到它们的失败原因各不相同：Starknet 是技术路线要改，Blast 是收入模型不成立，Abstract 是用户结构虚化，Linera 是叙事定价失效，Arc 是分发还没跑起来。<strong>但它们指向的同一个事实是：2021 年到 2024 年那套「模块化 + 更多 L2」的叙事，正在退潮。</strong></p>
+<p>而更有意思的是，就在这批 L2 退潮的同一时期，以太坊 L1 侧出现了两条方向完全相反的技术路线。</p>
+<hr />
+<h2>二、复盘：L2 叙事的三个隐含假设</h2>
+<p>要理解这轮退潮，得先把 L2 叙事拆成它的假设。这套叙事从 2021 年 Rollup-centric 路线图确立起，长期建立在三个隐含假设上。</p>
+<p><strong>假设一：DA 成本会持续下降，所以 L2 会越来越便宜。</strong> 这条假设在技术上是成立的——EIP-4844 之后 blob 让 DA 成本大幅下降，PeerDAS 与后续的 blob 扩容还会继续压。但它有一个被忽略的推论：<strong>如果 DA 便宜对所有人是同等便宜，它就不能构成任何一条 L2 的差异化。</strong> DA 是行业的公共品，不是某条链的护城河。当 DA 成本从「主要成本项」降为「可忽略成本项」时，L2 之间就只剩下排序器效率、生态密度与分发渠道这三个变量在竞争——而这三个变量里，没有一个能靠「更便宜的 DA」获得。</p>
+<p><strong>假设二：流动性会从 L1 溢出到 L2。</strong> 这可能是最贵的一条假设。Blast 用最直白的方式证伪了它：它用被动收益把 TVL 从零拉到 22.7 亿美元，然后在空投完成、收益激励淡出的两个月里流失 60%。<strong>靠补贴买来的 TVL 是租来的流动性，租约到期就还回去。</strong> Abstract 的数据是这条假设的另一个版本：40 万用户、400 万钱包，说明增长可以靠 NFT 收藏者与品牌活动参与者买到——但正如 Netz 自己承认的，链的收入来自手续费，不来自用户数。</p>
+<p>真正让这条假设失效的，是没有补贴的那两家的对照。研究机构 Yellow 与 BlockEden.xyz 把 2026 年 L2 的排序器手续费收入分布算了出来：<strong>Base、Arbitrum、Optimism 拿走全部收入约 80%</strong>。这条分布揭示的规律是清楚的：活下来的 L2 只有两种模式——<strong>要么靠分发渠道，要么靠先发生态。</strong> Base 背靠 Coinbase 的数千万用户，流量成本接近于零；Arbitrum 从 2022 年就积累了大量 DeFi 协议，切换成本形成了生态黏性。这两种模式的共同点是：<strong>它们都不依赖补贴，也不是靠「有 DA 更便宜」这个技术属性赢的。</strong></p>
+<p><strong>假设三：代币能够捕获 L2 的价值。</strong> 这条假设的推理链条是：L2 有排序器收入 → 排序器收入有利润 → 代币可以捕获这部分利润。问题出在中间那一步。排序器的收入被三件事吃掉：DA 上链成本、用户补贴、以及 L2 之间为了抢交易而压低 base fee 的竞争。而当第四件事——也就是下一节要讲的 L1 提速——发生的时候，中间那一步会被压得更薄。</p>
+<p>数据已经给出了答案。Starknet 的 STRK 较历史高点下跌约 <strong>98.5%</strong>；Blast 关停时的市值约 <strong>2300 万美元</strong>，而它在 2024 年 6 月空投时的 FDV 是约 <strong>29 亿美元</strong>——<strong>两年多时间，估值蒸发超过 99%。</strong></p>
+<p>还有一条更隐蔽的假设，它没有写进任何一份路线图，却贯穿了几乎所有 L2 的白皮书：<strong>在模块化的分工里，L2 会长期占有「执行」这一层。</strong> DA 归以太坊或 Celestia，结算归以太坊，共识归以太坊，而执行——也就是用户真正发起交易的地方——归 L2。</p>
+<p>这条假设，正在被 L1 侧的两份提案直接挑战。</p>
+<hr />
+<h2>三、反向证据：L1 侧的扩容路线</h2>
+<p>L2 退潮的同时，以太坊 L1 侧出现了三条不同形态的进展：<strong>EIP-8288 降低单位计算的价格，EIP-8198 提高单位时间的供给，zkAPI 把 L1 的结算能力向 AI 调用场景延伸。</strong> 前两节是这一部分的重点。</p>
+<h3>3.1 EIP-8288：把聚合前移到内存池</h3>
+<p>9 月，Vitalik Buterin 在 ETHShanghai 2026 上系统讲解了一份新提案 EIP-8288。要理解它，先要看它要解决的问题有多贵。</p>
+<p>Vitalik 给出的 gas 量级是这样的：</p>
+<ul>
+<li>一笔普通的以太坊交易：约 <strong>21,000 gas</strong>；</li>
+<li>独立验证一个 ECDSA 签名（约 65 字节）：约 <strong>4,000 gas</strong>；</li>
+<li>换成任何一种量子安全签名：<strong>10 万到 30 万 gas</strong>（取决于参数大小）；</li>
+<li>任何基于 ZK 的隐私协议：最低约 <strong>35 万 gas</strong>，设计不佳的可以到 <strong>100 万 gas</strong> 左右；</li>
+<li>如果同时要量子安全与隐私，就需要用 STARK 证明替代上面这些，而<strong>一个 STARK 证明约需 800 万 gas，很可能还不止。</strong></li>
+</ul>
+<p>翻译成用户能感知的价格：今天一笔普通交易可能只花几分钱，而上面这几类交易可能要花 <strong>20 美分，甚至 2 美元</strong>。</p>
+<p>但真正致命的是总量的坍缩。Vitalik 的表述是：<strong>如果现在就让所有人开始使用「量子安全 + 隐私」的交易，以太坊原本约 25 TPS 的处理能力将骤降至 0.25 TPS 左右，几乎丧失可用性。</strong></p>
+<blockquote>
+<p>21,000 gas（普通交易）→ 4,000 gas（一枚 ECDSA 签名）→ 10 万–30 万 gas（量子安全签名）→ 35 万–100 万 gas（ZK 隐私协议）→ 约 800 万 gas（单个 STARK 证明）</p>
+<p>25 TPS（今天）→ 0.25 TPS（如果所有人都换成量子安全 + 隐私交易）</p>
+</blockquote>
+<p>还有一个附带问题：支持自定义密码学方案（比如从椭圆曲线切换到格密码）会持续增大协议体积，需要更多体积巨大、成本高昂的预计算文件；而如果不在 EVM 里原生支持，链上验证任何此类签名都极其耗费 gas。</p>
+<p>EIP-8288 的解法很干净：<strong>不把这些签名与证明直接放上链，而是把它们留在链下，在内存池（mempool）内部完成聚合。</strong></p>
+<p>具体机制是：新增一种「<strong>依赖项</strong>」（dependency）帧类型，共两种——一种对应签名，一种对应证明（STARK）。交易本体不再把签名嵌进去，而只包含一段抽象声明，指出它依赖于何种类型的签名与证明。用户广播交易时，完整数据会随之发送，但<strong>最终被写入区块的只是承载依赖项的微型帧，每个依赖项的数据占用仅 65 至 96 字节。</strong></p>
+<p>与此同时，内存池里的节点持续监听一种叫「<strong>信封</strong>」（envelope）的数据载体。单个信封内部可以封装多笔交易及其伴随证明。节点以固定的时间周期为窗口，收集该周期内观测到的所有信封，执行本地聚合计算，然后广播出去。广播时，原本离散的独立证明已被一个<strong>全局聚合证明</strong>取代，这个证明在数学上严谨地涵盖了本批次内全部底层签名的正确性。</p>
+<p>这带来一个重要的时序变化：<strong>在打包节点正式执行状态更新之前，以太坊网络已经在非共识层的内存池阶段完成了绝大部分高强度的验证计算。</strong></p>
+<p>这套机制建立在 EIP-8141（原生账户抽象，下一次硬分叉引入）之上。EIP-8141 凝聚了近十年的账户抽象研究，允许每笔交易直接、精确地声明自己的组成构件、签名规范与验证算法——没有它，依赖项帧就没有地方声明自己是哪种依赖项。</p>
+<p>Vitalik 把 EIP-8288 的架构本质称为「<strong>专门化分片</strong>」（specialized sharding）。它不是把链切成多条，而是把每一笔交易拆成两部分：一部分说明「这笔交易做了什么、如何与状态和其他交易交互」（业务逻辑），另一部分是纯粹的验证工作。验证负荷被剥离出去、被整个分布式网络以松散、非结构化的方式极度并行处理之后，<strong>主链共识层最终需要全网验证节点承担的数据载荷被压缩在每区块 100 至 300KB 的区间内</strong>——大约是当前以太坊区块数据量的两倍，而且随着网络吞吐量的线性扩张，这个常量开销在全网总负荷中的比重会被持续稀释。</p>
+<p>对 Layer 2 而言，影响是直接的。当前许多 ZK-Rollup 为了摊薄向主网发布状态证明的高昂 gas 成本，被迫拉长提交周期，以<strong>十分钟甚至一小时</strong>的频次做批处理结算。这在网络交易低谷期严重制约了最终确认速度。EIP-8288 让证明验证的成本大幅下降，意味着 ZK-Rollup <strong>可以大幅缩短状态证明的提交周期，加快最终确认速度。</strong></p>
+<p>还有一个容易被忽略的连带效应：EIP-8288 <strong>很可能会成为以太坊引入 RISC-V（或类似指令集）的第一个真实场景</strong>。原因在于，用户提交证明时需要用某种语言来表达自己正在验证的声明，而 RISC-V 正是这种语言。在这个流程里，以 RISC-V 表述的验证逻辑只需在用户客户端本地执行一次物理计算，用户生成证明（隐私场景下即为 ZK-STARK）并推入内存池，紧随其后的首个中继节点便会把它与全网成百上千个同类证明递归压缩为单一实体。</p>
+<p>Vitalik 的总结是两句：「本质上，这是通过把计算从链的『中心』移出去、推向『<strong>边缘</strong>』，来实现以太坊的扩容。」以及，「我希望，这只是把以太坊从它几乎从诞生之初就沿用至今的那套架构，改造成一套截然不同、也更加强大的新架构的第一步——这套新架构会把两件事真正结合在一起：一件是来自中本聪最早期、非常朴素的区块链理念；另一件，是我们此后不断积累起来的、极其强大、极其现代的密码学技术。」</p>
+<p>生态侧的动作已经在跑：针对内存池拓扑与聚合传播机制的网络级仿真模型已开放；支持帧交易形态的 EIP-8141 测试网已投入测试；面向开发者、重点攻坚底层证明系统高效实现的算法竞赛正在推进；底层原型代码库已具备雏形，供生态开发者进行独立的客户端实现与形式化验证。</p>
+<h3>3.2 EIP-8198 / Quick Slots：把「12 秒」从硬编码里拆出来</h3>
+<p>如果 EIP-8288 是在降低<strong>单位计算的价格</strong>，那么 EIP-8198 就是提高<strong>单位时间的供给</strong>。9 月 18 日，Ethlabs 汇总了约 20 位 DeFi 创始人、应用开发者与基础设施研究者的声音，主张把这份提案纳入 Hegotá 升级。</p>
+<p>它的方法只有两步，但第一步是很多人忽略的重点：<strong>先做一次较大的重构，移除软件中「出块时间永远为 12 秒」的硬编码；再借助这个能力，随网络准备程度逐步加快出块。</strong> 起步方案是从 <strong>12 秒降到 10 秒</strong>，此后每一次缩短都需要单独测试、单独达成共识。核心不是一次砍到极限，而是先让出块时间「可以安全调整」。</p>
+<p>时间线上：Carl Beekhuizen 于 2026 年 3 月撰写该 EIP；Barnabé Monnot 于 8 月 6 日将其提交给 All Core Devs（ACD），争取纳入 Hegotá；Francesco D'Amato 以及越来越多的客户端与生态团队共同推进。它被放在更大的 Fast Ethereum 工作流之内——Ethlabs 另有一条 FCR 工作流，把确认时间缩短约 30 倍。容量扩容已经按「改善、测量、再改善」的节奏推进（gas 上限随客户端余量上调、blob 容量可再议），延迟也应该享受同等待遇。</p>
+<p>为什么这么多人在意这 2 秒？因为它是<strong>全网约束</strong>。钱包可以改加载动画，DEX 可以改路由，但谁也不能单独让主网下一块更早出来。协议层修改这一约束，所有依赖 L1 延迟的应用和用户一起受益。</p>
+<p>市场的体量摆在那里：截至 2026 年 9 月 17 日，以太坊主网与 L2 合计锁仓约 <strong>580 亿美元</strong>；今年以来各层现货 DEX 成交超过 <strong>7500 亿美元</strong>；主网过去 30 天 DEX 成交约 <strong>412.5 亿美元</strong>——作为对照，新加坡主交易所 2026 年 8 月的证券成交约 <strong>339 亿美元</strong>。主网已经是一个不小的市场，而市场不会等待以太坊出块。</p>
+<p>支持声音里的具体论证，比口号有价值得多：</p>
+<ul>
+<li><strong>DefiLlama 创始人 0xngmi</strong>：更快槽位能改善 LlamaSwap 这类实时比价聚合器的体验——「报价在块间变动更小，滑点可以设得更紧。」</li>
+<li><strong>Doppler 创始人 Austin Adams</strong>：从 LP 角度，「更快槽位直接改善 LP 收益，也让资本市场更有效」。</li>
+<li><strong>Derive 工程负责人 Josh Kim</strong>：等待一笔 L1 交易落地时，套利者要承担价格风险，这会影响他们再平衡市场、维持窄价差的能力；Derive V3 将部署在以太坊主网。</li>
+<li><strong>Ondo 生态负责人 Armand Khatri</strong>：代币化股票与 ETF 的 RFQ 定价从不等待以太坊出块，从签字报价到交易确认，每一秒都有人在承担价格风险。</li>
+<li><strong>Aerodrome 贡献者 ZoomerAnon</strong>：价格更新更及时，流失给套利者的价值更少；「一大块成交跑去中心化做市商，并不符合以太坊的利益，这在一定程度上就是出块慢造成的。」</li>
+<li><strong>TokenWorks / FWA.fun 创始人 Adam</strong>：FWA.fun 是主网消耗 gas 最多的应用之一，而它使用的 Chainlink VRF 还要额外等 3 个区块确认——区块一短，整段等待都短。</li>
+<li><strong>Railgun 贡献者 Dan Lipert</strong>：出块加快会把流动性更集中在 L1，隐私集合更大；合规工具在关键窗口也有更多反应机会。</li>
+<li><strong>Gattaca 工程负责人 George Davies</strong>（负责 Titan Builder，目前约产出以太坊一半区块）：把 Quick Slots 视为下一版共识层 EIP 的<strong>第一优先级</strong>——「这是 DeFi 用户最大的体验解锁，同时带来审查抗性和最终性收益。」</li>
+<li>另有 <strong>Lido 的 Greg Casegamas</strong>（乐见其在 Hegotá 标为 S 级）、<strong>Ethena 创始人 Guy Young</strong>、<strong>Blockspace 研究负责人 Michael Mosier</strong>、<strong>Frachtis 的 Patrick Apriori</strong>、<strong>Umia 的 Nicolas</strong>、<strong>哥伦比亚商学院兼职教授 Omid Malekan</strong>（前提是保住去中心化）、<strong>Ethereum Institutional 联合创始人 Matthew</strong>、<strong>PropellerHeads 创始人 Haikane</strong>（延迟改善可能让更多业务把资产搬到 L1）等表态支持。</li>
+</ul>
+<p><strong>审查抗性是这份提案里被低估的部分。</strong> 对被审查的人来说，出块时间就是等待时间，决定多久才能再有一次上链机会。EIP-8198 与 Hegotá 的头牌 EIP——<strong>FOCIL</strong>——叠加后更有意义：FOCIL 给一组验证者（includers）额外的交易纳入职责，Quick Slots 则提高这些纳入机会出现的频率。<strong>12 秒一块是每分钟 5 次，10 秒一块是每分钟 6 次。</strong> FOCIL 给被审查交易更多扇门，Quick Slots 让门更频繁地打开。这里有个有用的概念：<strong>经济审查抗性</strong>——对手要把一笔交易持续挡在链外，需要付出多少代价。槽位变短，对手要在固定时间里维持审查，就要面对更多提议者机会。Patrick Apriori 的判断是：与 FOCIL 配对后，审查会更贵、更短、结构上更难做。</p>
+<p><strong>去中心化的评估也是公开的。</strong> Flashbots 公开评估后结论支持这个方向：更短槽位降低确认延迟、改善体验；支持把槽位时间做成可配置，并逐步试验。他们更关心地理去中心化——但按延迟校准的模拟，当前讨论的缩短幅度不太构成实质约束；<strong>即便从 12 秒降到 6 秒，地区间收益差距会扩大，地理集中度的结果大体不变。</strong> Castle Labs 研究员 Noveleader 的态度更有代表性：他们支持压缩出块时间有助于降低被动 LP 的再平衡损失（LVR）、提高资本效率、让清算窗口更及时，但<strong>同时要求测试证明更短槽位不会抬高地理分散与家庭验证者的门槛</strong>，以免传播窗口变紧、质押悄悄涌向网络更好的数据中心。</p>
+<p><strong>L1 变快，L2 之间也会更好配合。</strong> 依赖以太坊的 L2，都有一部分交互继承 L1 的时钟。最简单的是存款：资产或消息从 L1 进入 L2，必须先有一笔 L1 交易被纳入——L1 区块更短，这段路可以更早走完，不论该 L2 是否用以太坊做排序。对某些互操作设计，好处更大：<strong>Ethereum Economic Zone（EEZ）的 Armagan</strong> 举例说，EEZ 正在做的方案是一条 rollup 上的合约可以调用另一条 rollup 上的合约并在同一笔交易里使用返回值，而这个同步窗口每个 L1 区块最多开一次。「<strong>L1 槽位时间决定跨链组合的节拍</strong>；槽位缩短，同步窗口更频繁出现，等到下一次的最坏等待也变短。」</p>
+<p>这里必须把 Ethlabs 的定位陈述原样引出来，因为它直接关系到本文的主论点：「<strong>Quick Slots 不是要把 L1 快到让 L2 没必要存在，而是让主网逐步变快，让 L1 和各类 L2 一起变强。</strong>」Ethlabs 给 L1 的定位仍然是全球结算层：足够安全、足够去中心化，让资产、应用和 L2 都能依靠。</p>
+<p><strong>工程进展也不是空谈。</strong> 9 月 12 日，Terence 报告已按工作规范实现 Prysm 原型，并在本地用 Kurtosis 测通；下一步是多客户端对齐实现，以及在更接近真实网络条件下测试过渡。Ethlabs 与 Sourcify 一起排查已部署合约中的计时假设——找出今天有哪些东西绑死在 12 秒上，包括与历史信标区块根交互的合约，初步评估已经给出具体代码路径，而不是一句空泛的「可能会坏」。Francesco 与基金会最终性团队则在审视 Quick Slots 与<strong>解耦共识</strong>（Hegotá 之后的升级目前称作 I*，把出块与最终性分开，已是以太坊基金会协议路线图中优先级最高的提案）的关系。Barnabé 在 Francesco 以及基金会贡献者 Justin Traglia、Jihoon Song 的参与下，提出了覆盖计时变更与升级过渡的共识规范。</p>
+<p><strong>为什么必须争取 Hegotá？</strong> Barnabé 给出的答案值得记下来：错过 Hegotá，不等于 Quick Slots 会自动滑进下一分叉，而可能要与体量更大的共识改造争夺工程资源，<strong>再等好几个升级周期才有干净窗口</strong>。每一轮升级的工程带宽都有限，而「出块时间」这种全网约束，是少数只能在协议层解决、无法由应用各自变通的问题。</p>
+<h3>3.3 zkAPI：L1 结算能力向 AI 调用场景的延伸</h3>
+<p>10 月 2 日，以太坊基金会联合 OAC 上线 zkAPI：用户存入 ETH 或 USDC 后，用零知识证明换取一个临时密钥，来调用 AI 模型。</p>
+<p>这条消息在 L2 语境下容易被当作边角料，但把它放进本节的框架里，含义就清楚了：<strong>当 L1 上的验证成本被 EIP-8288 这类提案压低之后，会出现一批过去因为太贵而根本没人做的应用形态——隐私优先的 API 调用、可验证的 AI 推理计费、抗量子的凭证体系。</strong> 这些应用的共同点是：它们的重心不在「执行多少笔交易」，而在「验证一个证明有多便宜」。而这恰恰是 L1 提速之后最受益的一类负载。</p>
+<p>顺便一提，本期还有几条同方向的信号：Nostra 在 Starknet 上遭遇预言机操纵，单一账户借出约 <strong>350 万美元</strong>——它提醒了一件事：即使执行层另起一条链，安全性仍然不能离开底层；Vitalik 的新书《Snowmoon》面世，32 章、约 10 万英文词，把零知识、隐私与去中心化治理写进了主线；Zcash 计划明年 1 月引入抗量子签名，而目前约七成 ZEC 仍在透明地址池中；Aztec 重启 zk.money，隐私标的 AZTEC、RAIL、ZAMA 再度被讨论。这些线索合在一起，是同一个方向的：<strong>密码学层面的能力升级，正在从「叙事」变成「工程排期」。</strong></p>
+<hr />
+<h2>四、范式解读：扩容的单位从「链」变成了「计算」</h2>
+<p>把 3.1 和 3.2 两节合起来看，一个结构性判断就浮现出来了。</p>
+<p>以太坊的扩容史上，出现过两次方向相反的反转。</p>
+<p><strong>第一次反转发生在 2021 年前后。</strong> 在那之前，扩容的主流想法是「更好的 L1」——更大的区块、更短的出块时间、更高的 TPS，一批「以太坊杀手」就是这么做的。这条路线的困境在于，它必须以去中心化为代价：节点门槛上升、验证成本变高。以太坊选择了掉头：把执行外包出去，让 L2 承担交易处理，L1 退化为结算层与数据可用性层。这就是 Rollup-centric 路线图，也是 2021 到 2024 年整个行业「模块化」叙事的起点。那一次反转的本质是：<strong>扩容的单位从「一条链」变成了「多条链的分工」。</strong></p>
+<p><strong>第二次反转就是现在。</strong> 它不是在否定 L2 的存在，而是在改变扩容的计价方式。Rollup-centric 路线图隐含着一个结论：L1 的执行能力就是昂贵的、有限的、不该被用来跑应用的。EIP-8288 挑战的正是这个结论——它不增加链，不新增网络，它降低的是<strong>链上验证的单位成本</strong>。</p>
+<p>为什么说 EIP-8288 是这次反转的标志物，而不是「Vitalik 又发了一版提案」？</p>
+<p><strong>第一，它做的是纵向剖开交易，而不是横向复制链。</strong> 过去的扩容方案——分片、L2、侧链——全部是横向的：再开一条链，把负载分出去。EIP-8288 是纵向的：把一笔交易剖成「业务逻辑」和「纯粹验证工作」两半，把后一半从共识层剥离出来，交给链下节点做极度并行的处理，只把 65 到 96 字节的依赖项帧送回链上。Vitalik 自己用的词是「专门化分片」——<strong>分片的是计算类型，不是链。</strong></p>
+<p><strong>第二，它是「让 L1 更便宜」，而不是「让 L1 更快」。</strong> 这一点常被混淆。EIP-8198 是让 L1 更快（单位时间更多区块），EIP-8288 是让 L1 更便宜（单位计算更低价格）。两条路线不冲突，反而互补：一个提高供给的频次，一个提高供给的效费比。但它们共同的对手，都是「L1 的执行能力天然昂贵、因此必须外包」这个前提。</p>
+<p><strong>第三，它把抗量子与隐私从「扩容的对立面」变成了「扩容的同一个动作」。</strong> 这是 EIP-8288 最容易被低估的地方。在原来的架构下，量子安全签名要 10 万到 30 万 gas，隐私证明最低要 35 万 gas，两者叠加就是 TPS 从 25 掉到 0.25——安全、隐私、可扩展性三者不可兼得，这是 Vitalik 演讲开篇就点明的前提。而 EIP-8288 通过把验证前移到内存池、把聚合递归压缩，让「量子安全交易」的执行开销压缩到近乎可忽略，也让 zk-SNARK 与 STARK 隐私应用摆脱高昂 gas 的掣肘，成本平民化且原生具备量子抗性。也就是说：<strong>过去只能三选三的问题，现在变成了同一件事的三个侧面。</strong> 这就是它真实的政治力量来源——它给「L1 值得被投资」这件事提供了新的理由，而且是加密行业最难以反驳的那种理由：安全。</p>
+<p><strong>第四，衍生的能力恰好落在 L2 自己最需要的地方。</strong> 文章题目里「第二次反转」的「反转」还有一层含义：EIP-8288 对 ZK-Rollup 不是坏消息。当证明验证变便宜，ZK-Rollup 提交状态证明的成本随之下降，它可以从「十分钟甚至一小时一批」的批处理节奏里解放出来，加快最终确认。<strong>这意味着 L1 的提速并不必然消灭 L2 的技术价值，它会消灭的是「因为 L1 太贵所以只能用 L2」这类 L2 的定价依据。</strong></p>
+<p>用一个不太精确但直观的类比：Rollup-centric 路线图是「造更多城市，把人口疏解出去」；EIP-8288 是「修地铁，让中心城区单位面积能容纳更多人口」。前者解决的是空间问题，后者解决的是密度问题。当一条地铁线的运力足够时，靠「我在郊区，所以便宜」来定价的城市，就会先被重新估值。</p>
+<hr />
+<h2>五、对价值捕获的含义</h2>
+<p>如果扩容范式真的在反转，那它对估值框架的影响是可以推导出来的。</p>
+<p><strong>第一，L2 排序器的收入模型会被重新定价。</strong> 今天能活下来的 L2，收入来自排序器手续费。这个收入受三件事压制：DA 成本、用户补贴、以及 L2 之间为了抢交易而压低 base fee 的竞争。现在要加上第四件：<strong>L1 本身的延迟与成本在下降。</strong> 当 L1 的 12 秒变成 10 秒、甚至更短，当 L1 上验证 STARK 证明的单位成本下降，L2 相对 L1 的体验优势就会被压缩。体验优势被压缩，意味着 L2 在定价上能收的溢价也会被压缩。</p>
+<p>要注意这不是说 L2 会消失——执行仍然在 L2 上更便宜，这是结构性的。但「L2 有排序器，所以 L2 有护城河」这个推理链的强度，会被削弱一大截。</p>
+<p><strong>第二，L2 的差异化会被强迫分类。</strong> 把今天的 L2 按护城河类型排一下，会得到一个相当清晰的排序：</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>护城河类型</th>
+<th>代表</th>
+<th>与 L1 提速的关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分发渠道</td>
+<td>Base（背靠 Coinbase 数千万用户，流量成本近零）</td>
+<td><strong>基本无关</strong>。用户在哪里，链就在哪里，与 L1 快慢无关</td>
+</tr>
+<tr>
+<td>先发生态</td>
+<td>Arbitrum（2022 年就积累了大量 DeFi）</td>
+<td><strong>部分相关</strong>。生态黏性在，但排序器费率溢价会被 L1 提速压</td>
+</tr>
+<tr>
+<td>技术叙事</td>
+<td>Starknet、zkSync、Scroll 等</td>
+<td><strong>高度相关</strong>。当 L1 自己也能便宜，纯技术叙事最先被抢走</td>
+</tr>
+<tr>
+<td>补贴驱动</td>
+<td>Blast、Abstract</td>
+<td><strong>直接归零</strong>。补贴买来的 TVL 是租来的流动性</td>
+</tr>
+</tbody>
+</table>
+<p>这张表里最脆弱的是第三行和第四行。第四行已经被 2026 年的多次关停验证了。第三行是本文要提醒的重点：<strong>当一个 L2 的估值主要建立在「我的技术比 L1 更能扩容」上时，L1 侧的技术路线图就是它最大的风险敞口。</strong></p>
+<p><strong>第三，代币估值锚正在从「TVL + FDV」转向「实际收入」。</strong> 这不是 L2 独有的事，而是整个一级与二级市场的共同转向。RootData 的统计是：2026 年 1 月至 8 月，加密行业披露融资总额约 <strong>119.7 亿美元</strong>，同比下降约 <strong>52.9%</strong>；其中一级市场约 115.21 亿美元，同比下降约 14.6%；融资事件 329 起，同比下降约 31.7%。融资总额仍由少数大额交易支撑，机构出手更集中。散户能直接参与的公开销售收缩得更明显：2026 年一季度 ICO、IDO、IEO 合计约 <strong>3.9 亿美元、105 场</strong>；截至 6 月上旬约 <strong>5800 万美元、37 场</strong>；而 2025 年一季度曾经是约 <strong>8.49 亿美元、429 场</strong>。</p>
+<p>二级市场的对照更残酷。MegaETH 的预市场一度被炒到 <strong>60 亿美元</strong> FDV，2026 年 4 月 30 日正式上市，开盘 FDV 在 16 亿到 20 亿美元之间，最高点就出现在上市当天，此后价格回落到 <strong>0.037 美元</strong>，FDV 只剩约 <strong>3.7 亿美元</strong>——<strong>较高点跌去 80%</strong>。Monad 在 2024 年由 Paradigm 领投约 2.25 亿美元机构轮，2025 年 11 月又在 Coinbase 完成约 2.69 亿美元公开销售，上线后 FDV 一度冲到近 <strong>47 亿美元</strong>，如今回落到约 <strong>23 亿美元</strong>——<strong>较顶点跌 52%</strong>。Plasma 用与 Linera 相同的 Sonar 公募系统，目标 5000 万美元，实际超募到 <strong>3.73 亿美元</strong>，按 <strong>5 亿美元</strong> FDV 定价，上市首日冲到每枚 <strong>1.68 美元</strong>的历史高点，此后一路下跌至约 <strong>0.084 美元</strong>——<strong>较高点跌去 95%</strong>，完全稀释估值约 6.5 亿美元。</p>
+<p><strong>第四，Starknet 的转型可以读成一次估值框架的切换尝试。</strong> 它放弃的不是链，而是<strong>估值锚</strong>。作为 L2，它被按 TVL、按排序器收入、按生态应用数量来定价，而这三个指标它都在下滑——TVL 较峰值跌超 50.6%，日收入大多数时候只有数千美元。作为一条独立的抗量子 L1，它可以被按另一套框架定价：安全溢价、货币溢价、后量子迁移的先发优势。市场对这条叙事的第一反应，就是 STRK 单日 41.2% 的反弹，以及一周 47% 的涨幅。</p>
+<p>但这里必须把风险说清楚。</p>
+<p><strong>第一，这条叙事目前没有可执行的方案。</strong> Starknet 尚未提出具体的抗量子技术方案，转型也<strong>尚未正式进入链上治理提案阶段</strong>——它目前是一个由 CEO 在演讲中提出的方向，不是一个已启动的工程。<strong>第二，脱离以太坊意味着自担成本。</strong> 作为 L2，它的底层安全由以太坊提供；作为独立 L1，底层安全的维护、生态建设与流动性的获取，都要自己承担。<strong>第三，社区质疑是真实存在的。</strong> 质疑讲得很直白：Starknet 曾经依附于以太坊的安全叙事获得了 80 亿美元估值，如今要单飞，等于「过河拆桥/背刺以太坊」。<strong>第四，量子叙事本身也有炒作成分。</strong></p>
+<p>不过量子风险确实是真的。10 月 8 日，以太坊基金会核心研究员 Justin Drake 发警告文章，呼吁行业进入「地堡模式」，指出保护 BTC 与 ETH 钱包的 ECDSA 可能比预期更早受到威胁，建议有序进行资产迁移（把大额资产转到公钥尚未公开的新地址），并呼吁币安、Bitbank、Robinhood、Bitfinex、Tether 加强冷存储安全；文章还提到 strawmap.org 那份全面采用基于哈希的密码学与端到端形式化验证的路线图。Vitalik 的回应则是：不建议仓促转移资产，但应认真对待 AI 加速数学研究带来的密码学风险；核心的新风险落在 <strong>ML-DSA、FHE 这类格密码</strong>上——如果未来两年 AI 带来相当于过去约 50 年的数学进展，格密码的安全性可能明显下降，ECDSA 也可能比预期更早失守。整件事的引子，是 OpenAI 发布了一份包含 <strong>722 篇</strong>数字手稿的研究成果，涉及数百个未解问题的答案，在学术界引发震动；而随后的行业结论是：AI 短期内还无法破解加密技术。</p>
+<p>把这段合起来看：<strong>量子风险是真的，「2027 年 Starknet 变成抗量子 L1」不是必然的。</strong></p>
+<p><strong>第五，一个必要的反方视角。</strong> PANews 同期发过一篇《以太坊流动性护城河正在消失？反驳看空论的 10 个核心论据》。把它放在本文语境里有价值，因为它提醒了一件事：<strong>「L2 退潮」和「以太坊变弱」是两件不同的事。</strong> 前者是执行层商业模式的重估，后者是结算层的地位问题。EIP-8288 与 EIP-8198 的存在本身就说明：结算层正在主动扩大自己的能力边界。真正在退潮的，是「执行层可以独立于结算层形成长期定价权」这个判断。</p>
+<hr />
+<h2>六、结论与观察指标</h2>
+<p><strong>结论第一层，技术层面。</strong> 以太坊的扩容重心正在从「更多链」回到「更便宜的 L1 计算单位」。EIP-8288 是这次反转的标志物：它不新增网络，它把昂贵计算前置到内存池，把一笔交易纵向剖成业务逻辑与验证工作，让链上只留 65 到 96 字节的依赖项帧，把验证负荷交给链下节点做极度并行的处理，最终把主链每区块的共识层数据载荷压在 100 到 300KB。EIP-8198 则从另一侧推进：先把「出块时间永远 12 秒」的硬编码拆掉，让出块时间变成可调节的变量，再从 12 秒起步往下降。</p>
+<p><strong>结论第二层，商业层面。</strong> 2021 到 2024 年那套「模块化 + 更多 L2」的叙事，建立在三个假设上：DA 成本会持续下降、流动性会溢出、代币能捕获价值。2026 年这三条假设分别被证伪：DA 便宜是公共品而非护城河；靠补贴买来的流动性会在激励淡出后两个月内流失 60%；排序器收入被 DA 成本、补贴、base fee 竞争吃干，代币估值随之崩塌——Blast 从空投时的 29 亿美元 FDV 走到关停时的 2300 万美元市值，STRK 较历史高点下跌约 98.5%。</p>
+<p><strong>结论第三层，估值层面。</strong> L2 需要按护城河类型重新分类定价：靠分发的（Base）与 L1 快慢无关；靠先发生态的（Arbitrum）会被压缩费率溢价；靠技术叙事的（Starknet、zkSync、Scroll）风险敞口最大；靠补贴的（Blast、Abstract）已经出清。同时，估值锚正在从 TVL 与 FDV 转向实际收入——这在一级市场的融资数据（同比 -52.9%）、公开销售的数据（从 2025 年一季度的 8.49 亿美元 / 429 场，到 2026 年 6 月上旬的 5800 万美元 / 37 场）、以及 MegaETH、Monad、Plasma 的上市后回撤（-80%、-52%、-95%）上都有明确的读数。</p>
+<p><strong>接下来要盯的四个观察指标：</strong></p>
+<ol>
+<li><strong>Starknet 的 L1 转型是否从「CEO 演讲」变成「链上治理提案」。</strong> 具体门槛有三：是否提出可执行的抗量子技术方案；治理提案是否正式提交并进入投票；2027 年的时间表是否有工程节点支撑。三者缺一，「2027 年抗量子 L1」就只是叙事。</li>
+<li><strong>EIP-8288 的 devnet 状态与真实开销。</strong> 当前可观察的是四条线：基于 EIP-8141 的测试网运行情况；内存池聚合在真实网络条件下的开销与传播延迟（网络级仿真模型已在跑）；底层证明系统高效实现的算法竞赛结果；以及 RISC-V 是否真的经由这条路径被引入。</li>
+<li><strong>EIP-8198 是否进入 Hegotá。</strong> 这是最有明确时间窗口的一个。如果错过，按 Barnabé 的判断，Quick Slots 不会自动滑进下一分叉，而要与解耦共识（I*）这样体量更大的共识改造争夺工程资源，<strong>再等好几个升级周期才有干净窗口</strong>。需要盯的里程碑是：共识规范是否并入主代码、多客户端实现是否对齐、以及 Ethlabs 与 Sourcify 排查出的「绑死在 12 秒」的下游合约迁移方案是否落地。</li>
+<li><strong>L2 TVL 与排序器收入的分布迁移。</strong> 当前的分水岭数字是：Base、Arbitrum、Optimism 拿走约 80% 的排序器手续费收入。如果这个集中度继续上升，说明市场正在用脚投票、把「分发渠道」和「先发生态」之外的 L2 逐步清零；如果它开始下降，说明有某个新变量（很可能是 Arc 这类以支付与机构为切入点的链）在切分市场。同时还要盯一条：<strong>2026 年已经关停多条有融资背景的 L2（Blast、Abstract，以及 6 月的 Botanix），下一条的公告会不会来，来在哪里。</strong></li>
+</ol>
+<p>最后回到 Netz 留下的那个问题：那些既有钱又有人、但仍然依赖补贴维持生态的 L2，它们的倒计时，是否也已经开始了？</p>
+<p>我的答案是一句带条件的话：<strong>倒计时的时钟不在融资余额里，在排序器收入里。</strong> 只要一条 L2 的手续费收入还撑不起它的排序器与 DA 成本，它就必须持续向母公司或代币持有人融资；而一旦融资环境收紧（2026 年一级市场同比 -52.9% 已经说明这一点），这个循环就会断。</p>
+<p>而与此同时，L1 侧的两条提案正在做一件更根本的事：<strong>让「必须把执行外包出去」这个前提，一年比一年不成立。</strong></p>
+<p>这不是「L2 死了」。这是 L2 的估值框架，换了一套写法。</p>
+<hr />
+<p><strong>信息来源</strong></p>
+<ul>
+<li>Starknet 拟转型独立 L1、目标 2027 年前完成（2026-10-08 至 10-09）——<a href="https://www.panewslab.com/zh/articles/01a11f91-5603-7232-aac2-19b70a89b959">PANews：Starknet 计划转型为独立 L1，目标 2027 年完成</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a11eb9-dc5d-75f0-abc8-2cc6b714320c">PANews 跟进报道</a> ｜ <a href="https://www.techflowpost.com/article/34418">深潮 TechFlow</a> ｜ <a href="https://www.odaily.news/zh-CN/post/5213313">Odaily</a> ｜ <a href="https://www.techflowpost.com/article/34369">TechFlow：Starknet 与以太坊的关系</a> ｜ <a href="https://www.theblockbeats.info/news/63862">TheBlockBeats：StarkWare CEO 演讲</a></li>
+<li>Blast 停止运营（2026-10-02 公告 / 10-03 报道）——<a href="https://www.techflowpost.com/article/34355">深潮 TechFlow：Blast 关停</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0ffc6-8559-77d6-8bb6-249ec9b03507">PANews</a> ｜ <a href="https://www.odaily.news/zh-CN/post/5213252">Odaily</a> ｜ <a href="https://www.theblockbeats.info/flash/370104">TheBlockBeats 快讯</a></li>
+<li>Abstract 宣布 12 月 15 日关闭主网（2026-10-06 公告 / 10-07 报道）——<a href="https://www.techflowpost.com/article/34379">深潮 TechFlow</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a11413-43f2-77f9-bc8b-d550d848f29a">PANews：Abstract 落幕</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a115a6-271a-75a8-ad28-528d33248741">PANews 跟进</a> ｜ <a href="https://www.odaily.news/zh-CN/post/5213303">Odaily</a></li>
+<li>EIP-8288：Vitalik 在 ETHShanghai 2026 详解「把昂贵计算前置到内存池」（2026-09-23）——<a href="https://www.panewslab.com/zh/articles/01a0c7ee-2b4f-7747-8a0a-a71d569379bb">PANews：Vitalik 最新演讲详解 EIP-8288</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0c883-cc97-73eb-a9e8-412e7cd48361">PANews：ETHShanghai 演讲实录</a></li>
+<li>EIP-8198 / Quick Slots：约 20 位生态参与者主张纳入 Hegotá（2026-09-18，原文来自 Ethlabs）——<a href="https://www.techflowpost.com/article/34089">深潮 TechFlow：提速不必牺牲去中心化？EIP-8198 先改计时，再缩出块</a> ｜ <a href="https://x.com/ethlabs_org/status/2100572351104500108">Ethlabs 原始推文</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0b966-2663-76b4-844c-91e3ae2b057c">PANews</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0b73e-ce0f-7516-a365-554c0e48b00e">PANews 跟进</a></li>
+<li>Linera 社区轮募资遇冷、资金退款（2026-09-09 结束 / 09-11 报道）——<a href="https://www.panewslab.com/zh/articles/01a098b7-4a84-7606-a827-65f4b17fc046">PANews：Linera 社区轮募资遇冷，「a16z 概念」为何卖不动了？</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0bdc2-b913-7360-81d3-278268cfa708">PANews 跟进</a></li>
+<li>Circle 公链 Arc 主网开放（2026-09-16）——<a href="https://www.techflowpost.com/article/34028">深潮 TechFlow 加密早报</a> ｜ <a href="https://www.odaily.news/zh-CN/post/5213083">Odaily</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0afe0-d2f8-700e-8ccf-e826fdf2e2bd">PANews</a></li>
+<li>zkAPI 上线：存入 ETH / USDC 后用零知识证明换取临时密钥调用 AI 模型（2026-10-02）——<a href="https://www.techflowpost.com/article/34346">深潮 TechFlow</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0fb93-3fd1-74bb-9d43-a17d66ff1f8f">PANews</a></li>
+<li>Nostra 在 Starknet 上遭预言机操纵（2026-09-18）——<a href="https://www.panewslab.com/zh/articles/01a0b1fd-e2c1-771f-8430-0005a8f3a7bd">PANews</a></li>
+<li>Vitalik 新书《Snowmoon》面世（2026-10-02 至 10-03）——<a href="https://www.panewslab.com/zh/articles/01a0fc58-be30-701b-b663-f01ac8894a1a">PANews</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0ff60-006f-70b8-b6f2-9770640f221a">PANews 跟进</a></li>
+<li>抗量子与隐私叙事：Quantus、Zcash、Aztec（2026-10 上旬）——<a href="https://www.panewslab.com/zh/articles/01a11a7c-49fc-75c7-b5af-d43804e9f4eb">PANews：Quantus 抗量子</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a1207d-7f58-7426-86ae-70f7de393820">PANews：Zcash 明年 1 月引入抗量子签名</a> ｜ <a href="https://www.theblockbeats.info/flash/371016">TheBlockBeats 快讯</a> ｜ <a href="https://www.panewslab.com/zh/articles/01a0f0da-993e-76b0-bf56-a6ae824ae1d0">PANews：Aztec 重启 zk.money</a> ｜ <a href="https://www.techflowpost.com/article/34324">深潮 TechFlow</a></li>
+<li>反方视角：<a href="https://www.panewslab.com/zh/articles/01a124d7-586e-763f-aaa6-f47261f7dfa8">PANews：以太坊流动性护城河正在消失？反驳看空论的 10 个核心论据</a></li>
+<li>一周要闻汇总：<a href="https://www.panewslab.com/zh/articles/01a1201c-d569-743f-944a-cc59b1aedef5">PANews 一周精选丨Abstract 落幕、Starknet 计划转型 L1 抗量子</a></li>
+<li>基础素材：<code>task/2026-09-21_2026-10-10_技术与政策动态15条.md</code>；素材库归档：<code>crawler/output/素材库_20261002.md</code>、<code>素材库_20261003.md</code>、<code>素材库_20261007.md</code>、<code>素材库_20261009.md</code>、<code>素材库_20261010.md</code></li>
+</ul>
+<p><strong>编制日期</strong>：2026-10-10</p>
+<hr />
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav"><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-tbill-coupling-2026.html">💵 稳定币的尽头是美债</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-payments-infrastructure.html">🤖 AI Agent 支付基础设施</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/genius-act-implementation-2026.html">⚖️ GENIUS 法案落地</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/web2-web3-positioning.html">🧭 Web2 与 Web3 的定位</a></nav>
+
+        <!-- Sources -->
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/erc8211-analysis/">⛓ ERC-8211 研报</a> ·
+            <a href="https://julietwang123.github.io/blockchain-2025-report/">📊 年度报告</a>
+        </p>
+    </footer>
+</body>
+</html>
