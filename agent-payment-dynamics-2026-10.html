@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent 支付与交易的六层功能地图（2026 年 9 月 21 日–10 月 10 日动态梳理）</title>
+    <meta name="description" content="政策与准政策线、行业信号、Agent 支付/交易的六层功能分层框架，以及三条判断——一份把「机器原生支付」叙事拆解到具体协议落点的梳理。">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list { display: flex; gap: 20px; list-style: none; }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold { background: var(--gold-light); color: var(--gold); }
+        .article-title {
+            font-size: 1.95em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 14px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.02em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.65;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 12px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author { display: flex; align-items: center; gap: 6px; }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Body Typography ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            background: var(--accent-light);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 0 0 32px;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.8;
+        }
+        .article-body blockquote p { margin-bottom: 10px; }
+        .article-body blockquote p:last-child { margin-bottom: 0; }
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.1em; font-weight: 700;
+            color: var(--text);
+            margin: 30px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p { margin-bottom: 16px; color: var(--text2); line-height: 1.85; }
+        .article-body strong { color: var(--text); font-weight: 600; }
+        .article-body a { color: var(--accent); text-decoration: none; }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 22px 0 30px;
+            font-size: .87em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th {
+            padding: 12px 14px; text-align: left;
+            font-weight: 600; letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd) { background: var(--bg2); }
+        .article-body tbody tr:nth-child(even) { background: #fff; }
+        .article-body tbody tr:hover { background: var(--accent-light); }
+        .article-body td {
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+            vertical-align: top;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        .article-body td:first-child { font-weight: 600; color: var(--text); white-space: nowrap; }
+        .layer-name { font-family: var(--font-mono); font-weight: 700; color: var(--accent); }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 14px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li { margin: 7px 0; line-height: 1.75; }
+
+        /* ── Numbered Signal Cards ── */
+        .signal { margin: 20px 0 26px; }
+        .signal-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin-bottom: 14px;
+        }
+        .signal-item h4 {
+            margin: 0 0 10px; font-size: 1em; color: var(--text);
+        }
+        .signal-item h4 .step {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--accent); color: #fff;
+            font-size: .68em; margin-right: 8px; vertical-align: 1px;
+        }
+        .signal-item p { margin: 0 0 8px; font-size: .9em; }
+        .signal-item p:last-child { margin-bottom: 0; }
+        .arrow { color: var(--accent); font-weight: 700; margin-right: 4px; }
+        .caveat {
+            color: var(--text3);
+            border-top: 1px dashed var(--border);
+            padding-top: 8px;
+            margin-top: 10px !important;
+            font-size: .85em !important;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin: 22px 0 28px;
+        }
+        .highlight-box .hb-title {
+            font-size: .88em; font-weight: 700; color: #4338ca;
+            margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box p { margin: 0 0 8px; font-size: .9em; }
+        .highlight-box p:last-child { margin-bottom: 0; }
+        .highlight-box .verdict {
+            font-size: .92em; color: var(--text); font-weight: 600;
+        }
+
+        /* ── Note ── */
+        .note {
+            font-size: .86em; color: var(--text3);
+            border-left: 3px solid var(--border);
+            padding: 4px 0 4px 14px;
+            margin: 16px 0 24px;
+            line-height: 1.75;
+        }
+
+        /* ── Divider ── */
+        .article-body hr {
+            border: none; border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 7px; border-radius: 4px;
+            font-size: .88em; font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources ── */
+        .sources {
+            margin-top: 52px; padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: .82em; color: var(--text3);
+            line-height: 1.8;
+        }
+        .sources strong { color: var(--text2); }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px; padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px; border-radius: 8px;
+            font-size: .84em; text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover { border-color: var(--accent); background: #fff; }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .article-body table { font-size: .76em; }
+            .article-body thead th, .article-body td { padding: 8px 9px; }
+            .article-body td:first-child { white-space: normal; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+            .nav-links-list li:nth-child(3) { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/robinhood-chain-analysis/">⛓ Agent 支付栈研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-wallet-x402.html">Agent 钱包 × x402</a></li>
+            <li><a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-payments-infrastructure.html">Agent 支付基础设施</a></li>
+            <li><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-tbill-coupling-2026.html">稳定币的尽头是美债</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">Agent 支付</span><span class="tag">机器原生支付</span><span class="tag">x402</span><span class="tag">AP2</span><span class="tag">AMP</span><span class="tag">UCP / ACP</span><span class="tag">ZK 身份</span><span class="tag">稳定币结算</span><span class="tag">动态梳理</span>
+            </div>
+            <h1 class="article-title">Agent 支付与交易的六层功能地图</h1>
+            <p class="article-subtitle">2026 年 9 月 21 日–10 月 10 日动态梳理：政策与准政策线、行业信号，以及把「机器原生支付」叙事拆解到具体协议落点的六层功能分层框架</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026 年 10 月 10 日</span>
+                <span class="meta-sep">·</span>
+                <span>约 3,500 字 · 阅读约 12 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <blockquote>
+                <p>本文是「稳定币 &amp; A2A 动态梳理」中 Agent 支付 / 交易部分的独立成稿。核心结论在开头先说清：<strong>2026 年 9 月 21 日–10 月 10 日期间，没有任何专门针对 Agent 支付 / 交易的立法、牌照制度或监管细则。</strong>素材库中不存在专属标签，也不存在专文正文——本期所有内容均为间接信号，需要交叉推导。</p>
+                <p>这意味着，Agent 支付目前仍处于<strong>机构研究与技术原语层面的叙事</strong>，尚未进入监管议程。真正需要被讨论的，不是「有没有牌照」，而是这笔交易里<strong>身份、授权、订单、付款凭证、资金权限和结算</strong>分别由谁负责。</p>
+            </blockquote>
+
+            <hr />
+
+            <h2>一、政策 / 准政策线（主要为间接约束）</h2>
+            <p>本期没有任何直接针对 Agent 支付的监管动作。以下四条均为<strong>间接约束</strong>——它们不点名 Agent，却会在身份、认证、纳税与结算币种四个方向上，实质性限制代理的自主空间。</p>
+
+            <table>
+                <thead>
+                    <tr><th style="width:64px;">日期</th><th style="width:42%;">动作</th><th>对 Agent 支付 / 交易的含义</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>9/25</td>
+                        <td>SEC 委员 Peirce 呼吁减少个人数据采集，推动零知识证明等隐私技术</td>
+                        <td>可能减少身份信息暴露，但不能直接推导为降低 KYC 要求</td>
+                    </tr>
+                    <tr>
+                        <td>10/2</td>
+                        <td>SEC 探索 ZK 身份一次认证、跨平台交易的相关报道</td>
+                        <td>可能减少重复认证；<strong>身份认证不等于获得交易或资金授权</strong></td>
+                    </tr>
+                    <tr>
+                        <td>9/30</td>
+                        <td>伊利诺伊州数字资产交易税及 DeFi 适用范围的相关报道</td>
+                        <td>Agent 发起交易仍需分析实际纳税主体及适用规则，自动执行不消除纳税责任</td>
+                    </tr>
+                    <tr>
+                        <td>10/8</td>
+                        <td>ESMA 发布非 MiCA 合规稳定币服务监管预期</td>
+                        <td>涉及 MiCA 授权服务商面向欧盟客户提供的服务；Agent 选择结算币种同样受到辖区与服务商约束</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note">与上一版本相比，本表刻意收紧了口径：不再把「ZK 身份」直接等同于「降低 KYC」，也不再假定合规化路径会走向「新设 A2A 牌照」。这两处推断在素材层面都缺乏支撑。</div>
+
+            <h2>二、行业与机构线（本期动态）</h2>
+
+            <h3>★ 核心三条（机器原生支付相关信号）</h3>
+            <div class="signal">
+                <div class="signal-item">
+                    <h4><span class="step">1</span>9/24　贝莱德《智能经济白皮书》</h4>
+                    <p>据素材报道，讨论大语言模型与区块链代币化，并将 <strong>AI 自主购买数据、调用服务、获取算力</strong>与稳定币、代币化资产的应用联系起来。</p>
+                    <p><span class="arrow">→</span>机构研究开始关注<strong>机器消费与结算需求</strong>。</p>
+                    <p class="caveat"><span class="arrow">→</span>研究框架仍需通过实际产品接入和交易数据验证。</p>
+                </div>
+                <div class="signal-item">
+                    <h4><span class="step">2</span>9/30　瑞银研报</h4>
+                    <p>据素材报道，预测稳定币规模在 2031 年达到 1.2 万亿美元，并关注<strong>结算、抵押品流动性、机器原生支付</strong>等场景。</p>
+                    <p><span class="arrow">→</span><strong>机器原生支付被纳入稳定币应用讨论</strong>。</p>
+                    <p class="caveat"><span class="arrow">→</span>规模数字属于预测，应与实际支付量、商户覆盖和活跃用户分别呈现。</p>
+                </div>
+                <div class="signal-item">
+                    <h4><span class="step">3</span>10/2　以太坊基金会联合 OAC 上线 zkAPI</h4>
+                    <p>素材描述的流程为：用户存入 <strong>ETH 或 USDC</strong> → 使用<strong>零知识证明获取访问凭证</strong> → <strong>匿名调用 AI 模型</strong>。</p>
+                    <p><span class="arrow">→</span>是本期素材中的一个<strong>隐私付费 API 实验案例</strong>，主要涉及支付交互与访问控制。</p>
+                    <p class="caveat"><span class="arrow">→</span>局限：协议仍具实验性质；资金操作匿名与请求匿名需要分别评估，网关仍可能通过 IP 关联请求；它不直接解决购买授权、订单履约和争议处理。</p>
+                </div>
+            </div>
+
+            <h3>补充：Agent 支付 / 交易的功能分层与协议位置</h3>
+            <p>一笔 Agent 交易，需要解决<strong>身份、授权、订单、付款凭证、资金权限和结算</strong>六类问题。按这些功能，可以划分为以下六层，用于理解不同协议的覆盖范围：</p>
+
+            <table>
+                <thead>
+                    <tr><th style="width:150px;">功能层</th><th style="width:32%;">核心问题</th><th>相关协议与机制</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="layer-name">L6</span> 身份与信任</td>
+                        <td>哪个 Agent 在交易，代表谁？</td>
+                        <td>KYA、身份核验；AMP 的 Agent 准入与认证</td>
+                    </tr>
+                    <tr>
+                        <td><span class="layer-name">L5</span> 交易授权与证据</td>
+                        <td>用户允许购买什么、支付什么？</td>
+                        <td>AP2 Mandate、AMP Mandate</td>
+                    </tr>
+                    <tr>
+                        <td><span class="layer-name">L4</span> 商务与履约</td>
+                        <td>商品、价格、订单及交付条件是什么？</td>
+                        <td>UCP、ACP，Checkout / Order</td>
+                    </tr>
+                    <tr>
+                        <td><span class="layer-name">L3</span> 支付交互与凭证</td>
+                        <td>如何请求付款、传递支付材料？</td>
+                        <td>x402、ACP 委托支付凭证、AMP Payment Token</td>
+                    </tr>
+                    <tr>
+                        <td><span class="layer-name">L2</span> 账户与资金控制</td>
+                        <td>谁能够签名、扣款或支出资金？</td>
+                        <td>钱包、智能账户、受控签名及受限授权</td>
+                    </tr>
+                    <tr>
+                        <td><span class="layer-name">L1</span> 支付网络与结算</td>
+                        <td>资金如何转移、确认与结算？</td>
+                        <td>银行、卡网络、Alipay+ 及区块链网络</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box">
+                <div class="hb-title">▸ 如何读这张表</div>
+                <p><strong>UCP、ACP</strong> 主要组织商业交互并衔接支付；<strong>AP2</strong> 侧重交易授权与验证；<strong>AMP</strong> 跨越信任、授权和支付接入等环节。</p>
+                <p>这是一种功能分析框架，<strong>协议可以跨层覆盖，交易也不必按层级顺序执行</strong>。A2A、MCP 承担通信与能力调用，<strong>接通接口不自动获得用户资金权限</strong>。</p>
+            </div>
+
+            <h3>外围与供给端（代理本体能力与成本）</h3>
+            <table>
+                <thead>
+                    <tr><th style="width:64px;">日期</th><th style="width:42%;">事件</th><th>Agent 支付 / 交易关联</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>9/29</td><td><strong>Manus 2.0 发布</strong></td><td>通用代理产品化，为交易任务提供应用入口</td></tr>
+                    <tr><td>9/30</td><td><strong>OpenAI GPT-6.1 Sol 发布</strong></td><td>可能改善规划与工具调用，实际效果需评估</td></tr>
+                    <tr><td>10/3</td><td><strong>Meta 开放 Muse 硬件 SDK</strong></td><td>扩展代理与物理设备的交互范围</td></tr>
+                    <tr><td>10/8</td><td><strong>Claude Haiku 5.5 性能提升、降价</strong></td><td>降低任务执行成本，但不直接证明交易量增长</td></tr>
+                    <tr><td>10/6</td><td><strong>AI 公司相互投资，算力、订单与资本形成关联</strong></td><td>属于产业供需背景，不等同于 Agent 自主交易</td></tr>
+                    <tr><td>9/30</td><td><strong>代理购买算力与 GPU 代币化、RWA 的相关分析</strong></td><td>提供潜在应用方向，需区分研究设想与运营产品</td></tr>
+                </tbody>
+            </table>
+
+            <h2>三、三条判断</h2>
+
+            <h3>判断 1：瓶颈不只是结算，更在授权、资金权限与归责</h3>
+            <p>稳定币和传统支付网络已提供多种付款路径；AP2、AMP 等也已探索授权与信任机制。仍需衔接的是：</p>
+            <ul>
+                <li><strong>身份与责任</strong>——谁在交易，代表谁，责任由谁承担；</li>
+                <li><strong>授权与资金权限</strong>——允许买什么、支付多少，以及谁能够实际执行付款；</li>
+                <li><strong>争议与退款</strong>——误购、重复扣款或被提示词注入诱导付款后如何处理。</li>
+            </ul>
+            <div class="highlight-box">
+                <div class="hb-title">▸ 结论</div>
+                <p class="verdict">身份可信 ≠ 获得交易授权；交易授权 ≠ 钱包支出权限。</p>
+                <p>合规分析应落实到具体业务与参与方，不能仅凭是否存在专项牌照判断。</p>
+            </div>
+
+            <h3>判断 2：稳定币、隐私技术和链上结算是可组合能力</h3>
+            <p>本期素材中的几条线分别涉及：</p>
+            <ul>
+                <li><strong>稳定币与监管</strong>——影响可使用的资产和服务；</li>
+                <li><strong>ZK 与身份隐私</strong>——减少信息暴露和重复认证；</li>
+                <li><strong>链上结算与机器付费</strong>——支持资金转移和服务调用付款。</li>
+            </ul>
+            <p>与此同时，AMP 等路线也在探索通过现有移动钱包完成 Agent 支付。</p>
+            <div class="highlight-box">
+                <div class="hb-title">▸ 结论</div>
+                <p class="verdict">稳定币是重要路径，ZK 是可选能力，链上结算也不是唯一方式。</p>
+                <p>三者组合不能单独证明一个支付栈已经合规，也不足以推导统一落地时间。</p>
+            </div>
+
+            <h3>判断 3：「机器替人消费」与「机器对机器议价」应分别观察</h3>
+            <p>本期素材更集中于代理代用户购买 API、算力和服务。更复杂的 Agent 间交易还需要：</p>
+            <ul>
+                <li><strong>机器可读的商品、报价和订单接口</strong>——UCP、ACP 等已有探索，覆盖与互通程度需验证；</li>
+                <li><strong>身份、信誉和担保机制</strong>——应区分身份可验证与交易可靠性；</li>
+                <li><strong>交付、验收及售后能力</strong>——复杂服务仍需额外业务设计。</li>
+            </ul>
+            <div class="highlight-box">
+                <div class="hb-title">▸ 结论</div>
+                <p class="verdict">获得支付凭证 ≠ 支付完成，支付完成 ≠ 履约完成。</p>
+                <p>不能将相关基础设施概括为「完全缺失」。2027 年可作为观察窗口，但规模化应由真实接入、交易、交付及退款数据验证。</p>
+            </div>
+
+            <div class="sources">
+                <p><strong>信息来源</strong>：<code>crawler/output/素材库_20260921.md</code>、<code>素材库_20260924.md</code>、<code>素材库_20260927.md</code>、<code>素材库_20261001.md</code>、<code>素材库_20261004.md</code>、<code>素材库_20261007.md</code>、<code>素材库_20261010.md</code>（7 期，7 天滚动窗口完整覆盖 9/15–10/10）</p>
+                <p><strong>编制日期</strong>：2026-10-10</p>
+            </div>
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav">
+            <a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-wallet-x402.html">🤖 AI Agent 的钱包：x402</a>
+            <a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-payments-infrastructure.html">🛠 Agent 支付走向基础设施</a>
+            <a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-tbill-coupling-2026.html">🏦 稳定币的尽头是美债</a>
+            <a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-issuance-as-a-service.html">🏢 发行即服务：稳定币支付栈的垂直整合</a>
+        </nav>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/robinhood-chain-analysis/">⛓ BlockChain 研报</a> ·
+            <a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-wallet-x402.html">🤖 Agent 钱包 × x402</a>
+        </p>
+    </footer>
+</body>
+</html>
