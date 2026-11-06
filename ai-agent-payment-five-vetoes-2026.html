@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五方否决权：代理支付不会由任何一家推成，因为它需要五家同时点头</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list {
+            display: flex; gap: 20px; list-style: none;
+        }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+        .article-title {
+            font-size: 2em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.05em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 16px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Lead Block ── */
+        .lead-block {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 32px 0;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.75;
+        }
+        .lead-block .cite {
+            display: block; margin-top: 10px;
+            font-size: .82em; color: var(--text3);
+        }
+        .lead-block .cite a {
+            color: var(--accent); text-decoration: none;
+        }
+        .lead-block .cite a:hover { text-decoration: underline; }
+
+        /* ── Body Typography ── */
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.08em; font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p {
+            margin-bottom: 18px;
+            color: var(--text2);
+            line-height: 1.85;
+        }
+        .article-body p:first-of-type {
+            font-size: 1.05em;
+        }
+        .article-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .article-body em {
+            color: var(--text3);
+        }
+        .article-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table, .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0 32px;
+            font-size: .88em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead, .compare-table thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th, .compare-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd), .compare-table tbody tr:nth-child(odd) {
+            background: var(--bg2);
+        }
+        .article-body tbody tr:nth-child(even), .compare-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .article-body tbody tr:hover, .compare-table tbody tr:hover {
+            background: var(--accent-light);
+        }
+        .article-body td, .compare-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .article-body td:first-child, .compare-table td:first-child {
+            font-weight: 600; color: var(--text);
+        }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 16px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li {
+            margin: 6px 0;
+            line-height: 1.7;
+        }
+
+        /* ── Blockquote ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            margin: 24px 0;
+            background: var(--accent-light);
+            border-radius: 0 8px 8px 0;
+            color: var(--text2);
+            font-style: italic;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+        .highlight-box h4 {
+            font-size: .9em; font-weight: 700;
+            color: #4338ca;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .highlight-box ul li {
+            font-size: .88em; color: var(--text2);
+            padding-left: 18px; position: relative;
+            line-height: 1.6;
+        }
+        .highlight-box ul li::before {
+            content: '▸';
+            position: absolute; left: 0;
+            color: #6366f1; font-size: .8em; top: 2px;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37,99,235,.1);
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+        .feature-name {
+            font-size: .88em; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: .8em; color: var(--text3);
+            line-height: 1.6;
+        }
+
+        /* ── Protocol Map Grid ── */
+        .protocol-map {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 28px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .protocol-name {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+        .protocol-role {
+            font-size: .78em; color: var(--text3);
+            line-height: 1.5;
+        }
+        .protocol-item.highlight-protocol {
+            border-color: #059669;
+            background: #ecfdf5;
+            box-shadow: 0 2px 8px rgba(5,150,105,.12);
+        }
+        .protocol-item.highlight-protocol .protocol-name {
+            color: #047857;
+        }
+        .protocol-item.highlight-protocol .protocol-role {
+            color: #065f46;
+        }
+
+        /* ── Horizontal Rule ── */
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+
+        /* ── Code ── */
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .88em;
+            font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources Section ── */
+        .sources-section {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-section h3 {
+            font-size: .9em; font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+        .sources-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .sources-list li {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .source-num {
+            min-width: 22px; height: 22px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7em; font-weight: 700;
+            margin-top: 1px; flex-shrink: 0;
+        }
+        .source-content {
+            font-size: .82em; color: var(--text3);
+            line-height: 1.6;
+        }
+        .source-content a {
+            color: var(--accent); text-decoration: none;
+            word-break: break-all;
+        }
+        .source-content a:hover { text-decoration: underline; }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .84em;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .protocol-map { grid-template-columns: 1fr; }
+            .article-body table, .compare-table { font-size: .78em; }
+            .article-body table th, .article-body table td,
+            .compare-table th, .compare-table td
+            { padding: 8px 10px; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/erc8211-analysis/">⛓ BlockChain 研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/blockchain-2025-report/">年度报告</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">稳定币立法</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-chain-competition/">公链竞争</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">AI 代理支付</span><span class="tag">五方否决权</span><span class="tag">卡组织</span><span class="tag">发卡行</span><span class="tag">Stripe Link</span><span class="tag">Visa</span><span class="tag">稳定币结算</span><span class="tag">分金额段</span>
+            </div>
+            <h1 class="article-title">五方否决权：代理支付不会由任何一家推成，因为它需要五家同时点头</h1>
+            <p class="article-subtitle">通道层已经过剩，签字还没凑齐</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026年11月6日</span>
+                <span class="meta-sep">·</span>
+                <span>约 7,750 字 · 阅读约 26 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <div class="lead-block"><strong>核心结论：</strong> 代理支付卡住的不是速度，是签字。商户、收单行、发卡行、卡组织、代理公司五方各握一把钥匙，缺一把门就打不开。这五把钥匙里只有一把能靠工程解决，一把能靠定价解决，另外三把必须靠责任重新分配——而责任分配需要立法，立法在 11 月 6 日之后被推到了 2028 年。所以通道层可以无限快下去，商业化仍然不会开始。</div>
+<hr />
+<h2>引言：通路的悖论</h2>
+<p>2026 年 11 月 3 日，Celestia 公布 Voyager，宣称每秒 2,100 万笔交易，定位是专为 AI 代理打造的支付链。第二天，Base 的 Denim 升级上线，原生出块压到 200 毫秒，一秒五个区块。</p>
+<p>这两个数字放在任何一份 2021 年的行业预测里都算超额完成。通道层的产能早就过了瓶颈，现在是过剩——过剩到需要靠营销口径来区分彼此（2,100 万 TPS 是理论峰值，200 毫秒是实测出块，两者不在同一个量纲上，但都被写进了标题）。</p>
+<p>与此同时，另一组数字是：NMI 在 2026 年调查 1000 名美国成年人，69% 不信任 AI 能安全处理支付，70% 希望下单前能审核或否决 AI 的决定，只有 10% 愿意把购买全权交给 AI。YouGov 为 ACI 调查 2080 名英国成年人，60% 表示 AI 购物代理犯一次错就会永久停用。</p>
+<p>一边是每秒两千万笔的产能，一边是九成的人不肯放手。这中间的落差，通常被解释成"信任需要时间"。这个解释不算错，但它太软，软到无法回答一个具体问题：<strong>到底是谁在拦，拦在哪一环，为什么工程解决不了。</strong></p>
+<p>Foresight News 在 11 月 3 日编译的一篇文章给了一个更硬的框架：各方都有否决权。商户、发卡行、卡组织、代理公司、消费者，任何一方不点头，交易就不会发生。</p>
+<p>这个说法值得认真对待，但还需要再推一步。否决权不是五张一样的票——它们的性质完全不同，解法也完全不同。把它们混为一谈，就会得出"再快一点就好了"的结论，而那个结论已经被 2,100 万 TPS 证伪了。</p>
+<hr />
+<h2>一、五种否决，三种性质</h2>
+<h3>先分类，再谈解法</h3>
+<p>把一个交易从消费者授权到商户收到钱的全过程拆开，五方各有一个可以单方面叫停的位置：</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>角色</th>
+<th>否决的表现</th>
+<th>一句话原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>商户</td>
+<td>不接受代理下单，或只接受人工复核</td>
+<td>分不清是人还是机器，风控模型失效</td>
+</tr>
+<tr>
+<td>收单机构</td>
+<td>提高费率或要求额外保证金</td>
+<td>收到的是一张没有风险数据的卡</td>
+</tr>
+<tr>
+<td>发卡行</td>
+<td>不发放代理令牌</td>
+<td>无法承保，赔付责任算不清</td>
+</tr>
+<tr>
+<td>卡组织</td>
+<td>授权环节绕不过它的验证</td>
+<td>指令格式三家不互认</td>
+</tr>
+<tr>
+<td>代理公司</td>
+<td>不交出代理行为数据</td>
+<td>交了等于把客户资产暴露给对手</td>
+</tr>
+</tbody>
+</table>
+<p>这五条挂在同一笔交易上，但性质分三类。</p>
+<h3>技术性否决：能靠工程解决，所以最先被解决</h3>
+<p>发卡行不发代理令牌，是纯粹的技术与流程问题——Chase 等大行目前明确不支持，其他很多行也不能稳定支持。这个问题会随着时间消失，因为它是排期问题，不是意愿问题。</p>
+<p>Crossmint 的做法更直接：拿不到代理令牌就绕开。回退到 PCI 合规保险库直通卡号，卡号用代理浏览器生成的公钥加密，结账时在本地解密自动填充。这条路在法律上不优雅，在工程上完全可行——它证明了一件事：<strong>技术性否决是最容易绕过的一类，因为绕过它不需要任何人签字。</strong></p>
+<p>卡组织之间的指令格式不互认，也属于这一类。Visa Intelligent Commerce 走的是验证卡片、设置通行密钥、认证代理购买指令、VisaNet 核对金额上限与凭证有效期及商户域名；Mastercard Agent Pay 用 Intent API 提交购买详情换回意图 ID 与令牌化凭证；AmEx 的 ACE 把注册、意图批准、凭证获取拆成三个 API。语义接近，接口不通。三家都是商业机构，只要有一家的市场份额被侵蚀到临界点，标准化就会发生。</p>
+<h3>经济性否决：能靠定价解决，但没有人愿意先降价</h3>
+<p>商户侧的拒绝不是不肯收钱，是成本结构变了。Stripe 的 Link 模式里，商户收到的是一张没有风险数据的商业卡，收单成本最多高出约 200 个基点。这 2 个百分点不是给 Stripe 的，是给风险的——因为收单机构看不到持卡人是谁、买了什么历史、有没有欺诈记录，只能按最坏情况定价。</p>
+<p>这一类否决可以用定价解决：谁承担风险，谁付这 200 个基点。但现实的博弈是，五方里没有一家愿意主动认领这笔成本。商户认领等于毛利下降，代理公司认领等于抽成归零，卡组织认领等于承认自己的风控数据没用。</p>
+<p>发卡行侧的账更清楚。一笔 100 美元的信用卡消费，交换费约 1.95 美元进发卡行，扣掉奖励、欺诈损失、资金成本与运营，行业惯例下净留下约 0.40 美元。而在 Link 模式下，消费者是往钱包里充值，原发卡行只看到一笔借记充值，成本约 0.26 美元/100 美元，交换费整个消失。<strong>发卡行不是不愿意支持代理支付，是不愿意用自己的 1.95 美元去补贴别人的创新。</strong></p>
+<h3>责任性否决：只能靠制度，而制度本期失效了</h3>
+<p>第三类最难。它不涉及能不能做，也不涉及划不划算，而涉及"出了事谁赔"。</p>
+<p>Link 的条款不覆盖非授权交易——代理犯的错由消费者承担。这句话在合同法上无懈可击，在商业上极其危险：它把代理的失误定义为用户的失误。消费者保护体系里的拒付（chargeback）机制，前提是持卡人声明"这不是我授权的"。当授权来自一段代码，这个声明就没法用了。</p>
+<p>卡组织可以定义凭证格式、定义金额上限、定义有效期，但它不能定义赔付责任。赔付责任只能由发卡行承担，而发卡行在看不到代理背后的自然人、看不到意图的情况下，无法定价这个风险。Crossmint 的数据显示 Mastercard 侧明显好于 Visa 侧，尤其是 Chase 与商业卡，3D Secure 挑战率很高——挑战率高本身就是发卡行不敢放行的直接证据。</p>
+<p>这一类否决没有任何工程解法。它需要一条新规则，明确"代理在授权范围内行事，责任由授权人承担"或者"由代理公司承担"，并且配套一套可验证的授权凭证。<strong>规则不会从代码里长出来。</strong></p>
+<blockquote>
+<p>五类否决里只有一类是工程问题。这一类解决得越彻底，越容易让人误以为其余四类也会跟着消失——而它们的解法在定价表和法律文本里，不在代码里。</p>
+</blockquote>
+<hr />
+<h2>二、并联而不是串联：为什么"打通"这个词是错的</h2>
+<h3>一条串联链，一组并联开关</h3>
+<p>过去二十年支付行业的每一次改良，都是串联式的：只要把链条上新的一环接到上一环，整条链就能跑。EMV 迁移是这样，令牌化是这样，Apple Pay 也是这样——它们都在既有的串联结构里替换了一个节点，前后节点不变。</p>
+<p>代理支付不是这样。它不是链条上新加一环，而是<strong>在链条之外并联了五个开关</strong>。串联链的可靠性是各环节的乘积，加一环只降低一点；并联开关的通过率也是乘积，但基数小得多。</p>
+<p>算一下：假设五方各自有 80% 的概率放行（这个数字已经很乐观，NMI 的调查显示消费者侧远低于此），五方同时放行的概率是 0.8^5 ≈ 33%。把每一方的放行率提到 95%，五方同时放行是 77%。<strong>把任何单一一方的放行率从 80% 提到 100%，整体只从 33% 提到 41%。</strong></p>
+<p>这就是为什么"打通某一环"的新闻那么多，实际交易量却那么少。每一家的 PR 都在说自己那一环通了，而乘积不会因为一个因子变成 1 就变成 1。</p>
+<h3>一个具体的断路</h3>
+<p>Chase 不发代理令牌这件事，单看是个小问题——一家银行，一个技术特性。但它卡在第四环：卡组织已经定义了凭证，商户已经接入了代理结账，消费者已经完成了意图授权，到发卡行这一步断了。</p>
+<p>后果不是"这笔交易失败"，而是"这条路径不可用"。代理平台不可能告诉用户"今天可以，明天不行，取决于你用哪张卡"。产品经理在这种约束下的选择只有一个：<strong>不做这个功能，或者做一个只对部分用户可用的功能。</strong> 后者在增长上等于前者。</p>
+<p>Crossmint 的绕行方案之所以重要，不是因为它优雅，而是因为它是唯一能同时满足五方的解：它绕过了发卡行的令牌发放，代价是把 PCI 合规负担转移到自己身上，代价是把卡号暴露在自己的保险库里。<strong>它用一家公司的合规成本，买下了原本需要五家签字才能拿到的通行证。</strong> 这种解法只能由具备规模的服务商提供，小玩家做不到，于是市场结构被这种"绕行成本"重新分层。</p>
+<h3>商户侧的黑箱</h3>
+<p>最容易被低估的是商户这一环。商户用的反欺诈模型是为人类设计的：IP 地址、浏览器会话历史、设备指纹、地理定位。这套信号组合能相当准确地判断"这个浏览器背后的人和上次是不是同一个"。</p>
+<p>代理把这些信号全部污染了。同一个代理实例可以在十分钟内访问两百个商户，用同一个 IP、同一个指纹、同一套会话特征。在商户的模型里，这是典型的机器刷单特征，模型会给它打最高风险分。</p>
+<p>而商户真正想知道的东西——这个代理背后是谁、被授权买了什么、上限多少、是不是被诱导的——全都不在模型的输入里。Foresight News 那篇文章作者对此的判断很直接：如果看不清代理背后的人和意图，KYA 根本行不通，而代理公司不会轻易交出这些数据。</p>
+<p><strong>代理公司不交数据有充分理由</strong>：代理的行为轨迹就是用户的偏好画像，交出去等于把最有价值的资产送给合作方。商户要的正是这份数据，代理公司最不愿给的就是这份数据。这不是谈判技巧问题，是利益结构的直接冲突。</p>
+<hr />
+<h2>三、100 美元怎么分</h2>
+<h3>五个人的账</h3>
+<p>把所有成本摊到一笔 100 美元的信用卡消费上，按公开费率结构和行业惯例拆：</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>环节</th>
+<th>金额</th>
+<th>归谁</th>
+<th>性质</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交换费</td>
+<td>约 1.95 美元</td>
+<td>发卡行</td>
+<td>收入，用于覆盖奖励、欺诈、资金成本</td>
+</tr>
+<tr>
+<td>发卡行净留存</td>
+<td>约 0.40 美元</td>
+<td>发卡行</td>
+<td>扣掉上述成本后的净收益</td>
+</tr>
+<tr>
+<td>收单成本</td>
+<td>约 0.3–0.5%</td>
+<td>收单机构</td>
+<td>商户侧支付</td>
+</tr>
+<tr>
+<td>网络费</td>
+<td>少量</td>
+<td>卡组织</td>
+<td>按笔或按额</td>
+</tr>
+<tr>
+<td>商户实收</td>
+<td>约 97 美元</td>
+<td>商户</td>
+<td>扣除全部通道成本后</td>
+</tr>
+</tbody>
+</table>
+<p>这张表的关键不在数字精确度，在于<strong>净留存 0.40 美元这个位置太薄</strong>。发卡行收 1.95 美元，最后只留下 0.40 美元，中间 1.55 美元全部消耗在奖励、欺诈损失和运营上。</p>
+<p>这解释了一个常被误解的现象：为什么发卡行对代理支付如此保守。如果代理交易的风险特征与人类不同（比如代理更容易被提示注入攻击、更容易被恶意商户诱导下单），那么欺诈损失这一项会上升，而 0.40 美元的净留存没有任何缓冲空间。<strong>一次系统性的欺诈事件就能抹掉它一整年的利润。</strong></p>
+<h3>Link 模式不是绕开卡，是换了个位置收交换费</h3>
+<p>Stripe 的 Link Balance 常被描述成"绕开卡组织的代理支付方案"。这个描述不准确。</p>
+<p>看它的结构：消费者完成 KYC，预充值到 Privy 钱包，以 Tempo 上的 USDC 存在；花出去的时候，是一张由享受 Durbin 豁免的 Lead Bank 发行的消费者预付 Visa 卡。钱最终还是通过 Visa 网络走，交换费还是被收，只是收的人变了。</p>
+<p>真正变化的是位置：原来是消费者的原发卡行拿 1.95 美元，现在是 Lead Bank 拿。原发卡行只看到一笔借记充值，拿 0.26 美元的成本价。<strong>这是一次交换费的位移，不是交换费的消灭。</strong></p>
+<p>位移之后，账变成这样：</p>
+<ul>
+<li>原发卡行：从 1.95 美元变成 0.26 美元，损失 1.69 美元</li>
+<li>Lead Bank：拿到约 1.95 美元交换费</li>
+<li>Stripe：拿到闲置余额的浮存收益，加上商户侧的收单</li>
+<li>商户：收单成本上浮最多 200 个基点</li>
+<li>消费者：失去类别奖励与拒付保护</li>
+</ul>
+<p>五个人里，两个赚（Lead Bank、Stripe），一个打平（商户，多付 2% 换到订单），两个亏（原发卡行、消费者）。</p>
+<p><strong>这不是一个把饼做大的方案，是一个把饼重新切的方案。</strong> 它在工程上极其聪明——因为它把五方签字变成了两方签约（Stripe 与 Lead Bank），不需要说服任何一家大行。但它的天花板也在这里：它的收益完全来自于从原发卡行手里抢交换费，抢到一定程度，原发卡行会反击，方式是拒绝为这类充值提供低成本通道，或者游说收紧 Durbin 豁免的适用范围。</p>
+<h3>200 个基点是谁付的</h3>
+<p>那 200 个基点值得单独看。它是商户侧收单成本的上浮，来源是"没有风险数据的商业卡"。收单机构无法判断这笔交易的风险，只能按最高的那一档定价。</p>
+<p>换句话说，<strong>商户在为"不知道"付费</strong>。这 2% 不是服务费，是信息缺失的定价。如果代理公司愿意提供授权凭证、行为数据、意图记录，这 2% 理论上可以降下来。但代理公司不愿意，于是 2% 变成一笔永久的、由商户承担的"信息税"。</p>
+<p>这就把第三节的账和第二节的博弈接上了：商户不是不肯接受代理下单，是每单要多付 2% 的信息税，而这 2% 的定价依据正好是代理公司拒绝提供的那份数据。<strong>代理公司每拒绝一次数据共享，商户的成本就固定在高位一次。</strong></p>
+<hr />
+<h2>四、唯一净受益者是代理公司</h2>
+<h3>成本落在不参与决策的一方</h3>
+<p>把上面的账收一下，会发现一个结构性的不对称：</p>
+<p>代理公司拿的是交易额抽成，不承担赔付、不承担欺诈、不承担拒付、不承担合规。它的成本是模型推理和基础设施，与交易的风险无关。交易量越大，收益越大；交易出问题，成本落在别人身上。</p>
+<p>这是"死循环"的真正数学原因。<strong>不是没人愿意推，是只有一方有净收益，而那一方恰好不掌握任何一把钥匙。</strong> 代理公司想让交易发生，但它无法发放代理令牌（发卡行的钥匙）、无法降低收单成本（收单机构的钥匙）、无法提供授权凭证的法律效力（卡组织与监管的钥匙）、无法保证不被商户风控拦截（商户的钥匙）。</p>
+<p>它能做的只有一件事：把技术做顺，让交易在能通过的地方通过。这解释了为什么代理支付的产品体验都做得不错，而交易量都起不来。</p>
+<h3>为什么更快的链解决不了这个问题</h3>
+<p>回到引言的那两个数字。2,100 万 TPS 和 200 毫秒，解决的是"交易能不能在足够短的时间内完成"这个问题。但五方否决权里，没有一方的否决理由是"太慢了"。</p>
+<p>Chase 不发令牌，与出块时间无关。商户风控拦截，与最终性无关。收单成本上浮，与 TPS 无关。Link 条款不覆盖非授权交易，与共识机制无关。</p>
+<p>Base 的 B20 标准里有一处细节值得单独提：它在代币标准层面内置了转账代理审批与黑白名单。这个设计的意义不在于技术，而在于它承认了一件事——<strong>支付链需要内置"谁可以拒绝这笔交易"的能力，而不是把拒绝权留给链下的合规部门。</strong></p>
+<p>一个以"无许可"为核心卖点的技术，在自己的代币标准里加了白名单和审批代理。这个动作本身就是对通道决定论的否定：拒绝权必须存在，问题只是由谁行使。</p>
+<hr />
+<h2>五、二维而不是一维</h2>
+<h3>分金额段的真实形状</h3>
+<p>行业里流行的说法是"大额走卡，微额走链，分界在 5 到 50 美元"。这个说法只用一个维度，会得出错误的结论。</p>
+<p>真正决定路径的是两个变量：<strong>单笔金额</strong>和<strong>月笔数</strong>。因为卡通道的成本结构里，有一部分是百分比（交换费、收单费率），有一部分是绝对值（网关月费、PCI 审计、对账人力、拒付处理工时）。百分比部分随金额缩放，绝对值部分不缩放。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th></th>
+<th>月笔数少</th>
+<th>月笔数多</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>单笔金额低</strong></td>
+<td>两个通道都不划算，需求会被放弃</td>
+<td>只能链上，卡通道的固定成本摊不下来</td>
+</tr>
+<tr>
+<td><strong>单笔金额高</strong></td>
+<td>只能卡，链上无法提供争议与退款</td>
+<td>两者都可行，取决于争议需求与合规成本</td>
+</tr>
+</tbody>
+</table>
+<p>左上格最容易被忽略：一笔 0.3 美元、一个月几十笔的支付，走卡要被固定成本吃掉，走链要被出金与兑换成本吃掉，实际结果是这个需求根本不发生。<strong>这是"被放弃的需求"，它在任何统计里都不出现，因为没有发生过。</strong></p>
+<p>而 x402 那 1.38 亿笔、单笔均值 0.36 美元的交易，正好落在右上格——金额低、笔数极高。这一格里，卡通道的问题不是百分比成本（0.36 美元的 2.35% 只有 0.85 美分），而是每月固定的网关费、保证金、合规审计摊到每一笔上。<strong>卡做不了微额，原因不是费率太高，是固定成本有下限。</strong></p>
+<p>这个区别很重要。如果是费率问题，降价就能解决；如果是固定成本问题，降价解决不了，只有规模能解决。而规模恰好是卡组织最大的优势——这让"微额走链"变成了一个长期的、结构性的结论，而不是一个短期的价格竞争结果。</p>
+<h3>0.36 美元真正的位置</h3>
+<p>把 0.36 美元放回这个二维图，它落在右下角偏左的位置：笔数极高（1.38 亿笔累计），金额极低，且需求增长快。</p>
+<p>这一格的经济学极其残酷：<strong>任何带固定成本的通道都会在这里亏钱。</strong> 所以这一格不争份额，争的是谁的成本结构更接近零边际成本。链上通道在这一格的优势不是"更快"或"更便宜"，而是<strong>它没有月度承诺、没有最低消费、没有开户流程</strong>——它的固定成本接近于零。</p>
+<p>这也是 Visa 和 Stripe 的策略看起来矛盾、实际一致的原因。它们都不指望在 0.36 美元这一格赚钱，它们要的是这一格成长到 5 美元、50 美元的时候，自己还在场上。</p>
+<hr />
+<h2>六、卡组织的真实策略</h2>
+<h3>250 亿美元说明什么</h3>
+<p>Visa 在 2026 财年 Q4 电话会披露：稳定币结算年化交易量超 250 亿美元、同比增长 10 倍，支持 10 条区块链，覆盖全部 5 个地区，管道中 300 多个合作伙伴。同期稳定币挂钩卡项目超过 225 个，同比增长逾 70%，交易量增 150% 以上，覆盖 50 多个国家。</p>
+<p>这组数字常被读成"Visa 在拥抱稳定币"。更准确的读法是：<strong>Visa 正在把结算层商品化。</strong></p>
+<p>结算是一个注定走向零利润的业务。历史上每一次清算技术升级——从纸质到电子、从批量到实时、从境内到跨境——都以费率下降告终。Visa 对此非常清楚，所以它愿意支持 10 条链、愿意接入 x402、愿意让稳定币进结算，因为这些动作的成本由别人承担，收益是保住网络位置。</p>
+<p>但它同时在做另一件事：Intelligent Commerce、通行密钥、VisaNet 对指令的核对（金额上限、凭证有效期、商户域名）。这些全部在授权层。</p>
+<h3>三层收费模型</h3>
+<p>把卡组织的收入结构拆成三层看，策略就清楚了：</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>层</th>
+<th>内容</th>
+<th>利润率趋势</th>
+<th>卡组织的态度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>结算层</td>
+<td>资金划转、清算、跨境</td>
+<td>趋零</td>
+<td>主动商品化，谁便宜用谁</td>
+</tr>
+<tr>
+<td>授权层</td>
+<td>这笔交易该不该批准</td>
+<td>上升</td>
+<td>加固垄断，标准不开放</td>
+</tr>
+<tr>
+<td>数据层</td>
+<td>商户级风险数据、消费者画像</td>
+<td>稳定</td>
+<td>选择性开放</td>
+</tr>
+</tbody>
+</table>
+<p>结算层商品化，授权层垄断化。这不是两头下注，是<strong>分层定价</strong>：在自己注定守不住的地方主动放弃，在自己能守住的地方加倍投入。</p>
+<p>这个策略的推论很直接：<strong>卡组织不介意代理支付走哪条链，它介意授权环节是不是还在自己手里。</strong> 所以它会支持 x402（结算层商品化，符合它的策略），同时坚持三家指令格式不互认（授权层垄断，符合它的策略）。看似矛盾的两个动作，在分层定价的框架里完全一致。</p>
+<p>这也是理解 Visa 通行密钥豁免为什么危险的关键。每个主要代理平台都存在通行密钥豁免——持卡人证明自己授权了指令的唯一一步，被绕过了。对卡组织来说，这是授权层的一个漏洞；对发卡行来说，这是承保前提的崩塌。<strong>授权层正在被商品化的结算层反向拖累：因为结算侧要快，所以授权侧的验证被简化了。</strong></p>
+<hr />
+<h2>七、破解需要三个条件</h2>
+<h3>责任集中、数据共享、标准收敛</h3>
+<p>把五方否决权拆开，能破解它的路径只有三条，对应三类否决：</p>
+<p><strong>第一条：责任必须集中到一方。</strong> 目前五方都不愿意承担代理交易的赔付责任。要打破死循环，必须有一方明确说"我赔"。候选有三：发卡行（有承保能力，但没有定价依据）、代理公司（最了解风险，但只收抽成不担风险）、专门的保险方（有承保能力，但没有数据）。这一条需要制度确认——"代理在授权范围内行事，责任归属授权人"这样的规则，只能由立法或监管写出。</p>
+<p><strong>第二条：数据必须有条件共享。</strong> 商户需要代理的行为数据来降风险，代理公司不愿给。可行的中间态是"可验证但不泄露"：证明"这个代理被授权了、上限是 X、品类是 Y"，而不暴露具体行为轨迹。ERC-8004 这类身份协议加上零知识凭证能做这件事，但它有一个致命缺陷——<strong>没有强制力</strong>。它能证明"我被授权了"，不能保证"出问题有人赔"。</p>
+<p><strong>第三条：标准必须收敛。</strong> 三家卡组织的指令格式互不兼容，这件事在商业上会自然解决（一方份额被侵蚀到临界点就会开放），不需要外部干预。</p>
+<h3>立法失效意味着哪一条被冻结</h3>
+<p>10 月 26 日到 11 月 6 日这两周里，美国立法层发生了一件对这条赛道影响最大的事：11 月 6 日中期选举结果落定，民主党拿下参众两院，Sherrod Brown 重返参议院，Warren 继续在银行委员会发力。三条判断几乎同时出现——Sharplink CEO Joseph Chalom 预计《清晰法案》搁置至 2028 年；TD Cowen 的 Jaret Seiberg 称这是"对加密行业最为不利的选举结果"，两年内难有实质进展；Clear Street 的 Owen Lau 认为 2027 年前不会重回议程。</p>
+<p>Seiberg 自己也补了一句反向的："Warren 无法阻止监管机构推行有利于加密业的政策。"这句话让判断变得精确：<strong>立法不会来，机构规则会继续来，而且来得更分散。</strong></p>
+<p>把这件事和上面的三个条件对上：第三条（标准收敛）是商业问题，不受影响；第二条（数据共享）是技术加商业问题，可以自下而上推进；第一条（责任集中）是纯制度问题，<strong>被冻结了两年</strong>。</p>
+<p>所以更精确的结论是：<strong>未来两年，代理支付会在"可以绕开责任"的场景里扩张，在"必须明确责任"的场景里停滞。</strong> 前者是机器微支付（不可退、无争议、金额小），后者是消费级代理购物（可退、有争议、金额大）。</p>
+<p>这解释了本期一个看起来矛盾的观察：Celestia 在做 2,100 万 TPS 的专用支付链，Stripe 在做预付费的代理钱包，Crossmint 在做无头结账，Agentcard 的 opencommerce.sh 每笔完成订单只收 1%。四家都在做，方向各不相同，因为它们在攻不同的格。</p>
+<h3>谁在做"批"，谁只做了"传"</h3>
+<p>Shopify 的 UCP 与 WebMCP、Crossmint 的无头结账、Agentcard 的完成订单，这些都已经把"让代理完成购买"做成了标准件。它们的共同点是：<strong>做得越好，越说明"完成购买"这件事本身不值钱。</strong> Agentcard 每笔完成订单只收 1%，这个费率就是市场对"执行"这一定价。</p>
+<p>真正值钱的是"批"——判定这笔交易该不该发生，并为此兜底。这个位置在卡时代属于 Visa 授权网络，它的收费远高于清算成本，因为它承担了风险。</p>
+<p>代理支付这一层现在有四个候选在抢这个位置：卡组织（有商户网络和争议机制，但微额成本不成立）、稳定币发行方（有结算和跨链，但没有商户关系和承保意愿）、钱包厂商（离用户最近，但标准不互通）、身份协议（中立可组合，但没有强制力）。四家各有入口，各有硬伤。</p>
+<p>而没有一家在解决最根本的那个问题：<strong>当一段代码代替人做了购买决定，谁是这个决定的法定作者。</strong></p>
+<hr />
+<h2>结论：两年的窗口与一个可验证的判断</h2>
+<p>把整篇收在几个具体判断上。</p>
+<p><strong>第一，五方否决权是一个并联结构，不是一个串联链条。</strong> 把任何一方的放行率从 80% 提到 100%，整体通过率只从 33% 提到 41%。这是"打通某一环"的新闻很多、实际交易量很少的算术原因。通道层的胜利不会传导到商业化，因为它们解决的不是同一个问题。</p>
+<p><strong>第二，五类否决里只有一类是工程问题。</strong> 技术性否决（令牌发放、指令格式）可以绕、可以等；经济性否决（200 基点的信息税、1.95 美元的交换费归属）可以定价，但没人愿意认领；责任性否决（代理犯错谁赔）只能靠制度。第三类被冻结了两年。</p>
+<p><strong>第三，Link 模式是交换费的位移，不是消灭。</strong> 它把 1.95 美元从消费者的原发卡行转移到 Lead Bank，自己拿浮存收益，代价是消费者失去拒付保护、商户多付 2%。五方里两个赚、一个打平、两个亏。它是工程上的胜利，结构上的守成。</p>
+<p><strong>第四，卡组织的策略是分层定价，不是两头下注。</strong> 结算层主动商品化（10 条链、250 亿美元年化、300 多个合作伙伴），授权层加固垄断（三家指令格式不互认、VisaNet 逐项核对）。它不介意代理支付走哪条链，它介意授权还在不在自己手里。</p>
+<p><strong>第五，分金额段要用二维看。</strong> 单笔金额乘以月笔数，四个格里只有两个格有生意：低额高频只能上链，高额低频只能走卡。低额低频的需求根本不会发生，它在任何统计里都不出现。x402 的 0.36 美元落在低额高频格，这一格的经济学是"任何带固定成本的通道都会亏钱"。</p>
+<p><strong>那么什么时候能看到变化？</strong> 两个信号可以盯。一是发卡行侧：Chase 这类大行是否开始稳定发放代理令牌，这决定技术性否决是否解除。二是责任侧：是否出现第一条明确"代理在授权范围内行事、责任归属授权人"的规则文本——无论是监管规则、卡组织章程还是判例。前者是时间问题，后者是立法问题。</p>
+<p>如果两年内只出现前者，代理支付会停在"低额高频"这一格，规模能长得很快，收入薄得可怜。如果两者同时出现，5 到 50 美元那一格才会打开，而那一格才是真正有利润的地方。</p>
+<p>NMI 的调查里还有一个数字值得记着：70% 的人希望下单前能审核或否决 AI 的决定。这个比例在短期内不会变，它意味着"完全自主的代理购物"不是一个可以被产品设计说服的市场。能被说服的只有一条路径——<strong>让审核这一步变得足够便宜，便宜到用户愿意放弃它。</strong> 这个成本现在由商户的 2% 信息税和发卡行的 1.55 美元成本共同承担，而这两方都不打算继续付下去。</p>
+<hr />
+<p><strong>信息来源</strong></p>
+<ul>
+<li>代理支付五方否决权（vignesh sreedhar 撰文、Foresight News 编译）：<code>techflowpost.com/article/35081</code></li>
+<li>Agent 是否需要加密支付：<code>techflowpost.com/article/34846</code></li>
+<li>小摩研报解读：AI 购物代理仍走卡网络：<code>techflowpost.com</code>（2026.10.26）</li>
+<li>支付叙事与互补品定律：<code>techflowpost.com</code>（2026.11.05）</li>
+<li>Visa 2026 财年 Q4 电话会：<code>panewslab.com/zh/articles/01a18534-da71-75da-a24c-968acfa041c8</code>、<code>fool.com/earnings/call-transcripts/2026/10/28/visa-v-q4-2026-earnings-call-transcript/</code></li>
+<li>Base Denim 升级与 B20 标准：<code>panewslab.com/zh/articles/01a1a1c5</code></li>
+<li>Celestia Voyager：<code>panewslab.com/zh/articles/01a19a7e</code></li>
+<li>中期选举与《清晰法案》搁置判断：<code>panewslab.com/zh/articles/01a1a48d-e3d8-73b4-9d61-8d9b4ae2e775</code>、<code>odaily.news/zh-CN/post/5213782</code></li>
+</ul>
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav"><a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-payment-authorization-gap-2026.html">🔐 代理支付的授权缺口</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-haircut-capital-gate-2026.html">💼 2% 折扣率：稳定币的资本关</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-yield-boundary-2026.html">📈 有收益的美元</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-distribution-sovereignty-mica-2026.html">🌍 分发主权：MiCA 的准入名单</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-tbill-coupling-2026.html">💵 稳定币的尽头是美债</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/l2-retreat-mempool-revolution-2026.html">⛓️ L2 退潮与 Mempool 革命</a></nav>
+
+        <!-- Sources -->
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/erc8211-analysis/">⛓ ERC-8211 研报</a> ·
+            <a href="https://julietwang123.github.io/blockchain-2025-report/">📊 年度报告</a>
+        </p>
+    </footer>
+</body>
+</html>
