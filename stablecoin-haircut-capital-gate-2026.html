@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2% 折扣率：稳定币通过会计关之后，还有一道资本关</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list {
+            display: flex; gap: 20px; list-style: none;
+        }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+        .article-title {
+            font-size: 2em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.05em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 16px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Lead Block ── */
+        .lead-block {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 32px 0;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.75;
+        }
+        .lead-block .cite {
+            display: block; margin-top: 10px;
+            font-size: .82em; color: var(--text3);
+        }
+        .lead-block .cite a {
+            color: var(--accent); text-decoration: none;
+        }
+        .lead-block .cite a:hover { text-decoration: underline; }
+
+        /* ── Body Typography ── */
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.08em; font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p {
+            margin-bottom: 18px;
+            color: var(--text2);
+            line-height: 1.85;
+        }
+        .article-body p:first-of-type {
+            font-size: 1.05em;
+        }
+        .article-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .article-body em {
+            color: var(--text3);
+        }
+        .article-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table, .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0 32px;
+            font-size: .88em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead, .compare-table thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th, .compare-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd), .compare-table tbody tr:nth-child(odd) {
+            background: var(--bg2);
+        }
+        .article-body tbody tr:nth-child(even), .compare-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .article-body tbody tr:hover, .compare-table tbody tr:hover {
+            background: var(--accent-light);
+        }
+        .article-body td, .compare-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .article-body td:first-child, .compare-table td:first-child {
+            font-weight: 600; color: var(--text);
+        }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 16px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li {
+            margin: 6px 0;
+            line-height: 1.7;
+        }
+
+        /* ── Blockquote ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            margin: 24px 0;
+            background: var(--accent-light);
+            border-radius: 0 8px 8px 0;
+            color: var(--text2);
+            font-style: italic;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+        .highlight-box h4 {
+            font-size: .9em; font-weight: 700;
+            color: #4338ca;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .highlight-box ul li {
+            font-size: .88em; color: var(--text2);
+            padding-left: 18px; position: relative;
+            line-height: 1.6;
+        }
+        .highlight-box ul li::before {
+            content: '▸';
+            position: absolute; left: 0;
+            color: #6366f1; font-size: .8em; top: 2px;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37,99,235,.1);
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+        .feature-name {
+            font-size: .88em; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: .8em; color: var(--text3);
+            line-height: 1.6;
+        }
+
+        /* ── Protocol Map Grid ── */
+        .protocol-map {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 28px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .protocol-name {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+        .protocol-role {
+            font-size: .78em; color: var(--text3);
+            line-height: 1.5;
+        }
+        .protocol-item.highlight-protocol {
+            border-color: #059669;
+            background: #ecfdf5;
+            box-shadow: 0 2px 8px rgba(5,150,105,.12);
+        }
+        .protocol-item.highlight-protocol .protocol-name {
+            color: #047857;
+        }
+        .protocol-item.highlight-protocol .protocol-role {
+            color: #065f46;
+        }
+
+        /* ── Horizontal Rule ── */
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+
+        /* ── Code ── */
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .88em;
+            font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources Section ── */
+        .sources-section {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-section h3 {
+            font-size: .9em; font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+        .sources-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .sources-list li {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .source-num {
+            min-width: 22px; height: 22px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7em; font-weight: 700;
+            margin-top: 1px; flex-shrink: 0;
+        }
+        .source-content {
+            font-size: .82em; color: var(--text3);
+            line-height: 1.6;
+        }
+        .source-content a {
+            color: var(--accent); text-decoration: none;
+            word-break: break-all;
+        }
+        .source-content a:hover { text-decoration: underline; }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .84em;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .protocol-map { grid-template-columns: 1fr; }
+            .article-body table, .compare-table { font-size: .78em; }
+            .article-body table th, .article-body table td,
+            .compare-table th, .compare-table td
+            { padding: 8px 10px; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/erc8211-analysis/">⛓ BlockChain 研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/blockchain-2025-report/">年度报告</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">稳定币立法</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-chain-competition/">公链竞争</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">稳定币</span><span class="tag">净资本规则</span><span class="tag">15c3-1</span><span class="tag">折扣率</span><span class="tag">券商</span><span class="tag">代币化存款</span><span class="tag">SEC</span><span class="tag">货币基金</span>
+            </div>
+            <h1 class="article-title">2% 折扣率：稳定币通过会计关之后，还有一道资本关</h1>
+            <p class="article-subtitle">会计问它像不像现金，资本问我要为它留多少钱</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026年11月6日</span>
+                <span class="meta-sep">·</span>
+                <span>约 7,600 字 · 阅读约 25 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <div class="lead-block"><strong>核心结论：</strong> 稳定币进入金融机构的资产负债表，要连过两道关。第一道是会计，问的是它像不像现金；第二道是资本，问的是我该为它留多少钱。2026 年秋天，第一道关的答案在变好，第二道关的答案却还是一个很具体的数字：2%。美国证券交易委员会的净资本规则要求券商持有支付稳定币时按市值计提 2% 折扣，这一笔折扣在券商的杠杆上限下会放大成数量级的业务承载损失。10 月 29 日，Circle 向 SEC 提交意见函，要求在拟议规则 302(b) 中把 GENIUS 合规的支付稳定币直接认定为「现金」，并把 2% 降到零。同一周，加拿大把赎回期限、费用上限、储备要求一条条写进法条草案，用可验证的数字替换会计准则里的形容词。两件事方向相反，手法一致——都在用条件换裁量。而真正决定这笔钱能不能大规模停在券商账上的，是那条几乎没人讨论的规则：款项究竟记在谁的负债上。</div>
+<p>上一篇讨论的是企业能不能把稳定币记成现金；这一篇讨论的是记成现金之后，券商还要为它留多少钱。两句话之间隔着一整个资本充足率体系。</p>
+<hr />
+<h2>一、一道分录：2% 到底贵在哪</h2>
+<p>一家中型券商的资产负债表上，如果多出一笔 1 亿美元的稳定币库存，风险部门要做的第一件事不是估值，是做一笔扣减。</p>
+<p>美国券商的净资本规则（Rule 15c3-1）不按市价给资产记账，而是先假设清算场景：这些资产在压力下能不能卖掉，能卖到账面价的几成。卖不掉的、卖不到全价的，按资产类别打一个折扣，叫做 haircut。折扣从净资本里扣。净资本不是总资产，是券商能真正拿来吸收损失的那部分钱，它同时是监管门槛和业务上限。</p>
+<p>所以 2% 这个数字要放在折扣表里才能读出意思。同一张表上，短期美国国债的折扣在 0% 到 1% 之间，按剩余期限浮动；投资级公司债按期限和评级从 2% 一路排到 15% 以上；股票、私募股权、不动产的折扣更高。支付稳定币落在 2% 这一档。</p>
+<p>单看数字，2% 在整张表里算轻的。1 亿美元的稳定币，占用 200 万美元净资本，对一家净资本 2 亿美元的券商来说是一个百分点。放在新闻标题里，这个成本几乎可以忽略。</p>
+<p>问题出在这个 200 万美元不是终点，是杠杆的起点。</p>
+<p>15c3-1 的应付项目标准规定，券商的应付项目不得超过净资本的 15 倍。反过来读：每一美元净资本，可以支撑 15 美元的负债规模。于是那 200 万美元的名义扣减，对应的业务承载能力是 3,000 万美元。</p>
+<p>换句话说，为了把 1 亿美元稳定币放在账上，券商放弃的是 3,000 万美元的业务规模。资本效率打了三折。</p>
+<p>这个换算有个前提必须说清楚：它算的是机会成本，只有在券商已经把杠杆顶到 15 倍上限时，三折才成立。没有顶到上限的券商，边际上腾得出一块资本缓冲，2% 对它的实际约束接近于零。真正被这笔折扣卡住的，是那些业务规模已经贴着监管天花板、每一块资本都要排队分配的大机构——恰好也是稳定币做市和结算的主力。这就是为什么这个看起来很小的数字，在行业里的抱怨声量远大于它的会计金额。</p>
+<p>再往下算，还有一个更容易被忽略的差异。15c3-1 有两套标准，应付项目标准之外，还有一套替代净资本标准，适用于规模较大、可以逐日计算应收账款（aggregate debit items）的券商：净资本不少于应收账款的 2%。同一笔 200 万美元净资本，按这套标准能支撑 1 亿美元的应收账款。</p>
+<p>同样的折扣率，同样的资产，两套标准下算出来的业务承载差三倍多。所以「2% 吃掉多少业务」没有唯一答案，取决于这家券商走哪条合规路径。规则给了一个数字，市场读出来的是一段区间。</p>
+<p>这里还有一个纯粹属于观察者的巧合，值得单独说一句：15c3-1 里有三个百分比容易被搅在同一句话里——15 倍的应付项目杠杆上限、2% 的替代标准门槛、以及提案里 2% 的稳定币折扣率。前两个是分母和入口，第三个是分子上的扣减，作用方向完全不同。任何一场关于「2% 到底重不重」的讨论，如果没分清说的是哪一个，基本等于各说各话。</p>
+<p>对做市台来说，真正难受的地方还不在折扣本身，在库存周转。</p>
+<p>稳定币的套利利润极薄。同一时刻不同交易所之间的价差常在几个基点，扣掉手续费和滑点，剩下的空间靠周转次数堆出来。库存占用的资本成本一旦按 2% 的年化口径计进去，加上跨所调仓需要的持有时间，很多原本能做的价差就直接做不了了。交易员不会写报告解释这件事，他们只是把报价撤掉。于是市场上看到的是流动性变薄、买卖价差变宽，看不到的是资本规则在中间挡了一道。</p>
+<p>这笔钱最后是谁付的，也值得追一层。名义上的承担方是券商，但券商不会自己消化成本。一部分转给客户：库存变小，报价变宽，买卖价差里多出几个基点。一部分转给发行人：做市库存下降，流通量增长放缓，储备利息收入跟着少。还有一部分谁也没拿到，是交易本身消失了——原本能够撮合的价差，在资本成本之下不再成立，两边都没成交。第三部分不出现在任何一张报表上，量却最大。</p>
+<p>这也是 2% 最容易被误读的地方：它看起来是一个价格，实际是一个分类标签。监管把一项资产放进「需要折扣」的那一栏，而不是「等同现金」的那一栏，等于给它的风险等级签了字。折扣率比任何一份新闻稿都直白。</p>
+<hr />
+<h2>二、Circle 的诉求：302(b) 里的「现金」两个字</h2>
+<p>10 月 29 日，Circle 向 SEC 提交了一份意见函，回应的是关于经纪交易商加密资产处理的规则提案。函件里提了两件事，一件定性，一件定量。</p>
+<p>定性的一件，是要求把符合 GENIUS 法案要求的支付稳定币，在拟议规则 302(b) 的语境下直接归入「现金」。函件的表述很具体：按美元计价、适用相应的会计处理、适用客户储备的处理方式。定量的那一件，是在设立客观保障措施的前提下，把券商持有此类稳定币的 2% 折扣率降到零。函件末尾还附了一句，说网络投入运行后会提供相应的技术服务。</p>
+<p>前两件事是监管沟通，第三件事是商业条款。三件事写在同一份文件里，说明这笔账发行人算得很清楚。</p>
+<p>先看发行人为什么关心券商的资本规则。Circle 的收入结构摆在明面上，绝大部分来自储备资产的利息。储备规模跟着流通量走，流通量跟着谁能持有走。企业司库是一个方向，交易所和跨境汇款是另一个方向，券商是第三个——做市库存、结算头寸、抵押品，这三样都要求账户上随时压着一批稳定币。</p>
+<p>2% 让这三样都变贵。做市商不愿意囤库存，结算头寸被压到最低，抵押品折价传导到融资成本。发行人的流通量就卡在这里。</p>
+<p>这一季 Circle 的财报刚好提供了一个旁证。Q3 收入超出市场预期，同一时间宣布裁员 5%。收入超预期和裁员同时出现，说明增长的质量和成本的结构不在同一个方向上——储备利息收入随规模和市场利率走，人力成本随产品线扩张走，两条线交叉的时候，管理层的选择是收缩组织。发行人要撑住估值，就必须找到储备利息之外的收入来源；而任何新增收入来源，都要求稳定币能被更多人持有、更长时间持有。意见函背后的财务动机，大概就写在这两行财报数字里。</p>
+<p>但真正让「客户储备处理」这五个字变得值钱的，是另一条规则。</p>
+<p>15c3-3，客户保护规则，要求券商把客户的现金隔离在一个特别储备银行账户里，金额按客户自由贷方余额计算。这条规则的目的是防止券商挪用客户资金。它有一个隐含前提：什么算「现金」。如果稳定币不算现金，那么客户交来 1 亿美元的稳定币，券商在账上认了这笔负债，却还得另外拿 1 亿美元的真实现金放进储备账户。</p>
+<p>双倍占用。客户的钱在链上，券商的钱在银行，两边同时压着。</p>
+<p>这一条比 2% 的折扣率重得多。2% 是持有成本，这一条是结构性的资金占用，做市规模越大，占得越多。Circle 在意见函里把「客户储备处理」和「现金认定」放在同一句里，原因就在这里：它要的不是一个折扣豁免，是一个法律类别的入场券。</p>
+<p>从监管的角度看，这个诉求的核心难点不在合理性，在举证。要把一项私人发行的、价格理论上可以偏离 1 美元的代币认定为现金，SEC 需要相信它真的不会脱锚。函件给出的答案是「客观保障措施」，但这四个字在公开文本里没有逐条展开成可以检验的门槛。什么算客观？储备披露到什么频率？赎回承诺由谁担保？跨链桥被攻击导致某条链上的代币暂时无法赎回，算不算违约？这些都没有答案。</p>
+<p>我的判断是，零折扣不会一次给到位。SEC 的规则制定习惯是先设条件、再给台阶，最可能的路径是分档：满足较严条件的稳定币适用接近零的折扣，其余维持 2% 甚至更高。分档的好处是监管不需要对「稳定币是不是现金」这个定性问题表态，只需要对「这家发行人做没做到这几件事」表态。定性问题变成一个合规检查表，政治上好过得多。</p>
+<p>代价是分档会立刻在发行人中划出等级。头部发行人拿零折扣，中小发行人留在 2%，折扣率从风险度量变成竞争壁垒。这个结果对 Circle 是好事，对整个行业未必。</p>
+<hr />
+<h2>三、加拿大的答案：把会计准则的形容词写成法条数字</h2>
+<p>大西洋另一边，加拿大走了一条完全不同的路。</p>
+<p>2026 年秋天，加拿大财政部就稳定币监管条例草案启动 60 天公开咨询，截止日期是 12 月 23 日。草案里没有讨论「稳定币是不是现金」，直接把这件事拆成了五条可以检查的数字。</p>
+<p>赎回期限：持有人提出赎回请求后，发行人须在 3 个工作日内完成兑付。</p>
+<p>赎回费用：不得超过赎回金额的 1%。</p>
+<p>最低赎回金额：不得设置。也就是说，持有人拿着一美元来赎，发行人也得给。</p>
+<p>储备要求：储备资产的价值不得低于流通中的稳定币总量，且必须存放在加拿大的合格托管机构。</p>
+<p>付息禁令：不得向持有人支付利息，条文明确写到「或通过第三方」。同一条里保留了另一个口子——与使用行为相关的奖励不在禁止范围内。</p>
+<p>这五条放在一起，几乎是把国际会计准则里现金等价物的定义逐字翻译成了法条。准则说现金等价物要「短期、高度流动、易于转换为已知金额的现金、价值变动风险很小」，这四个短语全是形容词，全靠审计师判断。加拿大把它们换成了 3 天、1%、无最低金额、储备全额覆盖。</p>
+<p>这样的写法有一个直接后果：合规变成了一件可以核查的事，而不是一次可以裁量的判断。监管不需要评价某家发行人「够不够稳健」，只需要看它有没有在 3 天内兑付、有没有收超过 1% 的费用。</p>
+<p>付息禁令那一句里的「或通过第三方」，是整份草案里信息量最大的六个字。稳定币付息最常见的规避方式不是发行人直接付，是找一个合作方——把钱存进某个理财协议，由第三方给收益；或者在交易所端给持有奖励。加上这六个字，这条路被堵住了。同时保留的「与使用行为相关的奖励」又把另一条路留着：返现、手续费减免、支付折扣都可以做，只要不与持有余额和持有时间挂钩。</p>
+<p>这条线画得很细，细到可以直接当成判据用：挂钩余额，就是利息；挂钩使用，就是营销。</p>
+<p>60 天的咨询期对一个新资产类别来说也偏短。加拿大财政部通常给重大立法咨询 90 天以上，这次压到 60 天，说明想把框架赶在 GENIUS 生效之前立起来——在跨境稳定币的监管竞争里，先出规则的一方拿到的是标准制定权。</p>
+<p>至于加拿大为什么要禁付息，官方口径是保护消费者、防止把支付工具当投资品卖。真实的考虑恐怕更接近货币主权。如果加元计价的稳定币可以付息，加拿大人的活期存款会往稳定币搬家；如果只有美元稳定币可以付息，搬家的方向就是美元资产。存款基础一旦松动，银行的信贷投放能力跟着松动。禁付息与其说是在管稳定币，不如说是在守存款。</p>
+<p>把美国和加拿大这两件事并排看，会发现一个有趣的对称。</p>
+<p>Circle 对 SEC 说的是：给我零折扣，我承诺客观保障措施。加拿大对发行人说：给你合规地位，你须在 3 天内赎回、费用不超过 1%。一个是从监管手里拿走裁量权，用发行人自证替代；一个是把裁量权换成明码标价的条件，写进法条。手法是同一个——用可验证的条件置换不可验证的信任——只是谁出价、谁收价的位置相反。</p>
+<p>这个对称解释了 2026 年全球稳定币监管的基本形态：没有哪个辖区愿意对「稳定币是什么」下一个本质性的定义，所有辖区都在做同一件事，把本质问题拆成一串可执行的检查项。检查项越细，监管越省事，发行人也越容易规划。代价是这个行业从此活在清单里。</p>
+<hr />
+<h2>四、同一个链上美元，两种负债人</h2>
+<p>10 月 21 日，美国货币监理署发布了一份终规，删掉了此前的「第三方推定」——过去银行只要通过第三方间接参与加密资产业务，一律被认为不安全、不稳健；删掉之后，改为逐案审查。同一份文件里明确了一件事：代币化存款——也就是银行存款在链上的代表——属于存款，可以付息。</p>
+<p>香港那边，Ensemble 项目在推进代币化存款的机构间结算安排，参与方是几家发钞行和大型商业银行。</p>
+<p>于是一条链上同时跑着两种美元。</p>
+<p>一种是代币化存款。负债人是银行，背后是存款保险（按辖区设有上限），可以付息，风险权重按银行敞口计算，在券商的净资本规则下按现金处理，折扣为零。</p>
+<p>另一种是支付稳定币。负债人是发行人，没有存款保险，法律禁止付息（GENIUS 法案、加拿大草案、欧盟 MiCA 在这一条上高度一致），在券商的净资本规则下按 2% 计提折扣。</p>
+<p>两样东西在技术层面几乎无法区分。同样的代币标准，同样的确认时间，同样的 7×24 可用，同样的可编程性。钱包里看到的都是一串余额。</p>
+<blockquote>
+<p>同一条链上，一美元稳定币和一美元代币化存款的转账成本、确认时间完全相同，区别不在传输层，在负债人。存款保险、付息资格、风险权重、折扣率这四个变量，全由「谁欠你钱」这一个问题决定。</p>
+</blockquote>
+<p>这个分野带来的第一个后果，是监管自己造出了一个套利口。</p>
+<p>同样一美元，挂在银行名下能生息、零折扣、有保险；挂在发行人名下不能生息、2% 折扣、无保险。理性的资金会往银行那边走。这不是市场偏好，是规则设定的相对价格。</p>
+<p>第二个后果更有意思：稳定币被推回它最擅长的位置。</p>
+<p>本期数据显示，稳定币总市值 2,874.7 亿美元，比上一期下降 2.16%；USDT 跌 1.87%，USDC 跌 3.72%，USDS 跌 2.6%。存量在缩。同一时间，月度链上转账额 10.09 万亿美元，同比增长 38.53%。</p>
+<p>分销端的数据正好印证这个走向。Visa 的稳定币结算规模年化 250 亿美元，同比增长约 10 倍，覆盖 10 条链、5 个地区、300 多家合作机构，卡项目超过 225 个；三星把 Solana 上的 USDC 接进了 8,200 万台 Galaxy 设备，用户可以用信用卡按 4% 的手续费充值，纽约州暂不开放；日本从 11 月 1 日起允许 JPYC 用于退税，跑在 Avalanche C-Chain 上。这些动作全部落在「过手」这一侧：结算、消费、退款。没有一个是在做「存钱」。</p>
+<p>两个数字放在一起除一下：月度转账额是存量市值的 35 倍。</p>
+<p>一个月里，整个稳定币体系把它自己的存量搬了 35 遍。这个周转率不像储值工具，更像清算网络。存量在缩、流量在涨，恰好对应一条清晰的路径：钱不再停在稳定币里，只是路过。</p>
+<p>这与负债人分化是同一件事的两面。储值功能被代币化存款和货币基金拿走，因为那边能生息、有保险、零折扣；结算功能留在稳定币，因为它快、便宜、跨境无障碍。稳定币的定位在这场规则调整里被重新划定了，而且不是被谁宣布的，是被四套规则体系（存款保险、付息禁令、风险权重、折扣率）共同挤出来的。</p>
+<p>发行人对这件事的态度是分裂的。流通量是命，但流通量的质量在变：停留时间从几天缩短到几小时，储备利息收入不变，因为储备规模取决于某一时点的余额，跟周转次数无关。所以周转率上升对发行人是中性偏好的——它带来了网络效应和使用场景，却没减少储备。真正受损的是那些靠「稳定币存款化」讲故事的商业模式。</p>
+<hr />
+<h2>五、谁被挡住：三张表</h2>
+<p>把 2% 放回具体的资产负债表，会看到三种完全不同的处境。</p>
+<h3>5.1 券商：库存与做市</h3>
+<p>一家净资本 2 亿美元的中型券商，稳定币库存常年维持在 5 亿美元规模，用于跨所套利和客户结算。按 2% 计提，占用 1,000 万美元净资本，相当于净资本的 5%。</p>
+<p>这 5% 不能拿去做别的。承销业务、自营额度、客户融资，都在同一个净资本池子里排队。资本配置会上，稳定币库存的提案要和一条新的做市业务线竞争同一笔钱，而后者能讲出更漂亮的回报率。</p>
+<p>再叠上 15c3-3 的客户储备要求。客户交来的稳定币如果按 2% 折扣处理，同时又不被认定为现金，券商需要另外准备等额真实现金放进特别储备账户。5 亿美元的客户稳定币，意味着一笔 5 亿美元的现金占用，利息收入归客户，资金成本归券商。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>项目</th>
+<th>规则</th>
+<th>数值</th>
+<th>对券商的影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>净资本折扣</td>
+<td>Rule 15c3-1</td>
+<td>市值的 2%</td>
+<td>5 亿美元库存占用 1,000 万美元净资本</td>
+</tr>
+<tr>
+<td>客户储备隔离</td>
+<td>Rule 15c3-3</td>
+<td>等额现金</td>
+<td>客户稳定币不认作现金时，需双倍资金占用</td>
+</tr>
+<tr>
+<td>杠杆乘数</td>
+<td>应付项目标准</td>
+<td>15 倍</td>
+<td>1,000 万美元净资本对应 1.5 亿美元业务承载</td>
+</tr>
+<tr>
+<td>库存周转</td>
+<td>内部风控</td>
+<td>分钟到小时级</td>
+<td>薄价差业务在资本成本下失去可行性</td>
+</tr>
+</tbody>
+</table>
+<h3>5.2 货币基金：2a-7 的门</h3>
+<p>比 2% 更硬的墙在货币基金这边。</p>
+<p>美国货币市场基金受 Rule 2a-7 约束，只能持有「合格证券」——剩余期限不超过 397 天、满足评级与流动性要求的短期债务工具。支付稳定币不是证券，进不了这个定义。2023 年修订之后，货币基金还被要求持有不低于 25% 的日流动性资产和不低于 50% 的周流动性资产。稳定币在功能上完美符合「日流动性」，在法律上却不属于「资产」清单里的任何一个品种。</p>
+<p>结果是：全球规模最大的现金替代资金池，碰不到稳定币。美国货币市场基金的总规模以万亿美元计，比整个稳定币市场的存量高出一个数量级以上。这扇门关着的时候，2% 是二还是零，对结果没有任何影响。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>门槛</th>
+<th>规则</th>
+<th>要求</th>
+<th>稳定币的位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>品种资格</td>
+<td>Rule 2a-7「合格证券」</td>
+<td>剩余期限不超过 397 天，评级达标</td>
+<td>不是证券，不可持有</td>
+</tr>
+<tr>
+<td>日流动性</td>
+<td>2023 年修订</td>
+<td>不低于总资产的 25%</td>
+<td>功能上符合，法律上不具备</td>
+</tr>
+<tr>
+<td>周流动性</td>
+<td>2023 年修订</td>
+<td>不低于总资产的 50%</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>估值方式</td>
+<td>摊余成本 + 影子定价</td>
+<td>偏离超过 0.5% 触发董事会</td>
+<td>无适用条款</td>
+</tr>
+</tbody>
+</table>
+<p>这也解释了 Circle 意见函里那句「适用相应的会计处理、适用客户储备的处理方式」为什么写得那么绕。它要的不是一个折扣数字，是一个类别。只要稳定币在法律上仍然不是「现金」，货币基金就永远不能配它，无论折扣率降到多少。折扣率是门槛上的锁，类别是门本身。</p>
+<h3>5.3 代币化存款：不需要这场辩论</h3>
+<p>银行在这场辩论里几乎不需要发言。</p>
+<p>代币化存款本来就是存款。它不需要 SEC 认定它是现金，因为它在法律上已经是现金；不需要豁免 2% 折扣，因为存款的折扣是零；不需要讨论能不能付息，因为存款本来就能付息。</p>
+<p>10 月 21 日 OCC 那份终规把话说得更清楚：删掉第三方推定、改逐案审查，同时确认代币化存款属于存款、可以付息。银行拿到的是一个不需要重新论证的身份。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>维度</th>
+<th>券商持有稳定币</th>
+<th>货币基金持有稳定币</th>
+<th>代币化存款</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>法律性质</td>
+<td>非现金的金融资产</td>
+<td>不合格证券，不可持有</td>
+<td>银行存款</td>
+</tr>
+<tr>
+<td>资本处理</td>
+<td>2% 折扣</td>
+<td>不适用</td>
+<td>按现金，零折扣</td>
+</tr>
+<tr>
+<td>付息能力</td>
+<td>法律禁止</td>
+<td>不适用</td>
+<td>可以付息</td>
+</tr>
+<tr>
+<td>存款保险</td>
+<td>无</td>
+<td>无</td>
+<td>有，按辖区上限</td>
+</tr>
+<tr>
+<td>结算效率</td>
+<td>7×24，秒级</td>
+<td>不适用</td>
+<td>7×24，秒级</td>
+</tr>
+</tbody>
+</table>
+<p>这张表说明的东西比数字更直接：三者的差距不在技术，在类别。2% 折扣、付息禁令、无保险，这三条都是类别归属的结果，不是原因。想改这三条，得先改类别；改类别要动的是证券法、银行法、税法三套体系，任何一套都不是 SEC 一家能定的。</p>
+<p>所以行业里抱怨 2% 的声音，多半错焦了。2% 是症状，类别是病。</p>
+<hr />
+<h2>六、结论：双重身份不会在 2027 年前统一</h2>
+<p>把四件事的日历摆在一起看，结论会变得很难乐观。</p>
+<p>GENIUS 法案 2027 年 1 月生效。加拿大的咨询 12 月 23 日截止，成文规则走完流程大概率落在 2027 年下半年。SEC 关于 302(b) 的规则还在提案阶段，从提案到终规通常要 12 到 18 个月，加上分档设计需要的经济分析，最早也要 2027 年底。FASB 那边的现金等价物项目没有公开的时间表。</p>
+<p>2027 年会出现一个很别扭的状态：法律上稳定币是合法的支付工具，会计上可能被接纳为现金等价物，资本上仍然被扣 2%。三套体系各走各的，谁也没有等谁。</p>
+<p>这个不同步的商业后果，比任何一条单独的规则都大。</p>
+<p>做市商的库存会继续留在银行体系。既然代币化存款能生息、零折扣、有保险、还能在同一批链上做 7×24 结算，没有任何理由把库存放在一个要被扣 2% 的资产上。跨所套利会变成「银行钱调拨、稳定币过桥」的结构：大额资金停在代币化存款里，只在真正需要跨链的那几分钟换成稳定币。</p>
+<p>稳定币的增量会留在零售和跨境汇款。这两块对周转速度敏感、对余额停留不敏感，正好避开 2% 的射程。</p>
+<p>两条轨道各自长大，不会合并。</p>
+<p>什么情况下会合并？两个触发点值得盯。一是 SEC 真的给出零折扣，而且是通过正式的规则制定而不是员工声明。员工声明不构成法律确定性，机构的法律顾问不会拿它去说服审计委员会。二是有大型托管行开始接受稳定币作为特别储备账户里的合格资产，这会从 15c3-3 这一端倒逼解释，效果比修改折扣率更快。</p>
+<p>这两件事都在 2027 年之后。</p>
+<p>还有一个信号值得记一笔。SEC 在 2027 财年的检查优先级里，第一次把代币化资产列进了清算机构的高风险审查范围。检查优先级不是规则，但它决定未来两年监管资源往哪里投；被列为高风险的业务，机构内部的合规团队会自动给它多加一层审批。这层审批的成本，往往比一条明文规则更高，因为它没有申诉渠道，也没有明确的生效和失效日期。</p>
+<p>所以接下来一年最可能的情形是：2% 以「过渡措施」的名义继续存在。规则提案里会加一句「将在进一步评估后调整」，评估的周期跨过 GENIUS 生效日，跨过加拿大成文，跨过 FASB 的下一次会议。到期之后重新提一次，再延一次。</p>
+<p>一年的持仓成本，足够让一家中型做市商把稳定币库存从 5 亿美元降到 1 亿美元。它不会在公告里说是因为资本规则，它只会说「优化资产负债表效率」。资本规则从来不靠禁止发挥作用，它靠改变相对价格，然后等市场自己走。</p>
+<p>这也是这道关比会计关更难过的原因。会计关有一个正确答案，只要储备和赎回权到位，稳定币就可以被记成现金。资本关没有正确答案，只有一组相对价格，而相对价格可以被设计，也可以被无限期地拖延。真正决定稳定币能走多远的，不是它像不像现金，是有没有人愿意为它腾出资本。</p>
+<hr />
+<p><strong>信息来源</strong></p>
+<p>SEC 规则提案与员工指引（Rule 15c3-1 净资本规则、Rule 15c3-3 客户保护规则、拟议规则 302(b)）
+<code>https://www.sec.gov/rules-regulations</code>
+<code>https://www.sec.gov/tm/staff-guidance</code></p>
+<p>Circle 2026 年 10 月 29 日意见函与季度披露
+<code>https://www.circle.com/blog</code>
+<code>https://investor.circle.com/</code></p>
+<p>加拿大稳定币监管条例草案公开咨询（2026 年秋，截止 2026 年 12 月 23 日）
+<code>https://www.canada.ca/en/department-finance/consultations.html</code>
+<code>https://www.bankofcanada.ca/</code></p>
+<p>美国货币监理署 2026 年 10 月 21 日终规
+<code>https://www.occ.treas.gov/news-issuances/</code></p>
+<p>香港金管局 Ensemble 项目代币化存款安排
+<code>https://www.hkma.gov.hk/eng/key-functions/international-financial-centre/fintech/</code></p>
+<p>GENIUS 法案（Guiding and Establishing National Innovation for U.S. Stablecoins Act）生效安排
+<code>https://www.congress.gov/</code></p>
+<p>货币市场基金 Rule 2a-7 流动性要求（2023 年修订）
+<code>https://www.sec.gov/investment</code></p>
+<p>稳定币市值与链上转账数据
+<code>https://defillama.com/stablecoins</code>
+<code>https://www.visa.com/solutions/stablecoin</code></p>
+<p>Visa 稳定币结算规模与卡项目数据
+<code>https://usa.visa.com/about-visa/newsroom.html</code></p>
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav"><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-tbill-coupling-2026.html">💵 稳定币的尽头是美债</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-yield-boundary-2026.html">📈 有收益的美元</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-cash-equivalent-fasb-2026.html">🧾 稳定币能不能记成现金</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-distribution-sovereignty-mica-2026.html">🌍 分发主权：MiCA 的准入名单</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-payment-authorization-gap-2026.html">🔐 代理支付的授权缺口</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/l2-retreat-mempool-revolution-2026.html">⛓️ L2 退潮与 Mempool 革命</a></nav>
+
+        <!-- Sources -->
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/erc8211-analysis/">⛓ ERC-8211 研报</a> ·
+            <a href="https://julietwang123.github.io/blockchain-2025-report/">📊 年度报告</a>
+        </p>
+    </footer>
+</body>
+</html>
