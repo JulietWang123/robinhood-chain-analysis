@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代理支付的承保缺口：凭证有了，责任还没有</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list {
+            display: flex; gap: 20px; list-style: none;
+        }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+        .article-title {
+            font-size: 2em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.05em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 16px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Lead Block ── */
+        .lead-block {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 32px 0;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.75;
+        }
+        .lead-block .cite {
+            display: block; margin-top: 10px;
+            font-size: .82em; color: var(--text3);
+        }
+        .lead-block .cite a {
+            color: var(--accent); text-decoration: none;
+        }
+        .lead-block .cite a:hover { text-decoration: underline; }
+
+        /* ── Body Typography ── */
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.08em; font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p {
+            margin-bottom: 18px;
+            color: var(--text2);
+            line-height: 1.85;
+        }
+        .article-body p:first-of-type {
+            font-size: 1.05em;
+        }
+        .article-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .article-body em {
+            color: var(--text3);
+        }
+        .article-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table, .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0 32px;
+            font-size: .88em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead, .compare-table thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th, .compare-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd), .compare-table tbody tr:nth-child(odd) {
+            background: var(--bg2);
+        }
+        .article-body tbody tr:nth-child(even), .compare-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .article-body tbody tr:hover, .compare-table tbody tr:hover {
+            background: var(--accent-light);
+        }
+        .article-body td, .compare-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .article-body td:first-child, .compare-table td:first-child {
+            font-weight: 600; color: var(--text);
+        }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 16px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li {
+            margin: 6px 0;
+            line-height: 1.7;
+        }
+
+        /* ── Blockquote ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            margin: 24px 0;
+            background: var(--accent-light);
+            border-radius: 0 8px 8px 0;
+            color: var(--text2);
+            font-style: italic;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+        .highlight-box h4 {
+            font-size: .9em; font-weight: 700;
+            color: #4338ca;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .highlight-box ul li {
+            font-size: .88em; color: var(--text2);
+            padding-left: 18px; position: relative;
+            line-height: 1.6;
+        }
+        .highlight-box ul li::before {
+            content: '▸';
+            position: absolute; left: 0;
+            color: #6366f1; font-size: .8em; top: 2px;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37,99,235,.1);
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+        .feature-name {
+            font-size: .88em; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: .8em; color: var(--text3);
+            line-height: 1.6;
+        }
+
+        /* ── Protocol Map Grid ── */
+        .protocol-map {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 28px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .protocol-name {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+        .protocol-role {
+            font-size: .78em; color: var(--text3);
+            line-height: 1.5;
+        }
+        .protocol-item.highlight-protocol {
+            border-color: #059669;
+            background: #ecfdf5;
+            box-shadow: 0 2px 8px rgba(5,150,105,.12);
+        }
+        .protocol-item.highlight-protocol .protocol-name {
+            color: #047857;
+        }
+        .protocol-item.highlight-protocol .protocol-role {
+            color: #065f46;
+        }
+
+        /* ── Horizontal Rule ── */
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+
+        /* ── Code ── */
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .88em;
+            font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources Section ── */
+        .sources-section {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-section h3 {
+            font-size: .9em; font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+        .sources-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .sources-list li {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .source-num {
+            min-width: 22px; height: 22px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7em; font-weight: 700;
+            margin-top: 1px; flex-shrink: 0;
+        }
+        .source-content {
+            font-size: .82em; color: var(--text3);
+            line-height: 1.6;
+        }
+        .source-content a {
+            color: var(--accent); text-decoration: none;
+            word-break: break-all;
+        }
+        .source-content a:hover { text-decoration: underline; }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .84em;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .protocol-map { grid-template-columns: 1fr; }
+            .article-body table, .compare-table { font-size: .78em; }
+            .article-body table th, .article-body table td,
+            .compare-table th, .compare-table td
+            { padding: 8px 10px; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/erc8211-analysis/">⛓ BlockChain 研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/blockchain-2025-report/">年度报告</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">稳定币立法</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-chain-competition/">公链竞争</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">AI代理支付</span><span class="tag">承保缺口</span><span class="tag">责任归属</span><span class="tag">卡组织</span><span class="tag">争议处理</span><span class="tag">稳定币</span><span class="tag">预授权</span><span class="tag">深度伪造</span>
+            </div>
+            <h1 class="article-title">代理支付的承保缺口：凭证有了，责任还没有</h1>
+            <p class="article-subtitle">Barr 在讲速度，Waller 在讲责任，花旗在把风险往外推——三方都没有说那句「出事我赔」</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026年11月20日</span>
+                <span class="meta-sep">·</span>
+                <span>约 7,640 字 · 阅读约 19 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <p>11 月 17 日到 11 月 19 日，三天，三件事。</p>
+<p>11 月 17 日，美联储理事 Michael Barr 说，AI 代理可能在数分钟内引发银行挤兑。</p>
+<p>同一天，另一位美联储理事 Christopher Waller 在谈代币化金融时，把币安那次被盗拿出来当例子，问了三个问题：欺诈算谁的，密钥泄露算谁的，交易失败算谁的。</p>
+<p>11 月 19 日，花旗更新了服务条款。外部 AI 代理带来的风险归客户，包括登录凭证泄露。</p>
+<p>三件事看起来不在一个话题上。一件讲系统性风险，一件讲技术架构，一件是法律文本。但把它们并排放着读，会看到同一件东西的三个面：<strong>没有一方愿意为代理支付承保。</strong></p>
+<p>Barr 说的是后果有多快。Waller 说的是责任有多空。花旗做的是把责任往外推。三条合起来，指向一个比"授权凭证"更靠后的位置——就算凭证齐全、指令清楚、限额设好，出事之后谁掏钱，仍然是空的。</p>
+<p>上一篇讨论的是授权层缺什么。这一篇只讨论一件事：<strong>凭证生效之后，损失怎么分。</strong></p>
+<hr />
+<h2>一、三个信号，同一个问题</h2>
+<p>先说 Barr。</p>
+<p>他的担忧点在速度。传统挤兑之所以慢，不是因为人心不慌，而是因为物理世界里塞满了减速带：银行要开门，柜台要排队，转账有限额，大额要人工复核。这些机制全部建立在一个假设上——<strong>有人在场，而且反应慢。</strong></p>
+<p>代理把这个假设拆了。它不需要开门，不需要排队，不受限额约束（如果给它开了额度），也不需要复核（如果授权是预先给的）。当几十万个代理读到同一条新闻、做出同一个判断、同时发起同一笔转出，减速带一根都不在。</p>
+<p>这里有个容易漏掉的细节：Barr 说的不是"代理会做错"。他说的是代理<strong>做对</strong>的时候更危险。单个代理在坏消息出来时撤出稳定币，是完全理性的行为。问题在于所有代理都这么理性。</p>
+<p>再说 Waller。</p>
+<p>他的三问比 Barr 的更细，细到可以直接当责任清单用。欺诈是第三方作恶。密钥泄露是基础设施失效。失败交易是系统本身出错。这三类事故，对应三种完全不同的责任主体、三种不同的举证方式、三种不同的赔付逻辑。</p>
+<p>放在传统金融里，这三件事各有一整套现成答案：欺诈走争议处理，密钥泄露走托管责任，失败交易走运营风险。放在链上，三件事共用一个答案——<strong>不可逆，所以自己承担。</strong></p>
+<p>Waller 的结论是代币化金融仍需要传统银行和更强的保障机制。同期他在另一场谈利率的讲话里也提了同一个意思：区块链支付要规模化，还得靠传统结算系统兜底。这两件事在他那里是一件事——利率是宏观的刹车，结算系统是微观的底盘，两个都不能拆。</p>
+<p>最后说花旗。</p>
+<p>这份条款是本期唯一一份成文的责任切分样本。它的做法不新鲜，就是把风险从自己的资产负债表上挪到客户的资产负债表上。新鲜的是它挪的范围：外部 AI 代理，包括登录凭证泄露。</p>
+<p>"包括登录凭证泄露"这六个字，是整份条款里最重的一句。它的意思是：即使不是你授权错了，是凭证被人偷了，也算你的。传统卡支付里，这种情况叫未授权交易，默认责任在发卡行，美国规则下信用卡持卡人的责任上限是五十美元。花旗这条把默认值反过来了。</p>
+<p>三条放在一起，图景很清楚：<strong>监管在提问，银行在撇清，产品在抢入口。没有一方在定价。</strong></p>
+<h3>一个更硬的证据</h3>
+<p>如果上面这个判断成立，那么应该能看到一个旁证：在链上，"被骗"这件事在法律上可能根本不构成"骗"。</p>
+<p>这个旁证在本期出现了。MIT 两兄弟的以太坊 MEV 案，联邦法官判无罪，理由是检方无法证明"重大虚假陈述"。判词里有一句话被媒体报道直接写进了标题：<strong>以太坊没有使用条款（no terms of use）。</strong></p>
+<p>这句话值得停一下。它不是在说以太坊设计得不好，它是在陈述一个法律事实：没有条款，就没有约定的义务；没有约定的义务，就没有可被违反的陈述；没有虚假陈述，欺诈的构成要件就缺一块。</p>
+<p>法官的判决在法律上是对的。但它同时暴露了一件事：<strong>在一条没有条款层的链上，损失分配这件事没有起点。</strong> 你可以说某人害了你，但你没法说清他违反了什么。这不是技术问题，是文本问题。</p>
+<p>所以我把它当成本篇的第一个结论：代理支付的承保缺口，根子不在风控模型不够好，在于<strong>没有人写过那份"什么情况下算我的"的文件</strong>。花旗写了，但写的只有一件事："不算我的"。</p>
+<hr />
+<h2>二、为什么代理让承保变难</h2>
+<p>承保这件事，本质是把不确定的损失换成确定的保费。它要成立，需要三个前提，缺一不可。</p>
+<p><strong>第一，频率可估。</strong> 车险能定价，是因为有几十年的出险数据。卡支付的欺诈率能定价，也是同样的原因。代理支付没有这个。1.38 亿笔听起来样本量足够，但拆开看，绝大多数是 0.36 美元量级的机器调用——买一次摘要、买一次数据查询。这些交易不出险，因为它们没有争议标的。真正会出险的那部分，量还很小。</p>
+<p><strong>第二，单笔损失有上限。</strong> 卡有额度，这是最朴素的风控。代理没有天然上限。你给它的预算是月五百，它可以在一分钟内花完，也可以因为一个循环 bug 花五百次。这不是假设，是已经发生过很多次的工程事故类型。</p>
+<p>11 月 10 日 CertiK 提了一个建议，说交易所的热钱包应该设硬性美元上限，理由是"冷存储是衡量在线暴露的有用指标，但不是独立的安全评分"。这条建议针对的是交易所，但它背后的思路适用于所有给代理开了额度的账户：<strong>风险要有一个物理的、写死的天花板，不能只靠逻辑约束。</strong> 代理的问题在于，逻辑约束它可以自己解释，物理上限它绕不过去。</p>
+<p><strong>第三，事故可归因。</strong> 这一条最要命。</p>
+<p>代理出问题，可能是三种情况：用户授权错了（让他买 A，其实想买 B），代理执行错了（理解对了，做错了），第三方攻击（都对，但凭证被偷了）。这三种在事后看起来一模一样——<strong>因为链上只记录结果，不记录意图。</strong></p>
+<p>卡支付的整套争议处理，建立在"意图可以被重建"上。持卡人说我没买过这件东西，发卡行去调签购单、查 IP、看设备指纹，重建一个"当时他是否在场、是否同意"的判断。代理支付里，这个重建链条断了：代理确实在场，但它不是人；授权确实给了，但给的是语义而不是金额。</p>
+<p>举个具体的例子。你让代理"订下周去上海的机票，别太贵"。它订了，还顺手买了一份退改签保险——在人类看来这叫周到，在争议处理里这叫"未授权交易"。你要退款，商户说这是配套服务，代理自己选的。谁对？</p>
+<p>没有判例。没有判例就没有定价。没有定价就没有承保。</p>
+<h3>一个被低估的难点：预授权的语义边界</h3>
+<p>11 月 13 日，OpenAI 在 ChatGPT 里上线支付钱包，接的是 Visa、Mastercard、American Express，明确不依赖加密，并且说后续会支持<strong>预授权交易</strong>（preauthorized transactions）。</p>
+<p>这条新闻被读成"代理支付终于有了第一条规模化路径"。这个读法没错，但它绕过了预授权的核心难点。</p>
+<p>预授权在卡体系里的含义非常具体：<strong>授权一个金额上限，允许商户在这个范围内扣款。</strong> 它的可执行性来自那个数字。数字是硬的，可以比对，可以拒付，可以举证。</p>
+<p>代理的"授权范围"是语义的。"订机票，别太贵"——不贵是多少？含不含行李？能不能改签？这些在人类之间靠常识补齐，在争议处理里靠不了常识。争议处理要的是可以写进规则的东西。</p>
+<p>所以预授权这件事，技术上是把额度传下去，法律上是把语义变成金额。前一半是工程问题，后一半是立法问题。OpenAI 能做前一半。</p>
+<h3>还有一层：相关性</h3>
+<p>保险的精算基础是"独立同分布"。一千辆车，各自出事，互不牵连，所以可以算期望、可以分散。</p>
+<p>代理不是这样。同一个模型、同一份提示词、同一个新闻源、同一套工具定义。它们的判断高度相关。相关性意味着什么？意味着出事的时候会一起出事。</p>
+<p>这一点跟 Barr 的挤兑警告是同一件事的两面。挤兑不需要代理出错。它只需要代理都做同一件<strong>正确</strong>的事。</p>
+<p>后面第四节会专门讲这个，因为它和承保缺口不能用同一个方案解决。</p>
+<hr />
+<h2>三、已有的三个替代方案，都不够</h2>
+<p>承保缺口的替代方案，市场上已经出现了三个。逐个看它们的边界。</p>
+<h3>方案一：条款转移</h3>
+<p>代表是花旗 11 月 19 日那份更新。</p>
+<p>它有效，而且立刻生效——不需要立法，不需要行业共识，不需要技术改动。一份服务条款改几行字，风险就完成了转移。</p>
+<p>但它的可扩张性极差，因为它把风险交给了最没有能力管理它的那一方。</p>
+<p>这个判断需要拆开说。"最没有能力管理"不是指客户笨，而是指客户缺少三样东西：<strong>信息、工具、议价权。</strong> 客户不知道自己给代理开了多大权限（信息），客户没有办法实时监控代理行为（工具），客户不能跟银行谈条款（议价权）。</p>
+<p>更麻烦的是它的反噬。如果客户承担全部风险，客户的理性反应不是"更小心"，是<strong>不用</strong>。承保缺口于是变成需求缺口——这正好解释了为什么代理支付在 C 端一直起不来。上一轮的调研数据可以对照：69% 的人不信任 AI 处理支付，60% 表示一次出错就停用。条款把风险推给这样的用户群，等于把产品推给零。</p>
+<p>条款转移还有一个技术边界：它只对"已经同意条款"的场景有效。B2B 大额可以，因为合同是谈出来的。C 端小额不行，因为没有人读条款。而代理支付要规模化的地方，恰恰是 C 端小额。</p>
+<h3>方案二：技术拦截</h3>
+<p>代表是 Coinbase 11 月 17 日那套 AI 防御。</p>
+<p>一个冒充 Elon Musk 的深度伪造直播骗局，用户被诱导转账。Coinbase 的系统拦下了 470 万美元，拦截率约 91%，全程没有人工介入。</p>
+<p>91% 这个数字有两面。好的一面是它证明了"代理对代理"的防御是可行的——攻击用 AI，防守也用 AI，人在这个环节上已经追不上速度。这也顺手回答了"要不要人审"这个问题：不要，因为人审的速度上限就是攻击的下限。</p>
+<p>不好的一面是剩下那 9%。470 万是拦截额，按这个反推总尝试额约 516 万，漏过的就是 46 万左右。而且这 9% 不是随机分布的——<strong>自动化拦截做得越好，漏过的那部分越集中在"看起来最像真的"的样本上。</strong> 拦截率从 80% 提到 91%，拦住的绝对量只多一成，剩下那 9% 的难度却比原来 20% 的难度高得多。</p>
+<p>但技术拦截真正的问题不在效率，在于<strong>它不产生责任</strong>。</p>
+<p>拦住了，是本事。漏过了，是"我们尽力了"。这条链上没有任何一方因此欠谁一笔钱。技术方案解决的是概率，不是分配。而承保缺口是一个分配问题。</p>
+<h3>方案三：监管兜底</h3>
+<p>代表是 Barr、Waller 的讲话，以及香港金管局 11 月 18 日的动作。</p>
+<p>Barr 和 Waller 都在提问，不在定规则。这不能怪他们——央行理事的职责边界就在那里。定规则要走立法或监管规则制定程序，那是以年为单位的。</p>
+<p>香港的方向更有意思一点。金管局的执行总监 Raymond Chan 说，要用 agentic AI 去分析链上转账和链下客户交易，找出异常。这是把代理放在防守端，做反洗钱和金融犯罪检测。</p>
+<p>顺带说一句，这条新闻在中文报道里传的时候，容易被读成"香港在管代理支付"。不是。它管的是代理做反洗钱，是防守端的应用，跟责任归属没有关系。防守端用代理，和代理去做支付，中间隔着一整套责任规则。</p>
+<p>监管能做三件事：定责任归属、设金额上限、要求信息披露。监管不能做一件事：给损失定价。</p>
+<p>原因很朴素。监管不承担损失，所以它没有动力去精算。它能强制某一方承担，但承担方最终还是要通过定价把成本转出去。所以监管能打开承保的门，不能替代承保本身。</p>
+<p>而且监管的时间尺度和产品的尺度不匹配。Barr 担心的是"数分钟内"的挤兑，立法周期是几年。等到规则出来，形态早就变了。</p>
+<h3>三个方案的边界</h3>
+<table class="compare-table">
+<thead>
+<tr>
+<th></th>
+<th>谁承担损失</th>
+<th>生效速度</th>
+<th>可扩张性</th>
+<th>失效条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>条款转移（花旗）</td>
+<td>客户</td>
+<td>立即</td>
+<td>低——只覆盖已同意条款的场景，C 端小额读不到条款</td>
+<td>客户选择不用；跨机构不互认</td>
+</tr>
+<tr>
+<td>技术拦截（Coinbase）</td>
+<td>无人承担，只是概率下降</td>
+<td>立即</td>
+<td>中——取决于攻击形态，被动跟进</td>
+<td>剩余风险向高仿真样本集中；不产生赔付关系</td>
+</tr>
+<tr>
+<td>监管兜底（Barr/Waller/HKMA）</td>
+<td>未定</td>
+<td>以年计</td>
+<td>高，但滞后</td>
+<td>不承担损失，因此不定价；规则出来时形态已变</td>
+</tr>
+</tbody>
+</table>
+<p>三个方案有一个共同点：<strong>它们都在处理"事故发生的概率"，没有在处理"事故发生后钱从谁口袋到谁口袋"。</strong> 承保是后一件事。</p>
+<hr />
+<h2>四、速度问题与承保问题是两件事</h2>
+<p>上一节把 Barr、Waller、花旗并列当三条证据。这一节要把它们拆开，因为 Barr 和 Waller 指向两个不同的失效模式，而这两个失效模式需要完全相反的药。</p>
+<p>承保处理的是<strong>个别事故</strong>。一笔交易出问题，损失多少，谁赔。这是一个微观问题。它的数学基础是大数定律：样本多、事故独立，期望值就稳定。</p>
+<p>挤兑处理的是<strong>同时事故</strong>。所有代理同时做同一件事。这是一个宏观问题。它的数学基础是相关性：当相关性趋近于一，分散化失效，任何基于大数定律的定价都崩掉。</p>
+<p>我用一个粗略的模型说明这个区别。</p>
+<p>假设单笔代理交易出事故的概率是 p，事故独立，那么一万笔交易里出事的笔数围绕 10000p 波动，波动幅度约等于 √(10000p)。样本量越大，相对波动越小。这是保险能运作的原因。</p>
+<p>现在假设事故之间相关系数是 ρ。波动幅度会变成 √(10000p) 乘以一个跟 ρ 正相关的放大系数，当 ρ 趋近 1 时，放大系数趋近于 √10000，也就是一百倍。一万笔交易不再是"一万次独立试验"，而是"一次试验重复一万遍"。</p>
+<p>这不是精算技术不够好。这是结构上不可保。<strong>如果所有代理同时做同一件事，那么它们出事的时刻也是同一个时刻，那时需要的不是保险，是资本。</strong></p>
+<p>所以两件事必须分开定价：</p>
+<p>微观那一层——单笔交易错误、凭证被盗、商户欺诈——可以保，也可以转移到条款里。这是钱能解决的问题。</p>
+<p>宏观那一层——同步性——不能保。它只能靠摩擦、靠限额、靠分级响应、靠资本缓冲。而摩擦恰恰是代理支付要消灭的东西。这是一个内在矛盾：代理支付的价值来自消除摩擦，代理支付的风险也来自消除摩擦。</p>
+<p>Barr 说"数分钟内"，说的就是这个矛盾。他不是在说代理会犯错，他是在说一旦代理同时行动，人类社会所有用来吸收冲击的缓冲装置——营业时间、清算窗口、隔夜头寸——都会失效，因为那些装置的时间常数是以小时计的，而冲击的时间常数是以分钟计的。</p>
+<p>这个矛盾没有承保方案。这是本篇必须承认的一个边界：<strong>承保缺口可以补，速度缺口补不了。</strong></p>
+<p>Waller 的三问落在微观那一层，所以它有答案，只是答案还没写出来。Barr 的警告落在宏观那一层，所以它只有缓解，没有答案。</p>
+<hr />
+<h2>五、承保缺口的量化推演</h2>
+<p>这篇的推法不是从模型推出来的，是从一个更笨的问题开始的：一笔账，商户到底愿不愿意认？</p>
+<p>先列变量。单笔金额 A。单笔争议的处理成本 c，包括人工、流程、时间、以及与支付服务商往来沟通的固定开销。争议率 d。月交易笔数 N。</p>
+<p>关键的比较不是 A 和损失，是 <strong>A 和 c</strong>。</p>
+<p>如果 A 小于 c，商户的理性选择是：不争议，直接退款或直接认了。这时候承保缺口<strong>自动被填平</strong>了。不是因为有人承保，是因为不值得争。这是最重要的一条推论，也是"小额可退"能自然扩张的真正原因——不是风险小，是争议成本高于争议标的。</p>
+<p>反过来，如果 A 远大于 c，商户必须争议。争议必须有一套责任规则。责任规则必须有承保方兜底。这时候承保缺口就是硬约束。</p>
+<p>规范化一下：设 k = c / A。k &gt; 1 时自动填平；k 在 0.1 到 1 之间时，争议会发生但成本占比高，商户倾向用条款或拒收来规避；k &lt; 0.1 时，争议是高价值行为，必然需要正式的责任规则和承保。</p>
+<p>再叠上 N。低频高额（N 小、A 大）的场景，商户可以逐笔人工处理，条款转移就够用。高频低额（N 大、A 小）的场景，自动填平。<strong>真正难的是高频中额：N 大、A 在争议成本之上、但又没大到值得逐笔打官司。</strong> 这个区间是承保缺口的正中心。</p>
+<p>代理支付想去的方向，恰恰是这个区间。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>区间</th>
+<th>单笔金额相对争议成本</th>
+<th>典型场景</th>
+<th>承保状态</th>
+<th>能否自然扩张</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自动填平区</td>
+<td>A ≪ c</td>
+<td>0.001–1 美元：模型调用、数据查询、单次摘要</td>
+<td>无需承保，争议直接认损</td>
+<td>已扩张（x402 到 1.38 亿笔）</td>
+</tr>
+<tr>
+<td>条款转移区</td>
+<td>A 略高于 c，N 小</td>
+<td>数十至数百美元，低频，B2B 或高客单服务</td>
+<td>靠合同条款，不靠保单</td>
+<td>有限，取决于议价权</td>
+</tr>
+<tr>
+<td>承保真空区</td>
+<td>A 明显高于 c，N 大</td>
+<td>20–200 美元：电商标品、日用品补货、服务预约</td>
+<td>无解——条款覆盖不到，技术拦截不管用，监管没规则</td>
+<td>卡在这里，这是缺口正中心</td>
+</tr>
+<tr>
+<td>制度覆盖区</td>
+<td>A 远高于 c，N 大</td>
+<td>200 美元以上：机票酒店、企业采购</td>
+<td>卡组织争议处理 + 商业保险</td>
+<td>已扩张，但走的是卡轨道，不是链</td>
+</tr>
+</tbody>
+</table>
+<p>这张表能解释不少现象。</p>
+<p>x402 长到 1.38 亿笔，因为它在自动填平区。0.36 美元的均价远低于任何争议处理成本，所以它天然不需要承保——它需要的是"别出问题"，而它出的问题也确实不值得追。</p>
+<p>代理订机票、订酒店这类场景，已经跑在卡轨道上很多年了。不是因为技术先进，是因为卡组织那套争议处理机制已经把承保这件事做完了。</p>
+<p>真正卡住的是中间那一格。20 到 200 美元，电商标品，高频。这个区间在人类手里跑得很顺——你上个电商网站买双鞋，出问题点一下退货。在代理手里跑不动，因为退货、拒付、退款这三个动词，在链上没有对应的原语；而条款、拦截、监管这三个替代方案，在这一格全部失效：条款覆盖不到（没人读），拦截不管用（不是诈骗是纠纷），监管没规则（没有判例）。</p>
+<p>所以有一个可以算出来的条件：<strong>代理支付要从 0.36 美元走到 50 美元，只有两条路。</strong></p>
+<p>第一条，把 c 降下来。争议处理成本从今天的量级降到几美元，靠全自动化。这条路技术上可行，但需要时间，而且降到最后会撞上一个下限——涉及真实资金的法律争议，总有一部分必须由人判断。</p>
+<p>第二条，把责任集中。让某一方明确承担某一类的损失，用条款写死，用费率定价。这条路不需要技术突破，只需要有人愿意签那一句话。</p>
+<p>没有第三条。</p>
+<hr />
+<h2>六、结论：第一份保单会从哪儿来</h2>
+<p>先说我的判断：第一份愿意承保的保单，不会来自保险公司，会来自卡组织。而且它不会叫保险，会叫"代理交易争议处理办法"。</p>
+<p>理由有三个。</p>
+<p><strong>第一，卡组织已经在承担争议处理，这件事本身就是一种承保。</strong> 拒付机制看上去是流程，实质是风险分配：卡组织向收单机构收保证金，向发卡机构兜底，最终由商户承担。这套机制跑了几十年，有费率，有准备金，有仲裁。它没有保险的名字，有保险的功能。</p>
+<p>代理支付只要挂进这套机制，就立刻获得承保，代价是费率。这就是为什么 OpenAI 在 11 月 13 日选卡组织而不是链——不是因为链上的通道不够快（上一篇已经论证过通道过剩），是因为<strong>卡组织那里有一份已经写好的责任规则。</strong></p>
+<p><strong>第二，本期有四条独立的证据，指向同一个方向。</strong></p>
+<p>11 月 10 日，Visa 把 Monad 加进稳定币结算选项。11 月 12 日，Anchorage 发行的 Western Union USDPT 可以在 VisaNet 上结算 VisaNet 债务。11 月 17 日，Anchorage 和 Kalshi Prime 打通，客户可以用存在联邦持牌银行的比特币和稳定币做保证金。11 月 18 日，Visa Direct 让亚太区客户用稳定币预筹跨境付款。</p>
+<p>四件事表面上都是"稳定币结算"，实质是同一件事：<strong>卡组织正在把"结算"和"争议处理"这两件原本绑在一起的事，拆开搬。</strong> 结算可以走新轨道，争议处理留在卡组织。这个拆法意味着，即使最终结算是稳定币，责任规则还是卡组织那一套。</p>
+<p><strong>第三，链上的对应动作思路完全不同，而且不适用于小额高频。</strong></p>
+<p>链上的做法是事后追索。11 月 19 日，币安拿到阿布扎比法院的全球冻结令，涉资 65 亿美元，可以用区块链送达，背后是一份包含 26,000 个钱包地址的"活名单"，持续更新。</p>
+<p>这套做法的技术含量很高，但它有三个前提：钱还在、能定位、能执行。在 65 亿美元这种量级上，三个前提都成立，因为值得动用全球法律资源。在 50 美元这个量级上，三个前提全不成立——钱早被拆散，地址早换了，没有人会为一笔 50 美元的纠纷去申请跨境冻结令。</p>
+<p><strong>追赃是承保的替代品，但只对大额有效。</strong> 而代理支付要去的地方是小额高频。这就是为什么链上的安全叙事再强，也填不上这一格。</p>
+<h3>一个可以被验证的时间点</h3>
+<p>我猜 2027 年。</p>
+<p>推法是这样的：OpenAI 说后续会支持预授权交易。预授权一旦上线，第一批争议就会出现。争议量不需要很大——<strong>只要出现"归因不清"的案子，规则就必须定。</strong> 因为归因不清的案子没法用自动化的方式处理，只能人工裁决，人工裁决的成本会逼着卡组织去写规则。</p>
+<p>而"归因不清"的案子会越来越多，原因在 Coinbase 那 91% 上。当自动化拦截把能拦的都拦掉了，剩下的争议就全是归因问题——不是明显诈骗，是"这算不算授权范围内"。这类争议的比例会随着拦截率上升而上升。这是一个可以观察的指标。</p>
+<p>所以真正要盯的不是技术进展，是两件事：卡组织的代理交易争议规则什么时候出第一版；花旗那份条款之后，有多少家银行跟进。</p>
+<p>上一期梳理里我列过一个观察项：Citi 之后是否有多家银行跟进"外部代理风险归责客户"条款。这一条现在要加一个对照组——<strong>跟进的速度，就是承保缺口的大小。</strong> 跟得越快，说明银行越确信这个缺口短期补不上，先把风险推出去再说。</p>
+<h3>最后</h3>
+<p>回到开头那三天。</p>
+<p>Barr 讲的是速度，Waller 讲的是责任，花旗做的是转移。三个人、三份文本，谁都没有说"出事我赔"。</p>
+<p>这件事的荒诞之处在于，代理支付的技术准备已经很充分了。通道有了，凭证在设计，标准在收敛，连安全防御都做到了 91% 的自动化。唯一缺的东西是一句话。</p>
+<p>那句话的成本，就是代理支付的真实价格。</p>
+<p>在有人愿意把这句话写进规则之前，这个市场会一直停在"小额、可退、可撤销"的区间里。不是因为它只能做这些，是因为只有在这个区间里，出事的损失小到不需要有人认领。</p>
+<p><strong>信息来源</strong></p>
+<ul>
+<li>美联储理事 Michael Barr 关于 AI agents 可在数分钟内引发 bank run 的表态（2026 年 11 月 17 日）：CoinDesk《Fed Governor Michael Barr warns AI agents could trigger bank runs in minutes》</li>
+<li>美联储理事 Christopher Waller 以币安被盗质问欺诈、密钥泄露、失败交易的责任归属（2026 年 11 月 17 日）：Cointelegraph《Fed's Waller cites Binance hack in warning over tokenized finance》</li>
+<li>Waller 关于代币化金融仍需传统银行与更强保障机制、以及 12 月可能加息 50bp 的表态（2026 年 11 月 18 日）：Decrypt《Fed's Waller Calls for 50-Basis-Point Rate Hike, Says Tokenized Finance Still Needs Traditional Banks》</li>
+<li>花旗更新服务条款，外部 AI 代理风险（含登录凭证泄露）归责客户（2026 年 11 月 19 日）：Decrypt《Citi Says Customers Are Responsible When AI Banking Agents Go Rogue—Even After a Hack》</li>
+<li>MIT 兄弟以太坊 MEV 案获判无罪，法官认定以太坊"no terms of use"、检方未能证明重大虚假陈述（2026 年 11 月 16 日判决，11 月 17—18 日报道）：CoinDesk、Decrypt、The Block</li>
+<li>OpenAI 在 ChatGPT 内上线支付钱包，接入 Visa、Mastercard、American Express，明确不依赖加密，计划后续支持预授权交易（2026 年 11 月 13 日）：Cointelegraph</li>
+<li>Coinbase AI 防御拦截冒充 Elon Musk 的深度伪造骗局 470 万美元，拦截率约 91%，全程无人工介入（The Block 报道日期为 2026 年 11 月 18 日，文中链接时间戳为 11 月 17 日）：The Block</li>
+<li>香港金管局探索用 agentic AI 分析链上与链下交易以检测加密相关金融犯罪，金管局执行总监 Raymond Chan 表态（2026 年 11 月 18 日）：The Block</li>
+<li>Google 称攻击者正用 AI 代理自动寻找并利用软件漏洞（2026 年 11 月 17 日）：Cointelegraph</li>
+<li>Coinbase CEO 称十年内 AI 代理将占交易量 99.9%（2026 年 11 月 17 日）：CoinDesk</li>
+<li>Solana 基金会 AI 负责人称代理已占 AI 代币使用量的四分之三（2026 年 11 月）：公开报道</li>
+<li>Hyundai 在 JPMorgan Kinexys 区块链上测试 AI 代理商务（2026 年 11 月 18 日）：CoinDesk</li>
+<li>Visa 将 Monad 加入稳定币结算网络选项（2026 年 11 月 10 日）：The Block</li>
+<li>Anchorage Digital 发行的 Western Union USDPT 可在 VisaNet 上结算，Visa 与合格企业可用其结算 VisaNet 债务（2026 年 11 月 12 日）：The Block、Decrypt</li>
+<li>Anchorage 与 Kalshi Prime 打通，客户可用托管于联邦持牌银行的比特币与稳定币作为保证金（2026 年 11 月 17 日）：The Block</li>
+<li>Visa Direct 将稳定币预筹模式扩展至亚太区跨境付款（2026 年 11 月 18 日）：The Block</li>
+<li>币安获阿布扎比法院 65 亿美元全球冻结令，可通过区块链送达，附 26,000 个钱包的持续更新名单（2026 年 11 月 19 日）：Decrypt、Cointelegraph</li>
+<li>DOJ 申请没收币安被盗 12 亿美元资产，并打击 FaceStealer 深度伪造骗局（18 个月窃取逾 4 亿美元）（2026 年 11 月 12—13 日）：The Block、Decrypt、Cointelegraph</li>
+<li>美国 2025 年网络欺诈报案损失逾 177 亿美元；与 TRM Labs 合作设立 Threat Disruption Center（2026 年 11 月 19 日）：Cointelegraph、The Block</li>
+<li>Scattered Spider 成员 Tyler Buchanan 因 1,160 万美元加密资产盗竊案获刑 6 年（2026 年 11 月 18 日）：Decrypt</li>
+<li>Bitget Wallet 报告钓鱼风险提示七倍增长，Q3 每周标记约 37,000 次签名请求（2026 年 11 月 11 日）：Cointelegraph</li>
+<li>CertiK 称交易所热钱包需要硬性美元上限（2026 年 11 月 10 日）：Cointelegraph</li>
+<li>Optimizely 遭入侵，Ledger、BBC 等 177 个站点被劫持用于替换钱包地址（2026 年 11 月 17 日）：Decrypt</li>
+<li>Ledger 确认柏林出现被篡改的比特币硬件钱包，调查扩展至迪拜（2026 年 11 月 18 日）：Decrypt、Cointelegraph</li>
+<li>Kraken 母公司 Payward 收购 Tribe Capital，以增加私募市场 sourcing、underwriting 与基金管理能力（2026 年 11 月 19 日）：The Block</li>
+<li>德国立法者支持在刑事案件之外冻结加密资产，海关可扣押"可疑"资产 30 天（2026 年 11 月 16 日）：Cointelegraph</li>
+<li>IOSCO 警告抗量子签名升级可能拖慢区块链，Solana 测试网速度下降约 90%（2026 年 11 月 19 日）：Cointelegraph</li>
+<li>本文第五节中关于争议处理成本 c、争议率 d 与单笔金额 A 的区间推演为作者自建模型，用于说明相对关系，非行业统计口径；假设条件已在正文中列明</li>
+<li>文中引用的 1.38 亿笔交易、0.36 美元均价、69% 不信任 AI 处理支付、60% 一次出错即停用等数据，来自本系列上一篇《代理支付的授权缺口》所引公开材料</li>
+</ul>
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav"><a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-payment-authorization-gap-2026.html">🔐 授权缺口：从能付到敢付</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-payment-five-vetoes-2026.html">🚦 五方否决权</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/three-onchain-dollars-issuer-divergence-2026.html">💵 三种「链上美元」</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-tbill-coupling-2026.html">📜 稳定币的尽头是美债</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/2026-11-07_2026-11-20_稳定币与AI代理支付动态梳理.html">💵🤖 本期专项梳理</a></nav>
+
+        <!-- Sources -->
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/erc8211-analysis/">⛓ ERC-8211 研报</a> ·
+            <a href="https://julietwang123.github.io/blockchain-2025-report/">📊 年度报告</a>
+        </p>
+    </footer>
+</body>
+</html>
