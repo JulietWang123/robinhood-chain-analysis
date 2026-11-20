@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三种「链上美元」：技术已经趋同，发行人还没趋同</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --bg3: #e2e8f0;
+            --border: #cbd5e1;
+            --text: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --accent: #2563eb;
+            --accent-light: #dbeafe;
+            --gold: #d97706;
+            --gold-light: #fef3c7;
+            --tag-bg: #e0f2fe;
+            --tag-text: #0369a1;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+            --font-mono: "SF Mono", "Fira Code", "Consolas", monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ── Nav Bar ── */
+        .nav-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(248,250,252,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            letter-spacing: .5px;
+        }
+        .nav-brand:hover { opacity: .8; }
+        .nav-links-list {
+            display: flex; gap: 20px; list-style: none;
+        }
+        .nav-links-list a {
+            font-size: .82em; color: var(--text3);
+            text-decoration: none; transition: color .2s;
+        }
+        .nav-links-list a:hover { color: var(--accent); }
+
+        /* ── Article Wrapper ── */
+        .article-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Article Header ── */
+        .article-header {
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border);
+        }
+        .article-tags {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tag {
+            font-size: .72em; font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            letter-spacing: .3px;
+        }
+        .tag.gold {
+            background: var(--gold-light);
+            color: var(--gold);
+        }
+        .article-title {
+            font-size: 2em; font-weight: 800;
+            line-height: 1.3; color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -.3px;
+        }
+        .article-subtitle {
+            font-size: 1.05em; color: var(--text3);
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .article-meta {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 16px; font-size: .8em; color: var(--text3);
+        }
+        .meta-author {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .author-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: .7em; font-weight: 700;
+        }
+        .meta-sep { color: var(--border); }
+
+        /* ── Lead Block ── */
+        .lead-block {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 10px 10px 0;
+            padding: 18px 22px;
+            margin: 32px 0;
+            font-size: .95em;
+            color: var(--text2);
+            line-height: 1.75;
+        }
+        .lead-block .cite {
+            display: block; margin-top: 10px;
+            font-size: .82em; color: var(--text3);
+        }
+        .lead-block .cite a {
+            color: var(--accent); text-decoration: none;
+        }
+        .lead-block .cite a:hover { text-decoration: underline; }
+
+        /* ── Body Typography ── */
+        .article-body h2 {
+            font-size: 1.35em; font-weight: 700;
+            color: var(--text);
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent-light);
+            position: relative;
+        }
+        .article-body h2::before {
+            content: '';
+            position: absolute; bottom: -2px; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+        }
+        .article-body h3 {
+            font-size: 1.08em; font-weight: 700;
+            color: var(--text);
+            margin: 28px 0 10px;
+        }
+        .article-body h4 {
+            font-size: .95em; font-weight: 700;
+            color: var(--accent);
+            margin: 22px 0 8px;
+        }
+        .article-body p {
+            margin-bottom: 18px;
+            color: var(--text2);
+            line-height: 1.85;
+        }
+        .article-body p:first-of-type {
+            font-size: 1.05em;
+        }
+        .article-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .article-body em {
+            color: var(--text3);
+        }
+        .article-body a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .article-body a:hover { text-decoration: underline; }
+
+        /* ── Tables ── */
+        .article-body table, .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0 32px;
+            font-size: .88em;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+        .article-body thead, .compare-table thead {
+            background: linear-gradient(135deg, #1e40af, #3730a3);
+            color: #fff;
+        }
+        .article-body thead th, .compare-table thead th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: .3px;
+        }
+        .article-body tbody tr:nth-child(odd), .compare-table tbody tr:nth-child(odd) {
+            background: var(--bg2);
+        }
+        .article-body tbody tr:nth-child(even), .compare-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        .article-body tbody tr:hover, .compare-table tbody tr:hover {
+            background: var(--accent-light);
+        }
+        .article-body td, .compare-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .article-body td:first-child, .compare-table td:first-child {
+            font-weight: 600; color: var(--text);
+        }
+        .hl-good { color: #059669; font-weight: 600; }
+        .hl-neutral { color: var(--gold); font-weight: 600; }
+
+        /* ── Lists ── */
+        .article-body ul, .article-body ol {
+            margin: 16px 0;
+            padding-left: 1.6rem;
+            color: var(--text2);
+        }
+        .article-body li {
+            margin: 6px 0;
+            line-height: 1.7;
+        }
+
+        /* ── Blockquote ── */
+        .article-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            margin: 24px 0;
+            background: var(--accent-light);
+            border-radius: 0 8px 8px 0;
+            color: var(--text2);
+            font-style: italic;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+        .highlight-box h4 {
+            font-size: .9em; font-weight: 700;
+            color: #4338ca;
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .highlight-box ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .highlight-box ul li {
+            font-size: .88em; color: var(--text2);
+            padding-left: 18px; position: relative;
+            line-height: 1.6;
+        }
+        .highlight-box ul li::before {
+            content: '▸';
+            position: absolute; left: 0;
+            color: #6366f1; font-size: .8em; top: 2px;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0 32px;
+        }
+        .feature-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .feature-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(37,99,235,.1);
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+        .feature-name {
+            font-size: .88em; font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .feature-desc {
+            font-size: .8em; color: var(--text3);
+            line-height: 1.6;
+        }
+
+        /* ── Protocol Map Grid ── */
+        .protocol-map {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 28px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .protocol-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .protocol-name {
+            font-size: .85em; font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+            font-family: var(--font-mono);
+        }
+        .protocol-role {
+            font-size: .78em; color: var(--text3);
+            line-height: 1.5;
+        }
+        .protocol-item.highlight-protocol {
+            border-color: #059669;
+            background: #ecfdf5;
+            box-shadow: 0 2px 8px rgba(5,150,105,.12);
+        }
+        .protocol-item.highlight-protocol .protocol-name {
+            color: #047857;
+        }
+        .protocol-item.highlight-protocol .protocol-role {
+            color: #065f46;
+        }
+
+        /* ── Horizontal Rule ── */
+        .article-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 36px 0;
+        }
+
+        /* ── Code ── */
+        .article-body code {
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: .88em;
+            font-family: var(--font-mono);
+            color: #4338ca;
+        }
+
+        /* ── Sources Section ── */
+        .sources-section {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+        }
+        .sources-section h3 {
+            font-size: .9em; font-weight: 700;
+            color: var(--text3);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+        .sources-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .sources-list li {
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .source-num {
+            min-width: 22px; height: 22px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7em; font-weight: 700;
+            margin-top: 1px; flex-shrink: 0;
+        }
+        .source-content {
+            font-size: .82em; color: var(--text3);
+            line-height: 1.6;
+        }
+        .source-content a {
+            color: var(--accent); text-decoration: none;
+            word-break: break-all;
+        }
+        .source-content a:hover { text-decoration: underline; }
+
+        /* ── Cross-nav ── */
+        .cross-nav {
+            display: flex; gap: 12px; justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        .cross-nav a {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .84em;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all .2s;
+        }
+        .cross-nav a:hover {
+            border-color: var(--accent);
+            background: #fff;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .78em; color: var(--text3);
+        }
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .article-title { font-size: 1.5em; }
+            .article-wrap { padding: 32px 16px 60px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .protocol-map { grid-template-columns: 1fr; }
+            .article-body table, .compare-table { font-size: .78em; }
+            .article-body table th, .article-body table td,
+            .compare-table th, .compare-table td
+            { padding: 8px 10px; }
+            .nav-bar { padding: 10px 16px; }
+            .nav-links-list { gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ── Nav Bar ── -->
+    <nav class="nav-bar">
+        <a class="nav-brand" href="https://julietwang123.github.io/erc8211-analysis/">⛓ BlockChain 研报</a>
+        <ul class="nav-links-list">
+            <li><a href="https://julietwang123.github.io/blockchain-2025-report/">年度报告</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-legislation-defi/">稳定币立法</a></li>
+            <li><a href="https://julietwang123.github.io/stablecoin-chain-competition/">公链竞争</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Article Wrapper ── -->
+    <div class="article-wrap">
+        <!-- Header -->
+        <header class="article-header">
+            <div class="article-tags">
+                <span class="tag">稳定币</span><span class="tag">代币化存款</span><span class="tag">批发CBDC</span><span class="tag">跨境结算</span><span class="tag">Project Faro</span><span class="tag">Kinexys</span><span class="tag">DBS</span><span class="tag">发行端分层</span>
+            </div>
+            <h1 class="article-title">三种「链上美元」：技术已经趋同，发行人还没趋同</h1>
+            <p class="article-subtitle">当工程差异消失，剩下的分歧是「谁被允许在自己的资产负债表上创造美元」</p>
+            <div class="article-meta">
+                <span class="meta-author">
+                    <span class="author-avatar">鉴</span>
+                    <strong>鉴叔</strong>
+                </span>
+                <span class="meta-sep">·</span>
+                <span>2026年11月20日</span>
+                <span class="meta-sep">·</span>
+                <span>约 7,430 字 · 阅读约 19 分钟</span>
+            </div>
+        </header>
+
+        <!-- Body -->
+        <div class="article-body">
+            <p>2026 年 11 月 16 日，四件事挤在同一天。</p>
+<p>新加坡。DBS 和 JPMorgan 的 Kinexys 打通了。美国与新加坡之间的代币化存款可以 24 小时不间断互转，第一个客户是 Ant International，用它做两地实体的资金归集和流动性调度。这不是试点公告，是上线。</p>
+<p>同一天，香港。HKMA 和 Swift 宣布在试一件事：把 Project Ensemble 接进 Swift 的账本，用多币种代币化存款做跨境支付。一个是全球报文网络，一个是区域批发结算试验平台，两边想把账本连起来。</p>
+<p>也是这一天，新加坡和德国两家央行公布了 Project Simbolon，用批发 CBDC 测跨境外汇结算。</p>
+<p>还是这一天，华盛顿。最高法院驳回了 Custodia Bank 的美联储主账户申请。这家银行从 2020 年就在要这个东西，要了六年，最后是最高法院把这扇门关上了。</p>
+<p>三条技术路线在同一天各自往前走了一步，一条准入路径在同一天被彻底关上。</p>
+<p>这四件事摆在一起看，会得到一个不太舒服的结论：三种「链上美元」在工程上已经趋同了。</p>
+<p>账本、智能合约、实时结算、可编程、7×24。这三样东西，代币化存款有，批发 CBDC 有，支付稳定币也有。如果你拿它们的白皮书做一张技术参数对照表，会发现自己在一张几乎全是勾的表里找差异，找得很辛苦。</p>
+<p>真正的差别只剩三条：谁发行，谁承担信用风险，谁在出事的时候兜底。</p>
+<p>真正的问题只有一个：如果技术不再是差异点，那么这个差别，会决定未来五年跨境结算的手续费归谁吗？</p>
+<hr />
+<h2>一、同一个功能，三种负债人</h2>
+<p>先把「1 美元」这个词拆开。</p>
+<p>你在银行 App 上看到的那个数字，不是银行替你保管的一美元。那是银行欠你的一美元。银行已经把大部分拿去放贷了，它欠你的这个数字记在它的负债栏里。</p>
+<p>稳定币也说自己是 1 美元。这句话里有两个东西：一个是链上的代币，一个是链下的美元。中间连着的是发行方的资产负债表。发行方收进一美元法币，买成短期国债，然后发出一个代币。代币持有人手上的权利，指向的是发行方，不是那堆国债。</p>
+<p>批发 CBDC 不是这个结构。央行发行批发 CBDC，你手里那个数字是央行的直接负债，中间没有第二张资产负债表。</p>
+<p>三种东西在钱包里长得一样，都是「1 美元」在跳。但「谁欠你」这一栏，填的是三个完全不同的主体。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>维度</th>
+<th>代币化存款</th>
+<th>批发 CBDC</th>
+<th>支付稳定币</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>谁欠你钱</td>
+<td>商业银行</td>
+<td>中央银行</td>
+<td>发行方（非银机构）</td>
+</tr>
+<tr>
+<td>负债性质</td>
+<td>银行负债，与普通存款同顺位</td>
+<td>央行负债，无信用风险</td>
+<td>发行方负债，依赖储备隔离</td>
+</tr>
+<tr>
+<td>破产时的地位</td>
+<td>普通债权，超出存款保险上限部分按比例受偿</td>
+<td>不适用，央行不会破产</td>
+<td>依赖各州信托牌照或联邦框架的隔离条款，尚未经大规模司法检验</td>
+</tr>
+<tr>
+<td>出事时谁兜底</td>
+<td>存款保险 + 央行最后贷款人</td>
+<td>不需要兜底</td>
+<td>储备资产，无保险，无最后贷款人</td>
+</tr>
+<tr>
+<td>谁被允许发</td>
+<td>持牌银行（已有牌照）</td>
+<td>央行自己</td>
+<td>联邦或州级合格发行人（新发牌照，稀缺）</td>
+</tr>
+<tr>
+<td>准入是否开放</td>
+<td>相对开放，银行都能做</td>
+<td>不开放</td>
+<td>名义开放，实质受牌照约束</td>
+</tr>
+</tbody>
+</table>
+<p>第一列和第三列摆在一起看，会发现它们在法律上是两个物种，在产品界面上一模一样。</p>
+<p>这张表里最重要的一列不是「是否 1:1」，是最后一列「出事时谁兜底」。因为跨境结算这种业务，机构客户问的第一个问题从来不是「多快」，是「如果明天出事，我这笔钱排第几」。</p>
+<p>这里还有一个细节值得停一下：这三种东西的「1:1」根本不是一个意思。</p>
+<p>银行存款的 1:1 是记账。你转一万美元给供应商，银行把你的负债减一万，把他的负债加一万。整个过程没有多出一美元，货币总量不变。</p>
+<p>稳定币的 1:1 是对价。发行方收进一万美元，发出去一万个代币。那一万美元还在，代币也在，货币总量多了一份。这多出来的一份，对应的是发行方用储备买的那笔短债。</p>
+<p>批发 CBDC 的 1:1 是替换。央行的负债总量不变，只是一部分准备金变成了 CBDC。总量一分没多。</p>
+<p>三个都叫 1:1，一个是记账，一个是对价，一个是替换。这三种机制的宏观后果完全相反，这件事在第三节展开。</p>
+<p>先记住这一节的一句话：三种链上美元在钱包里同构，在资产负债表上是三件不同的事。</p>
+<hr />
+<h2>二、工程差异其实很小</h2>
+<p>把 11 月这几周的案例按时间铺开，会看到一件更清楚的事：它们的技术架构几乎是同一个模子。</p>
+<p>11 月 13 日到 14 日，英国、新加坡、泰国三家央行完成了一轮跨境外汇结算试验，用的是 Partior 的同步原型，把传统系统和代币化系统连在一起做 PvP。同步交割这件事，传统系统里要靠两套报文加一个人工确认窗口，这里靠一个条件合约。</p>
+<p>11 月 16 日，DBS 和 JPMorgan 的 Kinexys，代币化存款跨美新两地 24 小时互转。</p>
+<p>11 月 16 日，HKMA 和 Swift，把 Project Ensemble 接入 Swift 账本，用多币种代币化存款做跨境支付。</p>
+<p>11 月 16 日，新加坡和德国央行，Project Simbolon，批发 CBDC 跨境外汇结算。</p>
+<p>11 月 18 日，DBS 和 Circle，亚洲合格机构可以 24 小时直接铸造和赎回 USDC，配美元实时结算。</p>
+<p>11 月 19 日，StanChart、StraitsX、OCBC 公布代币化存款互操作试验。他们自己在结论里写了一句很直白的话：always-on 代币化存款的潜力释放，需要跨平台互操作。</p>
+<p>11 月 19 日，Ant International 的 Whale Orchestration Protocol，让代币化存款和代币化货币市场基金之间做实时结算。</p>
+<p>七件事，五个不同的司法辖区，三个不同的技术阵营。但如果你把它们的架构图叠起来，会发现是同一张：一个分布式账本，一套智能合约原语（原子交换、条件转账），一种秒级的结算节奏，以及同一个没解决的难题——两本账在同一个瞬间，怎么确认对方那笔已经发生。</p>
+<p>有意思的地方在这里：DBS 同时出现在两个阵营里。它既是 Kinexys 那一侧的对手方（银行间代币化存款），也是 Circle 那一侧的合作伙伴（稳定币 24 小时铸造赎回）。</p>
+<p>一家银行不会在技术上选边站，因为技术上没有边可选。</p>
+<p>这不是说技术不重要。是说技术的难点已经全部转移到了同一个地方：互操作。</p>
+<p>注意 StanChart 那批人自己说的那句话。翻译过来是：我们自己这一套已经能跑了，但只有我们这一套，没用。</p>
+<p>这就是 2026 年链上美元的工程现状。单点技术全部过关，跨系统的账本一致性一个都没过关。而这个难点，和 SWIFT gpi 当年要解决的问题本质上是同一个——一笔钱从一个体系进入另一个体系时，中间那段时间怎么记、谁来确认、确认错了谁负责。换了底层，问题没换。</p>
+<p>所以技术层面，三者的差异已经小到可以互相嵌套：代币化存款的账本上可以跑稳定币，批发 CBDC 可以给它们当结算腿，稳定币可以给它们当流动性层。</p>
+<p>真正的分野不在代码里。</p>
+<hr />
+<h2>三、差异在资产负债表上</h2>
+<p>这一节是全文的核心。三种形态的宏观方向完全不同，而这件事决定了监管为什么对它们态度差那么多。</p>
+<p>代币化存款，是存款搬家。</p>
+<p>存款人把活期存款转成代币化存款，银行的负债科目不变——还是存款，只是记在了另一个账本上。货币总量不变，银行的可贷资金不变，准备金不变。变的只有两件事：这笔钱现在可以 24 小时动，以及它可以和另一笔资产在同一个瞬间完成交换。</p>
+<p>对银行来说，这件事是中性偏正面的。它把存款留在了体系内，还顺带解决了跨行跨境的实时性。这也解释了为什么 DBS 这种银行会同时押注两边——代币化存款是它的防守，稳定币是它的进攻。</p>
+<p>批发 CBDC，是央行负债的形态替换。</p>
+<p>央行把一部分准备金转成 CBDC，负债总量不变，结构变了。商业银行的准备金减少，货币总量不变。</p>
+<p>但它有一件别的形态给不了的东西：结算最终性从商业银行的账簿上，搬到了央行的账簿上。这是它唯一的、也是决定性的优势。</p>
+<p>用美联储理事 Waller 11 月 17 日在 The Clearing House 年会上的话说：「Central bank money need not be used in every transaction or on every platform, but its presence at the foundation of the system is essential.」</p>
+<p>央行货币不必出现在每一笔交易里，也不必出现在每一个平台上，但它必须在系统的地基上。</p>
+<p>这句话是给批发 CBDC 定位的。它不当支付工具，它当最后的结算层。MAS 11 月 19 日的动作是这句话的实践版：在新加坡元测试网上原生发行 7,750 万美元代币化票据，用批发 CBDC 结算。发行和结算发生在同一个央行的账本上，中间不经过任何一家商业银行的资产负债表。测试网之后改名 SG Digital Ledger，用于「试验之外的结算」。</p>
+<p>这句话是暗示商用。但 MAS 没有给时间表，也没有公布参与机构名单。公开信息就到这里为止。</p>
+<p>支付稳定币，是货币总量真的变多了。</p>
+<p>发行方收进一美元法币，买短期国债，发出去一个代币。法币还在，代币也在。多出来的这一份，对应的是「银行体系里的一笔存款，变成了非银机构持有的一笔国债」。</p>
+<p>这是脱媒。而且是单向的。</p>
+<p>11 月的数据给了这个机制一个反面证据：稳定币总供应在 30 天里缩了 142 亿美元，是 2022 年 6 月以来最大的一次收缩，其中 USDT 和 USDC 合计减少近 110 亿，金背币反而持稳。缩表的另一端，对应的是国债被卖出、现金回流银行体系。</p>
+<p>所以三者的宏观方向，用三句话就能说清：</p>
+<p>代币化存款，不改总量，改记账位置。</p>
+<p>批发 CBDC，不改总量，改结算层级。</p>
+<p>支付稳定币，改总量，也改持有结构。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>影响维度</th>
+<th>代币化存款</th>
+<th>批发 CBDC</th>
+<th>支付稳定币</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>货币总量</td>
+<td>不变</td>
+<td>不变</td>
+<td>增加</td>
+</tr>
+<tr>
+<td>银行可贷资金</td>
+<td>不变</td>
+<td>准备金减少，超额储备下降</td>
+<td>存款流出，可贷资金下降</td>
+</tr>
+<tr>
+<td>央行资产负债表</td>
+<td>不变</td>
+<td>负债结构变化，总量不变</td>
+<td>不变（但间接影响国债需求）</td>
+</tr>
+<tr>
+<td>结算最终性所在</td>
+<td>商业银行账簿，走央行 RTGS 日终</td>
+<td>央行账簿，实时</td>
+<td>发行方账簿，法律最终性待检验</td>
+</tr>
+<tr>
+<td>对银行体系的影响</td>
+<td>中性偏正面（留住存款）</td>
+<td>中性（银行间抵押品结构变化）</td>
+<td>负面（存款分流）</td>
+</tr>
+<tr>
+<td>监管主体</td>
+<td>银行监管</td>
+<td>央行</td>
+<td>新设发行人监管框架</td>
+</tr>
+</tbody>
+</table>
+<p>这张表的第二行和最后一行合起来，解释了全部政策分歧。</p>
+<p>批发 CBDC 的发行人就是监管者，没有利益冲突。代币化存款的发行人是银行，监管就是银行监管，也是现成的。只有支付稳定币，发行人是一个新的、不完全在银行监管框架内的主体，而它做的事情是「创造美元」。</p>
+<p>这就是为什么 GENIUS 法案要花那么大力气去定义「合格发行人」，为什么 11 月 18 日四位参议员要致函财长 Bessent 要求给州级框架发行人「equal footing」，为什么 11 月 19 日又有参议员警告实施细则可能把公司推向联邦监管、要求给州级发行人安全港。</p>
+<p>争的不是技术，争的是「谁被允许创造美元」这条线的位置。</p>
+<p>11 月还有一个标本，把三种形态的差异写得比任何分析都清楚。</p>
+<p>SoFiUSD 是美国的国民银行发行的稳定币，11 月上线了 Polygon，此前已经在 Ethereum 和 Solana 上，覆盖 1,700 万以上会员。同一家公司还提供 SoFi Earn 代币化存款，付 4.40% 的收益，并且可以一键转成 SoFiUSD。</p>
+<p>这个结构值得逐字拆开。</p>
+<p>按 GENIUS 框架，支付稳定币不能向持有人付息。所以 SoFiUSD 本身不付息。</p>
+<p>但代币化存款可以付息，因为它是银行存款，付息是天经地义的业务。</p>
+<p>所以 SoFi 把「付息」放在存款那一侧，把「支付」放在稳定币那一侧，中间放一个转换按钮。</p>
+<p>这不是产品设计上的小聪明。这是三种形态差异的准确反映——而且它完全合法，因为它本来就是这个制度安排下最合理的结构。</p>
+<p>顺带说一句，SoFi 整个卡项目跑在 Mastercard 网络上。这条线索在第四节会用到。</p>
+<p>同一周还有一条消息，把这件事的风险面翻了出来。11 月 17 日，美联储理事 Michael Barr 说，AI agents 可以在几分钟内触发 bank run。</p>
+<p>这句话的语境是 AI 代理开始替人管钱。但它指向的东西比 AI 更基础：一旦代币化存款和稳定币都能被程序在毫秒级调动，挤兑的速度上限就不再由「人去网点排队」决定。</p>
+<p>而 Waller 在同一周的另一次表态里说的是另一面：代币化可以让证券在传统交易时段之外买卖，支付和资产通过智能合约同步交割。他认可这个方向，但强调仍然需要可靠的结算基础设施和更清晰的问责。</p>
+<p>一个说风险，一个说方向。两个人说的是同一件事的两面：技术已经把速度问题解决了，接下来要解决的是「速度失控时谁来刹车」。</p>
+<p>而刹车这个东西，只有央行有。</p>
+<hr />
+<h2>四、手续费归谁</h2>
+<p>先给一个前提，这个前提是前面三节推出来的：技术成本已经趋同，所以费率差异不可能来自技术成本。</p>
+<p>它只能来自两个地方：信用风险溢价，和监管准入租金。</p>
+<p>信用风险溢价这一项，逻辑上很简单。银行存款有存款保险，有央行最后贷款人。稳定币没有。所以理论上稳定币应该付更高的利率、或者收更低的手续费，来补偿持有人承担的这份风险。</p>
+<p>但 GENIUS 框架禁止稳定币付息。于是这份风险溢价没法通过利率传导，只能压到手续费里，或者干脆不补偿——由持有人自己承担。</p>
+<p>这是稳定币的结构性优势，也是它的结构性脆弱。它省下来的成本，本质上就是「没有存款保险」这件事的对价。省得越多，越依赖「不出事」。</p>
+<p>11 月 19 日 Sky 的例子说明了「出事」长什么样：USDS 供应量缩了 35%，15 亿美元撤出储备。触发因素之一是朝鲜黑客用过这套系统，数十亿规模的资产面临冻结风险。这不是信用事件，这是治理事件。但它对「我敢放多少钱」的伤害是实实在在的。</p>
+<p>监管准入租金这一项更直接。谁能发，就是租金。</p>
+<p>11 月 9 日，Coinbase 拿到 OCC 联邦信托银行牌照的最终批准。11 月 19 日，MoonPay 申请国民信托银行牌照。11 月 16 日，Custodia 的最高法院之路走到尽头。</p>
+<p>同一周里，一张牌照发出去，一张牌照在申请，一条不要牌照的路被堵死。</p>
+<p>牌照就是租金。它限制供给，也就保护费率。</p>
+<p>现在做那个反推。这是本节最硬的部分。</p>
+<p>Project Faro，11 月 10 日公布。高盛、花旗、桑坦德、德意志银行、BBVA 等 21 家机构组成联盟——从最初筹划的 10 家扩到 21 家——出资 2.7 亿美元，覆盖五年运营，美国注册发行人，目标 2027 年上半年发行美元稳定币。</p>
+<p>目前它没有代币，没有 CEO，没有最终名称。</p>
+<p>2.7 亿美元除以五年，是每年 5,400 万美元。</p>
+<p>这个数字可以反推两种商业模式，而且两种都推得通，这才是关键。</p>
+<p>第一种口径，靠储备收益。</p>
+<p>如果不收手续费、全靠储备资产收益覆盖成本，按短债收益率 4% 估算（这是假设，实际取决于当时的利率环境），5,400 万美元的年成本需要平均发行规模约 13.5 亿美元。</p>
+<p>这个规模看起来很小，在 2,900 亿美元的市场里不到半个百分点。但问题是储备收益能不能全留下。</p>
+<p>Coinbase 和 Circle 的分成安排已经证明，储备收益的大头会被分销渠道拿走。如果 Faro 只能留下两成，需要 的发行规模就变成 67.5 亿美元。</p>
+<p>67.5 亿，占现有市场约 2.3%。不难，但也不轻松。而且这是要在一个 Tether 加 Circle 已经占了约 85% 的市场里抢出来的。</p>
+<p>第二种口径，按笔收手续费。</p>
+<p>5,400 万美元的年成本，如果净费率是 5 个基点，需要年流水 1,080 亿美元。10 个基点，需要 540 亿美元。</p>
+<p>跨境 B2B 的年流水是 30 万亿美元量级（不同统计口径差异很大，这里只用它做量级参照）。按 30 万亿算，5 个基点的费率意味着要承做 0.36% 的市场份额才能保本。</p>
+<p>这个比例听起来微不足道。但 0.36% 的跨境 B2B 流水，背后是极其庞大的一批企业客户关系——而这恰好是 21 家机构联盟能提供的东西。</p>
+<p>所以 Faro 的 2.7 亿美元不是在赌技术。技术可以买，21 家机构里没有一家缺技术。它赌的是客户关系能不能转化。</p>
+<p>联盟的价值不在代码里，在每一家成员手里那批企业客户。</p>
+<table class="compare-table">
+<thead>
+<tr>
+<th>成本项</th>
+<th>代币化存款</th>
+<th>批发 CBDC</th>
+<th>支付稳定币</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>账本与合约开发</td>
+<td>摊入银行 IT 预算，已沉没</td>
+<td>央行承担，不摊到用户</td>
+<td>发行人承担，可规模摊薄</td>
+</tr>
+<tr>
+<td>流动性占用</td>
+<td>银行需备付，成本落在银行</td>
+<td>央行无需备付</td>
+<td>储备资产占用，收益归发行人</td>
+</tr>
+<tr>
+<td>信用风险补偿</td>
+<td>存款保险 + 最后贷款人，接近零</td>
+<td>零</td>
+<td>无保险，只能靠储备质量，或干脆不补偿</td>
+</tr>
+<tr>
+<td>监管准入租金</td>
+<td>银行牌照（存量）</td>
+<td>央行许可（不开放）</td>
+<td>信托或国民银行牌照（新发，稀缺）</td>
+</tr>
+<tr>
+<td>结算最终性</td>
+<td>走央行 RTGS，日终</td>
+<td>央行账簿，实时</td>
+<td>发行人账簿，法律最终性待检验</td>
+</tr>
+<tr>
+<td>能否长期补贴费率</td>
+<td>不能，银行要赚存贷利差</td>
+<td>不适用</td>
+<td>能，靠储备收益交叉补贴</td>
+</tr>
+</tbody>
+</table>
+<p>最后一行是全部答案。</p>
+<p>费率的差异不来自技术，来自「谁能用别人的钱补贴这笔交易」。</p>
+<p>稳定币能，因为储备收益是它的。银行能，因为活期存款不付息。批发 CBDC 不能，因为它不为盈利而存在——它存在的理由是不让某一家机构垄断最终结算。</p>
+<p>所以三种形态在费率上不会收敛，只会分层。谁的成本结构允许它长期承受低费率，谁就吃掉流量；谁的成本结构不允许，谁就退到高价值、低频率的场景里去。</p>
+<hr />
+<h2>五、谁最可能先在跨境 B2B 形成规模</h2>
+<p>这个问题没法给确定答案，但可以给三个判断依据。三个依据各自指向不同的胜者，这才是重点。</p>
+<p>第一个依据，现有客户关系能不能直接转化。</p>
+<p>跨境 B2B 支付不是消费者支付。它没有网络效应，它有的是「两端都得开户」的麻烦。你不可能靠一个 App 就让一家越南工厂收到德国买家的货款，因为工厂的开户行、买家的开户行、两地监管、两套反洗钱检查，全都在中间。</p>
+<p>DBS 和 Kinexys 那个案例的第一个客户是 Ant International。这不是巧合。Ant 在两地都有实体，有真实的资金调度需求，也有能力自己评估技术风险。第一批客户一定是「自己就是跨国企业」的机构，不是被销售说服的。</p>
+<p>这一点上，代币化存款的优势是压倒性的：它不需要客户新开户。客户的银行关系直接平移，只是那笔钱现在能 24 小时动，能和另一笔资产同步交割。</p>
+<p>第二个依据，司法确定性。</p>
+<p>资金在谁的账簿上，破产时排在债权人第几顺位，法院认不认这个余额。这三件事决定了机构资金敢放多少。</p>
+<p>稳定币在这一栏是弱的。Sky 那个例子已经说明了：USDS 缩 35%、15 亿美元撤出储备，原因不是储备不够，是治理出了问题。治理风险对机构资金来说和信用风险一样致命，因为它没法定价。</p>
+<p>批发 CBDC 在这一栏是最强的，但它不开放。</p>
+<p>代币化存款在中间：它继承银行的司法地位，但要证明「链上那个余额和账上那个余额是同一笔钱」。这个证明在技术上不难，在法律上还在积累案例。11 月 16 日最高法院驳回 Custodia，某种程度上是在收紧这条路——你想要央行货币的确定性，就得先成为央行体系的一部分，而进这个体系的门，不是靠打官司能开的。</p>
+<p>第三个依据，结算终局性。</p>
+<p>跨境支付的真实成本大头不在手续费，在在途资金和对账。一笔款走三天，中间那三天资金是被占用的，还要在两个体系里各记一次账，月底再人工对一遍。</p>
+<p>谁能做到原子结算——钱和资产同时交割，要么都成，要么都不成——谁就省掉了对账。</p>
+<p>代币化存款能，批发 CBDC 能，稳定币也能。但稳定币的原子结算发生在发行方的账簿上，不是央行账簿上。</p>
+<p>所以对「必须和央行货币同等最终性」的场景，稳定币进不去。证券的券款对付、银行间拆借、抵押品调拨，这些是代币化存款和批发 CBDC 的地盘。</p>
+<p>对「最终性要求没那么高、但速度和覆盖更重要」的场景，稳定币已经在了。跨境电商回款、供应链上游付款、侨汇。</p>
+<p>这里补一条容易被忽略的证据。11 月 16 日，DTCC 和 Barclays 说了一句和「更快更便宜」完全不同的话：代币化真正的价值，是释放闲置抵押品。</p>
+<p>这个判断比速度重要得多。跨境结算里最贵的不是手续费，是抵押品在途期间不能复用。一笔质押在 A 地的债券，因为要等 B 地的确认，两天内不能拿去别处用。这两天的时间价值，比整笔交易的手续费高。</p>
+<p>把这个需求放在上面三个依据里看，答案会更清楚：谁能同时解决「终局性」和「抵押品复用」，谁就拿到跨境 B2B 的高价值部分。而这恰好是批发 CBDC 加代币化存款的组合。</p>
+<p>条件式结论，只给三条：</p>
+<p>如果跨境 B2B 的增量需求主要来自现有跨国企业的资金调度效率，代币化存款会先形成规模，因为客户关系已经在那儿。</p>
+<p>如果增量需求主要来自新兴市场的美元可得性，稳定币会先形成规模，因为它不需要当地银行配合。</p>
+<p>如果增量需求来自证券与抵押品的跨境流动，批发 CBDC 会先形成规模，因为只有它的终局性被监管认可。</p>
+<p>三种需求同时存在。所以三种形态会同时存在。</p>
+<p>这不是妥协，这是它们各自服务不同的需求。硬要收敛成一种，反而会让其中一部分需求落空。</p>
+<hr />
+<h2>六、结论</h2>
+<p>回到开篇那个问题。</p>
+<p>三种链上美元，工程上已经同构。你拿任何一份技术白皮书对比，会发现它们在账本、合约、结算节奏上写的是同一套东西。DBS 一家银行同时站两个阵营，就是最好的证明——技术上没有阵营可站。</p>
+<p>但路线不会因为技术趋同而收敛。</p>
+<p>原因是：技术趋同解决的是「能不能做」，分歧在「谁被允许做」。而这个「谁」，由三样东西决定：谁能发（牌照），谁承担损失（资产负债表），谁在出事时兜底（央行最后贷款人）。</p>
+<p>三样东西都不在代码里。</p>
+<p>所以未来五年更可能的图景是这样：三种形态同时存在，各自在自己的场景里形成规模，交界处靠互操作协议连着。跨境结算的手续费不会被某一家拿走，会被切成三段——最后一公里的可得性归稳定币，大额与抵押品归代币化存款，最终结算归批发 CBDC。</p>
+<p>真正会被压缩的，是中间那层代理行。它们过去收的钱，本质上是「我有你两端的账户，你没有」的租金。这个租金在三种形态都能直达的情况下，没有立足点。</p>
+<p>这也是为什么 11 月这一个月里，银行的角色看起来那么矛盾：一边自己做代币化存款，一边和稳定币发行方合作，一边还在申请新的信托牌照。它们不是在选路线，它们是在把三条路的入口都占住。</p>
+<p>11 月 16 日那一天的四件事，方向看起来相反：三条技术路线各自往前，一条准入路径被关上。</p>
+<p>它们其实在说同一件事。</p>
+<p>美元在链上的形态可以有很多种。但「谁被允许在自己的资产负债表上创造美元」这个问题的答案，正在被重新分配。</p>
+<p>技术已经把这个问题简化到了不能再简化的程度——三种实现方式，一套工程方案。</p>
+<p>剩下的部分，不在代码里。</p>
+<hr />
+<p><strong>信息来源</strong></p>
+<ul>
+<li>DBS 与 JPMorgan Kinexys 代币化存款 24/7 互转、Ant International 为首位客户（2026 年 11 月 16 日）：公开报道与公司公告</li>
+<li>HKMA 与 Swift 探索将 Project Ensemble 接入 Swift 账本、多币种代币化存款跨境支付（2026 年 11 月 16 日）：公开报道</li>
+<li>新加坡金管局与德国央行 Project Simbolon、批发 CBDC 跨境外汇结算试验（2026 年 11 月 16 日）：公开报道</li>
+<li>美国最高法院驳回 Custodia Bank 美联储主账户申请（2026 年 11 月 16 日）：公开报道</li>
+<li>英国、新加坡、泰国三央行跨境外汇结算试验，使用 Partior 同步原型（2026 年 11 月 13—14 日）：公开报道</li>
+<li>DBS 与 Circle 在亚洲提供合格机构 24/7 USDC 铸造赎回与美元实时结算（2026 年 11 月 18 日）：公开报道</li>
+<li>StanChart、StraitsX、OCBC 代币化存款互操作试验及「跨平台互操作」结论（2026 年 11 月 19 日）：公开报道</li>
+<li>Ant International Whale Orchestration Protocol、代币化存款与代币化货币市场基金实时结算（2026 年 11 月 19 日）：公开报道</li>
+<li>MAS 在新加坡元测试网原生发行 7,750 万美元代币化票据并以批发 CBDC 结算、测试网改名 SG Digital Ledger（2026 年 11 月 19 日）：公开报道</li>
+<li>美联储理事 Michael Barr 关于 AI agents 可在数分钟内引发 bank run 的表态（2026 年 11 月 17 日）：公开报道</li>
+<li>美联储理事 Christopher Waller 在 The Clearing House 年会演讲（2026 年 11 月 17 日），引语原文见 Decrypt 报道</li>
+<li>Project Faro：21 家机构、2.7 亿美元出资、覆盖五年运营、美国注册发行人、目标 2027 年上半年发币、目前无代币无 CEO 无最终名称（2026 年 11 月 10 日）：Decrypt《How Wall Street Is Racing to Claim the Onchain Dollar》</li>
+<li>Tether 与 Circle 合计约占 2,900 亿美元稳定币市场 85%：同上</li>
+<li>SoFiUSD 上线 Polygon、覆盖 1,700 万以上会员、SoFi Earn 代币化存款 4.40% 收益与转换机制、卡项目运行于 Mastercard 网络（2026 年 11 月 12 日）：Decrypt 报道与公司公告</li>
+<li>稳定币总供应 30 天收缩 142 亿美元、USDT 与 USDC 合计减少近 110 亿、金背币持稳（2026 年 11 月 11 日，Glassnode 口径）：Decrypt、Cointelegraph 报道</li>
+<li>Sky 的 USDS 供应量收缩 35%、15 亿美元撤出储备（2026 年 11 月 19 日）：公开报道</li>
+<li>Coinbase 获 OCC 联邦信托银行牌照最终批准（2026 年 11 月 9 日）；MoonPay 申请国民信托银行牌照（2026 年 11 月 19 日）：公开报道</li>
+<li>四位参议员致函财长 Bessent 要求州级框架发行人「equal footing」、2028 年 1 月期限（2026 年 11 月 18 日）；参议员警告 GENIUS 实施细则可能把公司推向联邦监管并要求安全港（2026 年 11 月 19 日）：公开报道</li>
+<li>DTCC 与 Barclays 关于代币化释放闲置抵押品的判断（2026 年 11 月 16 日）：公开报道</li>
+<li>Tether Gold 获 KPMG 无保留审计、确认 22 亿美元实物金（2026 年 11 月 12 日）：公开报道</li>
+<li>泰国 SEC 拟对稳定币存取各设每日 14.8 万美元上限、要求本人钱包间转移（2026 年 11 月 12—13 日）：公开报道</li>
+<li>本文中关于 Faro 保本规模的反推为作者按假设测算，非公司披露数据；假设条件已在正文中列明</li>
+</ul>
+        </div>
+
+        <!-- Cross-Nav -->
+        <nav class="cross-nav"><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-tbill-coupling-2026.html">📜 稳定币的尽头是美债</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/stablecoin-haircut-capital-gate-2026.html">✂️ 2% 折扣率：资本关</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/ai-agent-payment-five-vetoes-2026.html">🔐 五方否决权</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/tokenized-equity-three-routes-2026.html">🏛️ 代币化美股的三条路线</a><a href="https://julietwang123.github.io/robinhood-chain-analysis/2026-11-07_2026-11-20_稳定币与AI代理支付动态梳理.html">💵🤖 本期专项梳理</a></nav>
+
+        <!-- Sources -->
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 鉴叔 本文内容仅供研究参考，不构成投资建议</p>
+        <p style="margin-top:6px;">
+            <a href="https://julietwang123.github.io/erc8211-analysis/">⛓ ERC-8211 研报</a> ·
+            <a href="https://julietwang123.github.io/blockchain-2025-report/">📊 年度报告</a>
+        </p>
+    </footer>
+</body>
+</html>
